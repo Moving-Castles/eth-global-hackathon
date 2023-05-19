@@ -5,8 +5,10 @@ pragma solidity >=0.8.0;
 
 import { Core, CoreTableId } from "./tables/Core.sol";
 import { CarriedBy, CarriedByTableId } from "./tables/CarriedBy.sol";
+import { Name, NameTableId } from "./tables/Name.sol";
 import { Energy, EnergyTableId } from "./tables/Energy.sol";
 import { Points, PointsTableId } from "./tables/Points.sol";
 import { ReadyBlock, ReadyBlockTableId } from "./tables/ReadyBlock.sol";
 import { Health, HealthTableId } from "./tables/Health.sol";
 import { Active, ActiveTableId } from "./tables/Active.sol";
+import { Vote, VoteTableId } from "./tables/Vote.sol";

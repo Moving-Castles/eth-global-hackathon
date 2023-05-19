@@ -7,6 +7,13 @@ import { network } from "../network";
 
 // --- TYPES -----------------------------------------------------------------
 
+export enum ActionType {
+  NONE,
+  ATTACK,
+  BLOCK,
+  TAUNT
+}
+
 export type GameConfig = {
   worldHeight: number;
   worldWidth: number;
@@ -29,17 +36,22 @@ export type Entity = {
   core?: boolean;
   readyBlock?: number;
   energy?: number;
+  name?: string;
+  points?: number;
   carriedBy?: string;
   active?: boolean;
   health?: number;
+  vote: ActionType;
 };
 
 export type Core = {
   core: boolean;
   readyBlock: number;
+  name?: string;
   energy: number;
   points: number;
   carriedBy: string;
+  vote: ActionType;
 };
 
 // - - - -

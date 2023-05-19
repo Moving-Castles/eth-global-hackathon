@@ -35,6 +35,21 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    Name: (() => {
+      const tableId = new TableId("moving_castles", "Name");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     Energy: (() => {
       const tableId = new TableId("moving_castles", "Energy");
       return defineComponent(
@@ -101,6 +116,21 @@ export function defineContractComponents(world: World) {
         world,
         {
           value: RecsType.Boolean,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    Vote: (() => {
+      const tableId = new TableId("moving_castles", "Vote");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Number,
         },
         {
           metadata: {

@@ -1,10 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte"
   import { setup } from "../mud/setup"
+  import { mount as mountDevTools } from "@latticexyz/dev-tools"
   import { createComponentSystem, createLoadingStateSystem } from "./systems"
   import { network, ready, blockNumber } from "./modules/network"
   import { playerCore } from "./modules/player"
-  import { initStaticContent } from "./modules/staticContent"
+  // import { initStaticContent } from "./modules/staticContent"
   import { initActionSequencer } from "./modules/actionSequencer"
   import { initActionUpdater } from "./modules/actionUpdater"
 
@@ -21,7 +22,7 @@
 
   onMount(async () => {
     // App mounted. Start initializing...
-    initStaticContent()
+    // initStaticContent()
     const mudLayer = await setup()
     network.set(mudLayer)
     initActionSequencer()
@@ -37,6 +38,9 @@
 
     // For convenience, we store the block number in a svelte store
     mudLayer.network.blockNumber$.subscribe((x: number) => blockNumber.set(x))
+
+    // !!! Dev mode
+    mountDevTools()
   })
 </script>
 

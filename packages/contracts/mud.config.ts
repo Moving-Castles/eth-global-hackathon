@@ -13,14 +13,19 @@ export default mudConfig({
     snapSync: true,
     deploysDirectory: "./deploys",
     namespace: "moving_castles",
+    enums: {
+        ActionType: ["NONE", "ATTACK", "BLOCK", "TAUNT"]
+    },
     tables: {
         Core: "bool",
         CarriedBy: "bytes32",
+        Name: "string",
         Energy: "uint32",
         Points: "uint32",
         ReadyBlock: "uint256",
         Health: "uint32",
-        Active: "bool"
+        Active: "bool",
+        Vote: "ActionType"
     },
     modules: [
         {

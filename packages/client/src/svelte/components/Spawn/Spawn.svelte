@@ -2,7 +2,7 @@
   import { network } from "../../modules/network"
   import { WorldFunctions } from "../../modules/actionSequencer"
   function spawn() {
-    $network.worldSend(WorldFunctions.Spawn, [])
+    $network.worldSend(WorldFunctions.Spawn, ["player-name-goes-here"])
   }
 </script>
 

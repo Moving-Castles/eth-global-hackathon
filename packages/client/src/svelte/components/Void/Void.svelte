@@ -1,10 +1,11 @@
 <script lang="ts">
   import { network } from "../../modules/network"
-  import { entities } from "../../modules/entities"
+  import { entities, ActionType } from "../../modules/entities"
   import { WorldFunctions } from "../../modules/actionSequencer"
   import { cores } from "../../modules/entities"
   import { playerAddress } from "../../modules/player"
   import OffChain from "../OffChain/OffChain.svelte"
+  import ActionItem from "../ActionSequencer/ActionItem.svelte"
 
   const BODY_ONE =
     "0x0000000000000000000000000000000000000000000000000000000000000001"
@@ -44,8 +45,20 @@
     $network.worldSend(WorldFunctions.End, [])
   }
 
+  function vote(action: ActionType) {
+    $network.worldSend(WorldFunctions.Vote, [action])
+  }
+
   function attack() {
-    $network.worldSend(WorldFunctions.Attack, [])
+    vote(ActionType.ATTACK)
+  }
+
+  function block() {
+    vote(ActionType.BLOCK)
+  }
+
+  function taunt() {
+    vote(ActionType.TAUNT)
   }
 </script>
 

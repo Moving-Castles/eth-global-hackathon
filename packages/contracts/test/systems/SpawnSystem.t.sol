@@ -9,7 +9,7 @@ contract SpawnSystemTest is MudV2Test {
     setUp();
 
     vm.startPrank(alice);
-    world.moving_castles_SpawnSystem_spawn();
+    world.moving_castles_SpawnSystem_spawn("Alice");
     vm.stopPrank();
 
     bytes32 coreEntity = LibUtils.addressToEntityKey(alice);
@@ -24,9 +24,9 @@ contract SpawnSystemTest is MudV2Test {
   function testRevertRespawn() public {
     setUp();
     vm.startPrank(alice);
-    world.moving_castles_SpawnSystem_spawn();
+    world.moving_castles_SpawnSystem_spawn("Alice");
     vm.expectRevert(bytes("already spawned"));
-    world.moving_castles_SpawnSystem_spawn();
+    world.moving_castles_SpawnSystem_spawn("Alice");
     vm.stopPrank();
   }
 }
