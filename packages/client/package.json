@@ -44,6 +44,7 @@
     "@sanity/image-url": "^1.0.2",
     "@wagmi/chains": "^0.2.22",
     "contracts": "^0.2.0",
+    "copy-to-clipboard": "^3.3.3",
     "ethers": "^5.7.2",
     "gsap": "^3.11.5",
     "howler": "^2.2.3",

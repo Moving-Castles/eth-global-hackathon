@@ -20,6 +20,8 @@
   $: console.log($playerCore)
   // - - - - -
 
+  let UIState = 0
+
   onMount(async () => {
     // App mounted. Start initializing...
     // initStaticContent()
@@ -45,10 +47,9 @@
 </script>
 
 <main>
-  {#if !$ready}
-    <Loading />
-  {/if}
-  {#if $ready}
+  {#if !$ready || UIState === 0}
+    <Loading on:next={() => UIState = 1} />
+  {:else}
     {#if !$playerCore}
       <Spawn />
     {:else}

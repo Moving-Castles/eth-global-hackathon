@@ -55,7 +55,8 @@
   })
 </script>
 
-<div>
+
+<!-- <div>
   <div>OFF CHAIN CORES:</div>
   <div>
     {#each verifiedClients as client}
@@ -65,4 +66,4 @@
       </div>
     {/each}
   </div>
-</div>
+</div> -->

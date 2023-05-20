@@ -4,6 +4,9 @@
   import { WorldFunctions } from "../../modules/actionSequencer"
   import { cores } from "../../modules/entities"
   import { playerAddress } from "../../modules/player"
+  import copy from "copy-to-clipboard"
+  import Body from "../../components/Bodies/Body.svelte"
+
   import OffChain from "../OffChain/OffChain.svelte"
   import ActionItem from "../ActionSequencer/ActionItem.svelte"
 
@@ -11,15 +14,22 @@
     "0x0000000000000000000000000000000000000000000000000000000000000001"
   const BODY_TWO =
     "0x0000000000000000000000000000000000000000000000000000000000000002"
+  const CORES_REQUIRED = 2
 
-  let ready = false
-  $: {
-    ready =
-      Object.values($entities).find(entity => entity.carriedBy === BODY_ONE) &&
-      Object.values($entities).find(entity => entity.carriedBy === BODY_TWO)
-  }
+  $: bodyOneCores = Object.entries($cores).filter(([k, v]) => v.carriedBy === BODY_ONE)
+  $: bodyTwoCores = Object.entries($cores).filter(([k, v]) => v.carriedBy === BODY_TWO)
+  $: bodilessCores = Object.entries($cores).filter(([k, v]) => v.carriedBy !== BODY_ONE && v.carriedBy !== BODY_TWO)
+  
+  $: bodyCores = [...bodyOneCores, ...bodyTwoCores]
+  $: joined = bodyCores.map(([k, v]) => k).includes($playerAddress)
+  $: ready = bodyOneCores.length === 2 && bodyTwoCores.length === 2
 
   let active = false
+  let cheerTimeout
+  let cheering = false
+
+  const invite = () => copy(window.location.href);
+
   $: {
     active = $entities["0x0666"]?.active
   }
@@ -29,12 +39,16 @@
     done = $entities["0x01"].health == 0 || $entities["0x02"].health == 0
   }
 
-  function joinBodyOne() {
-    $network.worldSend(WorldFunctions.Join, [1])
+  function cheer () {
+    clearTimeout(cheerTimeout)
+    cheering = true
+    cheerTimeout = setTimeout(() => {
+      cheering = false
+    }, 1000)
   }
 
-  function joinBodyTwo() {
-    $network.worldSend(WorldFunctions.Join, [2])
+  function joinBody(i: 1 | 2) {
+    if (!joined) $network.worldSend(WorldFunctions.Join, [i])
   }
 
   function startMatch() {
@@ -62,48 +76,101 @@
   }
 </script>
 
-<div class="void" class:active={$entities["0x0666"]?.active}>
+<div
+  class="void"
+  class:active={$entities["0x0666"]?.active}
+  class:cheering>
+
   <div>
-    <div class="pane left">
+    <!-- ONE -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div class="pane left" on:click={() => joinBody(1) }>
+      <div class="body-container">
+        <Body {joined} ready={bodyOneCores.length === 2} id="BODY_ONE" />
+      </div>
       <div>
-        <button on:click={joinBodyOne}>BODY 1</button>
+        <!-- <button on:click={() => joinBody(1) }>BODY 1</button> -->
         {#if active}
           <div>
-            {$entities["0x01"]?.health}
+            E: {$entities["0x01"]?.health}
           </div>
         {/if}
-        {#each Object.entries($cores) as [key, value]}
-          {#if value.carriedBy === BODY_ONE}
-            <div class="core">
-              <div class="core__name">
-                {key}
-                {#if key === $playerAddress}(YOU){/if}
-              </div>
+        {#each bodyOneCores as [key, value]}
+          <div class="core">
+            <div class="core__name">
+              {$entities[key].name}
+              {#if key === $playerAddress}(YOU){/if}
             </div>
-          {/if}
+          </div>
         {/each}
       </div>
+
+      {#if !active}
+      <div class="statistics">
+        {#if bodyOneCores.length < 2}
+          <div class="">
+            {bodyOneCores.length} / {CORES_REQUIRED} Cores 
+          </div>
+        {:else}
+          <div>
+            READY
+          </div>
+        {/if}
+      </div>
+      {/if}
+
     </div>
 
-    <div class="pane right">
+    <!-- TWO -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div class="pane right" on:click={() => joinBody(2) }>
+      <div class="body-container">
+        <Body {joined} ready={bodyTwoCores.length === 2} id="BODY_TWO" />
+      </div>
       <div>
-        <button on:click={joinBodyTwo}>BODY 2</button>
         {#if active}
           <div>
-            {$entities["0x02"]?.health}
+            E: {$entities["0x02"]?.health}
           </div>
         {/if}
-        {#each Object.entries($cores) as [key, value]}
-          {#if value.carriedBy === BODY_TWO}
-            <div class="core">
-              <div class="core__name">
-                {key}
-                {#if key === $playerAddress}(YOU){/if}
-              </div>
+        {#each bodyTwoCores as [key, value]}
+          <div class="core">
+            <div class="core__name">
+              {$entities[key].name}
+              {#if key === $playerAddress}(YOU){/if}
             </div>
-          {/if}
+          </div>
         {/each}
       </div>
+
+      {#if !active}
+        <div class="statistics">
+          {#if bodyTwoCores.length < 2}
+            <div class="">
+              {bodyTwoCores.length} / {CORES_REQUIRED} Cores 
+            </div>
+          {:else}
+            <div>
+                READY
+            </div>
+          {/if}
+        </div>
+      {/if}
+    </div>
+
+    <div class="mid-top">
+      {#if !joined && !ready}
+        Pick a body, {$entities[$playerAddress].name}
+      {/if}
+      {#if ready && !joined}
+        {#if bodilessCores.length > 0}
+          Spectators: <br>
+          {#each bodilessCores as spectator}
+          {$entities[spectator[0]].name} <br>
+            <!-- {spectator[0]} -->
+          {/each}
+        {/if}
+      {/if}
     </div>
 
     <div class="mid">
@@ -112,18 +179,28 @@
       {:else}
         LOBBY
       {/if}
-      {#if ready}
-        {#if !active}
+
+      {#if !active}
+        {#if ready}
           <button on:click={startMatch}>START</button>
-        {:else if done}
-          <button on:click={endMatch}>END</button>
+        {:else}
+          <button on:click={invite}>INVITE</button>
         {/if}
+      {:else if done}
+        <button on:click={endMatch}>END</button>
       {/if}
-      {#if active}
+
+      {#if active && bodyOneCores.map(([k, v]) => k).includes($playerAddress) || bodyTwoCores.map(([k, v]) => k).includes($playerAddress)}
         <button on:click={attack}>ATTACK</button>
       {/if}
+      {#if active && !bodyOneCores.map(([k, v]) => k).includes($playerAddress) && !bodyTwoCores.map(([k, v]) => k).includes($playerAddress)}
+        <button on:click={cheer}>
+          CHEER
+        </button>
+      {/if}
     </div>
-    <div class="info">
+
+    <!-- <div class="info">
       <hr />
       <div>ON CHAIN CORES:</div>
       {#each Object.entries($cores) as [key, value]}
@@ -137,7 +214,7 @@
       <hr />
       <OffChain />
       <hr />
-    </div>
+    </div> -->
   </div>
 </div>
 
@@ -156,7 +233,22 @@
 
     &.active {
       background: orangered;
+      background-image: url('/worls.png');
+      background-position: center;
     }
+  }
+
+  .body-container {
+    width: 70%;
+    margin: 0 auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .body-statistics {
+    position: absolute;
   }
 
   button {
@@ -168,19 +260,38 @@
     width: 50%;
     height: 100vh;
     display: flex;
-    justify-content: center;
+    flex-flow: column;
+    gap: 3rem;
+    justify-content: space-between;
     align-items: center;
     position: fixed;
     top: 0;
+    padding: 3rem;
 
     &.left {
       left: 0;
     }
     &.right {
       right: 0;
+      background: orange;
     }
   }
 
+  .active .right {
+    background: transparent;
+  }
+
+  .statistics {
+    align-self: start;
+  }
+
+  .mid-top {
+    position: fixed;
+    left: 50%;
+    top: 10%;
+    background: red;
+    transform: translateX(-50%);
+  }
   .mid {
     position: fixed;
     left: 50%;
@@ -197,5 +308,19 @@
     padding: 5px;
     background: lightgrey;
     color: black;
+  }
+
+  .cheering {
+    animation: cheers 0.18s infinite;
+    filter: invert(1);
+  }
+
+  @keyframes cheers {
+    from {
+      filter: invert(0);
+    }
+    to {
+      filter: invert(1);
+    }
   }
 </style>

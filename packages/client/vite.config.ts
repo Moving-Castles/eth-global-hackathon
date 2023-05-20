@@ -4,7 +4,7 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [svelte()],
-  publicDir: "./src/public",
+  publicDir: "./src/svelte/public",
   server: {
     port: 3000,
     fs: {
