@@ -44,6 +44,7 @@ export type Entity = {
   active?: boolean;
   health?: number;
   vote: ActionType;
+  taunt: string;
 };
 
 export type Core = {

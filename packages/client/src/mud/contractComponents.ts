@@ -140,5 +140,20 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    Taunt: (() => {
+      const tableId = new TableId("moving_castles", "Taunt");
+      return defineComponent(
+        world,
+        {
+          taunter: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
   };
 }

@@ -4,7 +4,7 @@ pragma solidity >=0.8.17;
 // import { getKeysInTable } from "@latticexyz/world/src/modules/keysintable/getKeysInTable.sol";
 import { ActionType } from "../codegen/Types.sol";
 import { BodyOne, BodyTwo } from "../constants.sol";
-import { Health, Vote } from "../codegen/Tables.sol";
+import { Health, Vote, Taunt } from "../codegen/Tables.sol";
 import { LibBody } from "./LibBody.sol";
 import { console } from "forge-std/console.sol";
 
@@ -46,7 +46,7 @@ library LibAction {
 
     if (result == ActionType.TAUNT) {
       console.log("TAUNT");
-      // TODO: !!!
+      Taunt.emitEphemeral(_bodyEntity);
     }
 
     if (result == ActionType.CHARGE) {

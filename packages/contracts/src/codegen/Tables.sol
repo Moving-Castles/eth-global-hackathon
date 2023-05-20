@@ -12,3 +12,4 @@ import { ReadyBlock, ReadyBlockTableId } from "./tables/ReadyBlock.sol";
 import { Health, HealthTableId } from "./tables/Health.sol";
 import { Active, ActiveTableId } from "./tables/Active.sol";
 import { Vote, VoteTableId } from "./tables/Vote.sol";
+import { Taunt, TauntTableId } from "./tables/Taunt.sol";

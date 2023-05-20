@@ -25,7 +25,14 @@ export default mudConfig({
         ReadyBlock: "uint256",
         Health: "uint32",
         Active: "bool",
-        Vote: "ActionType"
+        Vote: "ActionType",
+        Taunt: {
+            keySchema: {},
+            schema: {
+                taunter: "bytes32",
+            },
+            ephemeral: true,
+        },
     },
     modules: [
         {
