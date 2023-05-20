@@ -23,6 +23,7 @@
   $: bodyCores = [...bodyOneCores, ...bodyTwoCores]
   $: joined = bodyCores.map(([k, v]) => k).includes($playerAddress)
   $: ready = bodyOneCores.length === 2 && bodyTwoCores.length === 2
+  $: console.log(bodyOneCores, ready)
 
   let active = false
   let cheerTimeout
@@ -30,9 +31,7 @@
 
   const invite = () => copy(window.location.href);
 
-  $: {
-    active = $entities["0x0666"]?.active
-  }
+  $: active = $entities["0x0666"]?.active
 
   let done = false
   $: {
@@ -78,8 +77,13 @@
 
 <div
   class="void"
-  class:active={$entities["0x0666"]?.active}
+  class:active
   class:cheering>
+
+  {#if active}
+    <img class="overlay-r" src="/neubauten.png">
+    <img class="overlay-l" src="/neubauten-2.png">
+  {/if}
 
   <div>
     <!-- ONE -->
@@ -190,10 +194,10 @@
         <button on:click={endMatch}>END</button>
       {/if}
 
-      {#if active && bodyOneCores.map(([k, v]) => k).includes($playerAddress) || bodyTwoCores.map(([k, v]) => k).includes($playerAddress)}
+      {#if active && (bodyOneCores.map(([k, v]) => k).includes($playerAddress) || bodyTwoCores.map(([k, v]) => k).includes($playerAddress))}
         <button on:click={attack}>ATTACK</button>
       {/if}
-      {#if active && !bodyOneCores.map(([k, v]) => k).includes($playerAddress) && !bodyTwoCores.map(([k, v]) => k).includes($playerAddress)}
+      {#if active && (!bodyOneCores.map(([k, v]) => k).includes($playerAddress) && !bodyTwoCores.map(([k, v]) => k).includes($playerAddress))}
         <button on:click={cheer}>
           CHEER
         </button>
@@ -236,6 +240,24 @@
       background-image: url('/worls.png');
       background-position: center;
     }
+  }
+
+  .overlay-l {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 9;
+    width: 45vw;
+    pointer-events: none;
+  }
+
+  .overlay-r {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    z-index: 9;
+    width: 45vw;
+    pointer-events: none;
   }
 
   .body-container {
