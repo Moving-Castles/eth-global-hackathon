@@ -14,7 +14,7 @@ export default mudConfig({
     deploysDirectory: "./deploys",
     namespace: "moving_castles",
     enums: {
-        ActionType: ["NONE", "ATTACK", "BLOCK", "TAUNT"]
+        ActionType: ["NONE", "ATTACK_ONE", "ATTACK_TWO", "BLOCK", "TAUNT", "CHARGE"]
     },
     tables: {
         Core: "bool",

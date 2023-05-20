@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17;
+import { console } from "forge-std/console.sol";
 import { getKeysWithValue } from "@latticexyz/world/src/modules/keyswithvalue/getKeysWithValue.sol";
 import { getKeysInTable } from "@latticexyz/world/src/modules/keysintable/getKeysInTable.sol";
 import { CarriedBy, CarriedByTableId, Vote } from "../codegen/Tables.sol";
@@ -32,7 +33,7 @@ library LibBody {
   function resetBodies() internal {
     bytes32[][] memory keys = getKeysInTable(CarriedByTableId);
     for (uint256 i = 0; i < keys.length; i++) {
-      CarriedBy.deleteRecord(keys[i][0]);
+      CarriedBy.set(keys[i][0], 0);
     }
   }
 }

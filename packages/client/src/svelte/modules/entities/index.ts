@@ -9,9 +9,11 @@ import { network } from "../network";
 
 export enum ActionType {
   NONE,
-  ATTACK,
+  ATTACK_ONE,
+  ATTACK_TWO,
   BLOCK,
-  TAUNT
+  TAUNT,
+  CHARGE
 }
 
 export type GameConfig = {
