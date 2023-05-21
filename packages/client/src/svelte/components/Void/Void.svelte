@@ -90,7 +90,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="pane left" on:click={() => joinBody(1) }>
       <div class="body-container">
-        <Body {joined} ready={bodyOneCores.length === 2} id="BODY_ONE" />
+        <Body {joined} {active} ready={bodyOneCores.length === 2} id="BODY_ONE" />
       </div>
       <div>
         <!-- <button on:click={() => joinBody(1) }>BODY 1</button> -->
@@ -129,7 +129,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="pane right" on:click={() => joinBody(2) }>
       <div class="body-container">
-        <Body {joined} ready={bodyTwoCores.length === 2} id="BODY_TWO" />
+        <Body {joined} {active} ready={bodyTwoCores.length === 2} id="BODY_TWO" />
       </div>
       <div>
         {#if active}
