@@ -21,6 +21,7 @@
   $: bodilessCores = Object.entries($cores).filter(
     ([k, v]) => v.carriedBy !== BODY_ONE && v.carriedBy !== BODY_TWO
   )
+
   $: isBodyOne =
     joined && bodyOneCores.map(([k, v]) => k).includes($playerAddress)
   $: isBodyTwo =
@@ -132,6 +133,12 @@
             <div>READY</div>
           {/if}
         </div>
+      {:else if bodyOneCores.map(([k, v]) => k).includes($playerAddress)}
+        <div class="votes">
+          <button on:click={attackOne}>ATTACK I</button>
+          <button on:click={attackTwo}>ATTACK II</button>
+          <button on:click={taunt}>TAUNT</button>
+        </div>
       {/if}
     </div>
 
@@ -172,7 +179,7 @@
             <div>READY</div>
           {/if}
         </div>
-      {:else}
+      {:else if bodyTwoCores.map(([k, v]) => k).includes($playerAddress)}
         <div class="votes">
           <button on:click={attackOne}>ATTACK I</button>
           <button on:click={attackTwo}>ATTACK II</button>
@@ -212,12 +219,7 @@
       {:else if done}
         <button on:click={endMatch}>END</button>
       {/if}
-
-      {#if active && !bodyOneCores
-          .map(([k, v]) => k)
-          .includes($playerAddress) && !bodyTwoCores
-          .map(([k, v]) => k)
-          .includes($playerAddress)}
+      {#if active && bodilessCores.includes($playerAddress)}
         <button on:click={cheer}> CHEER </button>
       {/if}
     </div>
