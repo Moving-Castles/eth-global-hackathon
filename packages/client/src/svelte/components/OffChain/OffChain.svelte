@@ -3,6 +3,7 @@
   import { network } from "../../modules/network"
   import { playerAddress } from "../../modules/player"
   import { cores } from "../../modules/entities"
+  import { v4 as uuid } from "uuid"
 
   type Client = {
     id: string
@@ -12,13 +13,12 @@
   let verifiedClients: string[] = []
   let socket: any
 
-  // function sendMessage() {
+  // function broadcast () {
   //   const message = JSON.stringify({
   //     topic: "broadcast",
-  //     data: { text: textInput },
+  //     data: { cheer: true },
   //   })
   //   socket.send(message)
-  //   textInput = ""
   // }
 
   function getUniqueValues<T>(arr: T[]): T[] {

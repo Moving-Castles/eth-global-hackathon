@@ -81,19 +81,6 @@
     {#if active}
       <HealthBar {id} />
     {/if}
-    <!-- {#if active}
-      <div>
-        H: {$entities[id === 1 ? "0x01" : "0x02"]?.health}
-      </div>
-    {/if}
-    {#each $bodyCores as [key, value]}
-      <div class="core">
-        <div class="core__name">
-          {$cores[key]?.name}
-          {#if key === $playerAddress}(YOU){/if}
-        </div>
-      </div>
-    {/each} -->
   </div>
 
   {#if !active}
@@ -177,7 +164,7 @@
   .vote-counter {
     position: absolute;
     top: 0;
-    font-size: 4rem;
+    font-size: 20rem;
   }
 
   .body-statistics {
