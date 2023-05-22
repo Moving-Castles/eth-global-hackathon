@@ -140,6 +140,21 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    CoresPerBody: (() => {
+      const tableId = new TableId("moving_castles", "CoresPerBody");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Number,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     Taunt: (() => {
       const tableId = new TableId("moving_castles", "Taunt");
       return defineComponent(

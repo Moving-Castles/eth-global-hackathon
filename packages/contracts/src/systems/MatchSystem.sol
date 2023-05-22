@@ -1,14 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17;
 import { System } from "@latticexyz/world/src/System.sol";
-import { Health, Active } from "../codegen/Tables.sol";
+// import { hasKey } from "@latticexyz/world/src/modules/keysintable/getKeysInTable.sol";
+import { Health, Active, CoresPerBody } from "../codegen/Tables.sol";
 import { LibUtils, LibBody } from "../libraries/Libraries.sol";
-import { MatchKey, BodyOne, BodyTwo, CORES_PER_BODY } from "../constants.sol";
+import { BodyOne, BodyTwo, MatchKey } from "../constants.sol";
 
 contract MatchSystem is System {
   function init() public {
-    // TODO: restrict this => require(active does not have MatchKey, "already initialized")
+    // TODO: restrict this => require(Active does not have MatchKey, "already initialized")
+    // require(!hasKey(ActiveTableId, keyTuple), "already initialized");
+    // !!! TEMP SOLUTION
+    require(CoresPerBody.get(MatchKey) == 0, "already initialized");
+    // ...
     Active.set(MatchKey, false);
+    CoresPerBody.set(MatchKey, 2);
     Health.set(BodyOne, 100);
     Health.set(BodyTwo, 100);
   }
@@ -16,7 +22,8 @@ contract MatchSystem is System {
   function start() public {
     require(Active.get(MatchKey) == false, "match already active");
     require(
-      LibBody.getCores(BodyOne).length == CORES_PER_BODY && LibBody.getCores(BodyOne).length == CORES_PER_BODY,
+      LibBody.getCores(BodyOne).length == CoresPerBody.get(MatchKey) &&
+        LibBody.getCores(BodyOne).length == CoresPerBody.get(MatchKey),
       "not enough players"
     );
     // ...

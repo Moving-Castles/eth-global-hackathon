@@ -8,7 +8,6 @@ import type { SystemTypes } from "contracts/types/SystemTypes";
 import { writable, get } from "svelte/store";
 import { network, blockNumber } from "../network";
 import { playerCore } from "../player";
-import { gameConfig } from "../entities";
 import { playSound } from "../../../howler";
 import { toastMessage } from "../../modules/toast"
 
@@ -49,25 +48,7 @@ export const failedActions = writable([] as Action[]);
 // --- API -----------------------------------------------------------------
 
 export function getEnergyCost(systemId: keyof SystemTypes) {
-  const config = get(gameConfig);
-  switch (systemId) {
-    case "system.Move":
-      return config.moveCost;
-    case "system.PickUp":
-      return config.pickUpCost;
-    case "system.Drop":
-      return config.dropCost;
-    case "system.Transfer":
-      return config.transferCost;
-    case "system.Play":
-      return config.playCost;
-    case "system.Open":
-      return config.openCost;
-    case "system.Harvest":
-      return config.harvestCost;
-    default:
-      return 0;
-  }
+  return 0;
 }
 
 export function addToSequencer(systemId: keyof SystemTypes, params: any[] = []) {

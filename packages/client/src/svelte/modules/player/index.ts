@@ -22,7 +22,6 @@ export const multiCore = derived([cores, playerCore], ([$cores, $playerCore]) =>
   Object.values($cores).filter((e) => e.carriedBy == $playerCore.carriedBy).length > 1 ? true : false
 );
 
-
 const ABILITY_LIST = ["abilityMove", "abilityConsume", "abilityPlay", "abilityChat"];
 
 export const playerAbilities = derived([entities, playerCore], ([$entities, $playerCore]) => {

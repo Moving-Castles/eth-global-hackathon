@@ -1,6 +1,6 @@
 <script lang="ts">
   import { network } from "../../modules/network"
-  import { entities, ActionType } from "../../modules/entities"
+  import { entities, matchSingleton, ActionType } from "../../modules/entities"
   import { WorldFunctions } from "../../modules/actionSequencer"
   import { cores } from "../../modules/entities"
   import { playerAddress } from "../../modules/player"
@@ -14,7 +14,6 @@
     "0x0000000000000000000000000000000000000000000000000000000000000001"
   const BODY_TWO =
     "0x0000000000000000000000000000000000000000000000000000000000000002"
-  const CORES_REQUIRED = 2
 
   $: bodyOneCores = Object.entries($cores).filter(([k, v]) => v.carriedBy === BODY_ONE)
   $: bodyTwoCores = Object.entries($cores).filter(([k, v]) => v.carriedBy === BODY_TWO)
@@ -22,16 +21,16 @@
   
   $: bodyCores = [...bodyOneCores, ...bodyTwoCores]
   $: joined = bodyCores.map(([k, v]) => k).includes($playerAddress)
-  $: ready = bodyOneCores.length === 2 && bodyTwoCores.length === 2
+  $: ready = bodyOneCores.length === $matchSingleton?.coresPerBody && bodyTwoCores.length === $matchSingleton?.coresPerBody
   $: console.log(bodyOneCores, ready)
 
   let active = false
-  let cheerTimeout
+  let cheerTimeout: number
   let cheering = false
 
   const invite = () => copy(window.location.href);
 
-  $: active = $entities["0x0666"]?.active
+  $: active = $matchSingleton?.active
 
   let done = false
   $: {
@@ -90,7 +89,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="pane left" on:click={() => joinBody(1) }>
       <div class="body-container">
-        <Body {joined} {active} ready={bodyOneCores.length === 2} id="BODY_ONE" />
+        <Body {joined} {active} ready={bodyOneCores.length === $matchSingleton?.coresPerBody} id="BODY_ONE" />
       </div>
       <div>
         <!-- <button on:click={() => joinBody(1) }>BODY 1</button> -->
@@ -111,9 +110,9 @@
 
       {#if !active}
       <div class="statistics">
-        {#if bodyOneCores.length < 2}
+        {#if bodyOneCores.length < $matchSingleton?.coresPerBody}
           <div class="">
-            {bodyOneCores.length} / {CORES_REQUIRED} Cores 
+            {bodyOneCores.length} / {$matchSingleton?.coresPerBody} Cores 
           </div>
         {:else}
           <div>
@@ -129,7 +128,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="pane right" on:click={() => joinBody(2) }>
       <div class="body-container">
-        <Body {joined} {active} ready={bodyTwoCores.length === 2} id="BODY_TWO" />
+        <Body {joined} {active} ready={bodyTwoCores.length === $matchSingleton?.coresPerBody} id="BODY_TWO" />
       </div>
       <div>
         {#if active}
@@ -149,9 +148,9 @@
 
       {#if !active}
         <div class="statistics">
-          {#if bodyTwoCores.length < 2}
+          {#if bodyTwoCores.length < $matchSingleton?.coresPerBody}
             <div class="">
-              {bodyTwoCores.length} / {CORES_REQUIRED} Cores 
+              {bodyTwoCores.length} / {$matchSingleton?.coresPerBody} Cores 
             </div>
           {:else}
             <div>

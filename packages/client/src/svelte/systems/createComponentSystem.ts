@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { entities, indexToID } from "../modules/entities";
+import { entities } from "../modules/entities";
 import { network } from "../modules/network";
 import { toCamelCase } from "../utils/misc";
 
@@ -17,9 +17,6 @@ export function createComponentSystem(componentKey: string) {
         ? nextValue.value
         : nextValue;
 
-    console.log(update.entity)
-
-    // const entityID = indexToID(update.entity);
     const entityID = update.entity;
     const propertyName = toCamelCase(componentKey);
 

@@ -26,6 +26,7 @@ export default mudConfig({
         Health: "uint32",
         Active: "bool",
         Vote: "ActionType",
+        CoresPerBody: "uint32",
         Taunt: {
             keySchema: {},
             schema: {

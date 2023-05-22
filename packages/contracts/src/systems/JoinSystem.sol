@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17;
 import { System } from "@latticexyz/world/src/System.sol";
-import { CarriedBy } from "../codegen/Tables.sol";
+import { CarriedBy, CoresPerBody } from "../codegen/Tables.sol";
 import { LibUtils, LibBody } from "../libraries/Libraries.sol";
-import { BodyOne, BodyTwo, CORES_PER_BODY } from "../constants.sol";
+import { BodyOne, BodyTwo, MatchKey } from "../constants.sol";
 
 contract JoinSystem is System {
   function join(uint32 _bodyIndex) public {
@@ -12,7 +12,7 @@ contract JoinSystem is System {
     require(_bodyIndex == 1 || _bodyIndex == 2, "invalid body");
     // ...
     bytes32 bodyEntity = _bodyIndex == 1 ? BodyOne : BodyTwo;
-    require(LibBody.getCores(bodyEntity).length < CORES_PER_BODY, "body is full");
+    require(LibBody.getCores(bodyEntity).length < CoresPerBody.get(MatchKey), "body is full");
     // ...
     CarriedBy.set(coreEntity, bodyEntity);
   }

@@ -2,8 +2,7 @@
  *  Central store for all entities in the game.
  * 
  */
-import { writable, get, derived } from "svelte/store";
-import { network } from "../network";
+import { writable, derived } from "svelte/store";
 
 // --- TYPES -----------------------------------------------------------------
 
@@ -16,25 +15,8 @@ export enum ActionType {
   CHARGE
 }
 
-export type GameConfig = {
-  worldHeight: number;
-  worldWidth: number;
-  initialEnergy: number;
-  defaultCarryingCapacity: number;
-  moveCost: number;
-  pickUpCost: number;
-  dropCost: number;
-  transferCost: number;
-  playCost: number;
-  moveCooldown: number;
-  openCost: number;
-  harvestCost: number;
-  organMatter: number;
-};
-
 // Default type with all potential properties.
 export type Entity = {
-  gameConfig?: GameConfig;
   core?: boolean;
   readyBlock?: number;
   energy?: number;
@@ -43,19 +25,29 @@ export type Entity = {
   carriedBy?: string;
   active?: boolean;
   health?: number;
-  vote: ActionType;
-  taunt: string;
+  vote?: ActionType;
+  taunt?: string;
+  coresPerBody?: number;
 };
+
+export type MatchSingleton = {
+  active: boolean;
+  coresPerBody: number;
+}
 
 export type Core = {
   core: boolean;
   readyBlock: number;
-  name?: string;
+  name: string;
   energy: number;
   points: number;
   carriedBy: string;
   vote: ActionType;
 };
+
+export type Body = {
+  health: number;
+}
 
 // - - - -
 
@@ -67,31 +59,14 @@ export type Cores = {
   [index: string]: Core;
 };
 
-
 // --- STORES -----------------------------------------------------------------
 
 export const entities = writable({} as Entities);
-
-export const gameConfig = derived(entities, ($entities) => {
-  // "0x6a1a" => singleton GAIA entity
-  // ... temp. "0x060d" => singleton G0D entity
-  return $entities["0x060d"].gameConfig || {} as GameConfig
-});
 
 export const cores = derived(entities, ($entities) => {
   return Object.fromEntries(Object.entries($entities).filter(([key, entity]) => entity.core)) as Cores;
 });
 
-
-// --- FUNCTIONS -----------------------------------------------------------------
-
-export const indexToID = (index: number) => {
-  console.log('get(network)', get(network))
-  return get(network).world?.entities[index]
-}
-
-export const getCores = (address: string) =>
-  Object.entries(get(entities)).filter(([id, ent]) => ent.core && ent.carriedBy === address);
-
-export const getInventory = (address: string) =>
-  Object.entries(get(entities)).filter(([id, ent]) => ent.carriedBy === address);
+export const matchSingleton = derived(entities, ($entities) => {
+  return $entities["0x0666"] as MatchSingleton;
+});
