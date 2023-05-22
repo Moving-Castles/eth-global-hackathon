@@ -15,6 +15,11 @@ export enum ActionType {
   CHARGE
 }
 
+export enum GovernanceType {
+  NONE,
+  DEMOCRACY
+}
+
 // Default type with all potential properties.
 export type Entity = {
   core?: boolean;
@@ -26,6 +31,7 @@ export type Entity = {
   active?: boolean;
   health?: number;
   vote?: ActionType;
+  governance?: GovernanceType;
   taunt?: string;
   coresPerBody?: number;
 };
@@ -47,6 +53,7 @@ export type Core = {
 
 export type Body = {
   health: number;
+  governance: GovernanceType;
 }
 
 // - - - -

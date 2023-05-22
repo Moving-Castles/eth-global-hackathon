@@ -54,7 +54,7 @@
   $: active = $matchSingleton?.active
 
   $: {
-    done = $entities["0x01"].health == 0 || $entities["0x02"].health == 0
+    done = $entities["0x01"]?.health == 0 || $entities["0x02"]?.health == 0
   }
 
   function cheer() {

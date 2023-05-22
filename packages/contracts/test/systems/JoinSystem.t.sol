@@ -29,8 +29,6 @@ contract JoinSystemTest is MudV2Test {
     world.moving_castles_SpawnSystem_spawn("Alice");
     vm.stopPrank();
 
-    bytes32 coreEntity = LibUtils.addressToEntityKey(alice);
-
     vm.startPrank(alice);
     world.moving_castles_JoinSystem_join(2);
 
@@ -45,8 +43,6 @@ contract JoinSystemTest is MudV2Test {
     vm.startPrank(alice);
     world.moving_castles_SpawnSystem_spawn("Alice");
     vm.stopPrank();
-
-    bytes32 coreEntity = LibUtils.addressToEntityKey(alice);
 
     vm.startPrank(alice);
     vm.expectRevert(bytes("invalid body"));
