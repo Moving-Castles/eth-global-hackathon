@@ -72,6 +72,27 @@ contract VoteSystemTest is MudV2Test {
     assertEq(uint32(Vote.get(world, LibUtils.addressToEntityKey(bob))), uint32(ActionType.NONE));
   }
 
+  function testUnderflow() public {
+    setUp();
+    fillBodies();
+    world.moving_castles_MatchSystem_start();
+
+    assertTrue(Active.get(world, MatchKey));
+
+    world.moving_castles_DevSystem_set(HealthTableId, BodyTwo, abi.encodePacked(uint32(20)));
+
+    vm.startPrank(alice);
+    world.moving_castles_VoteSystem_vote(ActionType.ATTACK_TWO);
+    vm.stopPrank();
+
+    vm.startPrank(bob);
+    world.moving_castles_VoteSystem_vote(ActionType.ATTACK_TWO);
+    vm.stopPrank();
+
+    assertEq(Health.get(world, BodyOne), 90);
+    assertEq(Health.get(world, BodyTwo), 0);
+  }
+
   function testTaunt() public {
     setUp();
     fillBodies();

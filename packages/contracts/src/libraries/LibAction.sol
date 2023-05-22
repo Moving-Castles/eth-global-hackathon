@@ -33,7 +33,7 @@ library LibAction {
     if (result == ActionType.ATTACK_TWO) {
       console.log("ATTACK TWO");
       // Damage to opponent =  30
-      Health.set(targetBodyEntity, Health.get(targetBodyEntity) - 30);
+      Health.set(targetBodyEntity, Health.get(targetBodyEntity) < 30 ? 0 : Health.get(targetBodyEntity) - 30);
       // Damage to self =  10
       Health.set(_bodyEntity, Health.get(_bodyEntity) - 10);
     }
