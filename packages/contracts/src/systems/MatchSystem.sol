@@ -44,7 +44,8 @@ contract MatchSystem is System {
     LibBody.resetVotes(BodyOne);
     LibBody.resetVotes(BodyTwo);
     // ...
-    LibBody.resetBodies();
+    LibBody.emptyBody(BodyOne);
+    LibBody.emptyBody(BodyTwo);
     // ...
     // TODO: Calculated points per core
   }
