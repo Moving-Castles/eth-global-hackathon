@@ -1,5 +1,7 @@
 <script lang="ts">
   import { network } from "../../modules/network"
+  import { derived } from "svelte/store"
+  import { setContext } from "svelte"
   import {
     entities,
     cores,
@@ -9,8 +11,9 @@
   import { WorldFunctions } from "../../modules/actionSequencer"
   import { playerAddress, playerCore } from "../../modules/player"
   import copy from "copy-to-clipboard"
-  import Body from "../../components/Bodies/Body.svelte"
   import OffChain from "../../components/OffChain/OffChain.svelte"
+  import Pane from "../../components/Void/Pane.svelte"
+  import Body from "../../components/Bodies/Body.svelte"
   import { onMount } from "svelte"
 
   const BODY_ONE =
@@ -18,45 +21,66 @@
   const BODY_TWO =
     "0x0000000000000000000000000000000000000000000000000000000000000002"
 
-  let active = false
   let cheerTimeout: number
   let cheering = false
-  let done = false
+  let gameOver = false
 
-  $: bodyOneCores = Object.entries($cores).filter(
-    ([k, v]) => v.carriedBy === BODY_ONE
-  )
-  $: bodyTwoCores = Object.entries($cores).filter(
-    ([k, v]) => v.carriedBy === BODY_TWO
-  )
-  $: bodilessCores = Object.entries($cores).filter(
-    ([k, v]) => v.carriedBy !== BODY_ONE && v.carriedBy !== BODY_TWO
-  )
+  // b1c
+  const bodyOneCores = derived(cores, $c => {
+    const coreEntities = Object.entries($c)
+    if (coreEntities.length) {
+      return coreEntities.filter(([k, v]) => v.carriedBy === BODY_ONE)
+    } else {
+      return []
+    }
+  })
 
-  $: isBodyOne =
-    joined && bodyOneCores.map(([k, v]) => k).includes($playerAddress)
-  $: isBodyTwo =
-    joined && bodyTwoCores.map(([k, v]) => k).includes($playerAddress)
+  // b2c
+  const bodyTwoCores = derived(cores, $c => {
+    const coreEntities = Object.entries($c)
+    if (coreEntities.length) {
+      return coreEntities.filter(([k, v]) => v.carriedBy === BODY_TWO)
+    } else {
+      return []
+    }
+  })
 
-  $: bodyCores = [...bodyOneCores, ...bodyTwoCores]
-  $: joined = bodyCores.map(([k, v]) => k).includes($playerAddress)
+  // blc
+  const bodilessCores = derived(cores, $c => {
+    const coreEntities = Object.entries($c)
+    if (coreEntities.length) {
+      return coreEntities.filter(
+        ([k, v]) => v.carriedBy !== BODY_ONE && v.carriedBy !== BODY_TWO
+      )
+    } else {
+      return []
+    }
+  })
+
+  // All bodies
+  const bodyCores = derived([bodyOneCores, bodyTwoCores], ([$b1c, $b2c]) => [
+    ...$b1c,
+    ...$b2c,
+  ])
+
+  $: console.log("$bodilessCores", $bodilessCores)
+
+  $: joined = $bodyCores.map(([k, v]) => k).includes($playerAddress)
   $: ready =
-    bodyOneCores.length === $matchSingleton?.coresPerBody &&
-    bodyTwoCores.length === $matchSingleton?.coresPerBody
+    $bodyOneCores.length === $matchSingleton?.coresPerBody &&
+    $bodyTwoCores.length === $matchSingleton?.coresPerBody
   $: playerVote = $entities[$playerAddress]?.vote
-
   $: if (playerVote) {
     console.log(playerVote)
     console.log(ActionType[playerVote])
   }
-
-  const invite = () => copy(window.location.href)
-
   $: active = $matchSingleton?.active
 
   $: {
-    done = $entities["0x01"]?.health == 0 || $entities["0x02"]?.health == 0
+    gameOver = $entities["0x01"].health == 0 || $entities["0x02"].health == 0
   }
+
+  const invite = () => copy(window.location.href)
 
   function cheer() {
     clearTimeout(cheerTimeout)
@@ -64,10 +88,6 @@
     cheerTimeout = setTimeout(() => {
       cheering = false
     }, 1000)
-  }
-
-  function joinBody(i: 1 | 2) {
-    if (!joined) $network.worldSend(WorldFunctions.Join, [i])
   }
 
   function startMatch() {
@@ -82,17 +102,12 @@
     $network.worldSend(WorldFunctions.Vote, [action])
   }
 
-  function attackOne() {
-    vote(ActionType.ATTACK_ONE)
-  }
-
-  function attackTwo() {
-    vote(ActionType.ATTACK_TWO)
-  }
-
-  function taunt() {
-    vote(ActionType.TAUNT)
-  }
+  // Set context
+  setContext("bodyOneCores", bodyOneCores)
+  setContext("bodyTwoCores", bodyTwoCores)
+  setContext("bodyCores", bodyCores)
+  setContext("bodilessCores", bodilessCores)
+  setContext("vote", vote)
 
   onMount(() => {
     console.log($entities[$playerAddress])
@@ -101,6 +116,14 @@
   })
 </script>
 
+<svelte:head>
+  <title>
+    {active
+      ? `FIGHT | ${$cores[$playerAddress].name}`
+      : `LOBBY | ${$cores[$playerAddress].name}`}
+  </title>
+</svelte:head>
+
 <div class="void" class:active class:cheering>
   {#if active}
     <img class="overlay-r" src="/neubauten.png" />
@@ -108,146 +131,44 @@
   {/if}
 
   <div>
-    <!-- ONE -->
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div class="pane left" on:click={() => joinBody(1)}>
-      <div class="body-container">
-        <Body
-          {joined}
-          {active}
-          ready={bodyOneCores.length === $matchSingleton?.coresPerBody}
-          id="BODY_ONE"
-        />
-      </div>
-      <div>
-        <!-- <button on:click={() => joinBody(1) }>BODY 1</button> -->
-        {#if active}
-          <div>
-            H: {$entities["0x01"]?.health}
-          </div>
-        {/if}
-        {#each bodyOneCores as [key, value]}
-          <div class="core">
-            <div class="core__name">
-              {$cores[key]?.name}
-              {#if key === $playerAddress}(YOU){/if}
-            </div>
-          </div>
-        {/each}
-      </div>
+    <!-- PLAYER ONE -->
+    <Pane id={1} {active} {joined} />
 
-      {#if !active}
-        <div class="statistics">
-          {#if bodyOneCores.length < $matchSingleton?.coresPerBody}
-            <div class="">
-              {bodyOneCores.length} / {$matchSingleton?.coresPerBody} Cores
-            </div>
-          {:else}
-            <div>READY</div>
-          {/if}
-        </div>
-      {:else if bodyOneCores.map(([k, v]) => k).includes($playerAddress)}
-        <div class="votes">
-          <button disabled={playerVote !== undefined} on:click={attackOne}
-            >ATTACK I</button
-          >
-          <button disabled={playerVote !== undefined} on:click={attackTwo}
-            >ATTACK II</button
-          >
-          <button disabled={playerVote !== undefined} on:click={taunt}
-            >TAUNT</button
-          >
-        </div>
-      {/if}
-    </div>
+    <!-- PLAYER TWO -->
+    <Pane id={2} {active} {joined} />
 
-    <!-- TWO -->
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div class="pane right" on:click={() => joinBody(2)}>
-      <div class="body-container">
-        <Body
-          {joined}
-          {active}
-          ready={bodyTwoCores.length === $matchSingleton?.coresPerBody}
-          id="BODY_TWO"
-        />
-      </div>
-      <div>
-        {#if active}
-          <div>
-            H: {$entities["0x02"]?.health}
-          </div>
-        {/if}
-        {#each bodyTwoCores as [key, value]}
-          <div class="core">
-            <div class="core__name">
-              {$cores[key]?.name}
-              {#if key === $playerAddress}(YOU){/if}
-            </div>
-          </div>
-        {/each}
-      </div>
-
-      {#if !active}
-        <div class="statistics">
-          {#if bodyTwoCores.length < $matchSingleton?.coresPerBody}
-            <div class="">
-              {bodyTwoCores.length} / {$matchSingleton?.coresPerBody} Cores
-            </div>
-          {:else}
-            <div>READY</div>
-          {/if}
-        </div>
-      {:else if bodyTwoCores.map(([k, v]) => k).includes($playerAddress)}
-        <div class="votes">
-          <button disabled={playerVote !== undefined} on:click={attackOne}
-            >ATTACK I</button
-          >
-          <button disabled={playerVote !== undefined} on:click={attackTwo}
-            >ATTACK II</button
-          >
-          <button disabled={playerVote !== undefined} on:click={taunt}
-            >TAUNT</button
-          >
-        </div>
-      {/if}
-    </div>
-
-    <div class="mid-top">
+    <!-- INSTRUCTIONS, META -->
+    <div class="pane-mid-top">
       {#if !joined && !ready}
         Pick a body, {$cores[$playerAddress].name}
       {/if}
       {#if ready && !joined}
-        {#if bodilessCores.length > 0}
+        {#if $bodilessCores.length > 0}
           Spectators: <br />
-          {#each bodilessCores as spectator}
-            {$cores[spectator[0]].name} <br />
-            <!-- {spectator[0]} -->
+          {#each $bodilessCores as spectator}
+            {spectator[1].name}
+            {#if spectator[0] === $playerAddress}(YOU){/if} <br />
           {/each}
         {/if}
       {/if}
     </div>
 
-    <div class="mid">
-      {#if active}
-        <!-- MATCH -->
-      {:else}
-        <!-- LOBBY -->
-      {/if}
-
+    <!-- ACTIONS, META -->
+    <div class="pane-mid-bottom">
       {#if !active}
         {#if ready}
           <button
-            disabled={bodilessCores.includes($playerAddress)}
+            disabled={$bodilessCores.includes($playerAddress)}
             on:click={startMatch}>START</button
           >
         {:else}
           <button on:click={invite}>INVITE</button>
         {/if}
-      {:else if done}
+      {:else if gameOver}
         <button on:click={endMatch}>END</button>
       {/if}
-      {#if active && bodilessCores.includes($playerAddress)}
+
+      {#if active && $bodilessCores.map(([k, v]) => k).includes($playerAddress)}
         <button on:click={cheer}> CHEER </button>
       {/if}
     </div>
@@ -296,55 +217,12 @@
     pointer-events: none;
   }
 
-  .body-container {
-    width: 70%;
-    margin: 0 auto;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: -1;
-  }
-
-  .body-statistics {
-    position: absolute;
-  }
-
   button {
     font-size: 32px;
     display: block;
   }
 
-  .pane {
-    width: 50%;
-    height: 100vh;
-    display: flex;
-    flex-flow: column;
-    gap: 3rem;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    padding: 3rem;
-
-    &.left {
-      left: 0;
-    }
-    &.right {
-      right: 0;
-      background: orange;
-    }
-  }
-
-  .active .right {
-    background: transparent;
-  }
-
-  .statistics {
-    align-self: start;
-  }
-
-  .mid-top {
+  .pane-mid-top {
     position: fixed;
     left: 50%;
     top: 10%;
@@ -352,12 +230,13 @@
     transform: translateX(-50%);
   }
 
-  .mid {
+  .pane-mid-bottom {
     position: fixed;
     left: 50%;
     bottom: 10%;
     background: red;
     transform: translateX(-50%);
+    z-index: 9;
   }
 
   .info {

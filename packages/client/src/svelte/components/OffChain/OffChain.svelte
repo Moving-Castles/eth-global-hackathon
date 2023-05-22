@@ -44,9 +44,8 @@
 
     // Listen for messages
     socket.addEventListener("message", event => {
-      console.log("Message from server ", event)
+      // console.log("Message from server ", event)
       let msgObj = JSON.parse(event.data)
-      console.log(msgObj)
       if (msgObj.topic === "verifiedClients") {
         // TODO: do this on server
         console.log("verifiedClients", msgObj.verifiedClients)
