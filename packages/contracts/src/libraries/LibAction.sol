@@ -40,7 +40,8 @@ library LibAction {
 
     if (result == ActionType.TAUNT) {
       console.log("TAUNT");
-      Taunt.emitEphemeral(MatchKey, _bodyEntity);
+      Taunt.set(_bodyEntity, block.number);
+      // Taunt.emitEphemeral(MatchKey, _bodyEntity);
     }
   }
 

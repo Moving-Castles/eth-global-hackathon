@@ -175,7 +175,7 @@ export function defineContractComponents(world: World) {
       return defineComponent(
         world,
         {
-          taunter: RecsType.String,
+          value: RecsType.BigInt,
         },
         {
           metadata: {

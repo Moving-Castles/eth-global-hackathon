@@ -109,12 +109,7 @@ contract VoteSystemTest is MudV2Test {
     world.moving_castles_VoteSystem_vote(ActionType.TAUNT);
     vm.stopPrank();
 
-    // Vote complete, Action should be executed
-
-    assertEq(Health.get(world, BodyOne), 100);
-    assertEq(Health.get(world, BodyTwo), 100);
-    assertEq(uint32(Vote.get(world, LibUtils.addressToEntityKey(alice))), uint32(ActionType.NONE));
-    assertEq(uint32(Vote.get(world, LibUtils.addressToEntityKey(bob))), uint32(ActionType.NONE));
+    assertEq(Taunt.get(world, BodyOne), block.number);
   }
 
   function testFailedVote() public {

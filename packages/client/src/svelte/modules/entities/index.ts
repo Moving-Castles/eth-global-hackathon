@@ -30,7 +30,7 @@ export type Entity = {
   health?: number;
   vote?: ActionType;
   governance?: GovernanceType;
-  taunt?: string;
+  taunt?: number;
   coresPerBody?: number;
 };
 
@@ -52,6 +52,7 @@ export type Body = {
   health: number;
   readyBlock: number;
   governance: GovernanceType;
+  taunt: number;
 }
 
 // - - - -

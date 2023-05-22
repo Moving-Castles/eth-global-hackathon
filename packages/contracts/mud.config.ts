@@ -29,12 +29,13 @@ export default mudConfig({
         Vote: "ActionType",
         Governance: "GovernanceType",
         CoresPerBody: "uint32",
-        Taunt: {
-            schema: {
-                taunter: "bytes32",
-            },
-            ephemeral: true,
-        },
+        Taunt: "uint256"
+        // Taunt: {
+        //     schema: {
+        //         taunter: "bytes32",
+        //     },
+        //     ephemeral: true,
+        // },
     },
     modules: [
         {
