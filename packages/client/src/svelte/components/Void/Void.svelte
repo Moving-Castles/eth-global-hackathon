@@ -3,12 +3,9 @@
   import { entities, ActionType } from "../../modules/entities"
   import { WorldFunctions } from "../../modules/actionSequencer"
   import { cores } from "../../modules/entities"
-  import { playerAddress } from "../../modules/player"
+  import { playerAddress, playerCore } from "../../modules/player"
   import copy from "copy-to-clipboard"
   import Body from "../../components/Bodies/Body.svelte"
-
-  import OffChain from "../OffChain/OffChain.svelte"
-  import ActionItem from "../ActionSequencer/ActionItem.svelte"
 
   const BODY_ONE =
     "0x0000000000000000000000000000000000000000000000000000000000000001"
@@ -19,11 +16,13 @@
   $: bodyOneCores = Object.entries($cores).filter(([k, v]) => v.carriedBy === BODY_ONE)
   $: bodyTwoCores = Object.entries($cores).filter(([k, v]) => v.carriedBy === BODY_TWO)
   $: bodilessCores = Object.entries($cores).filter(([k, v]) => v.carriedBy !== BODY_ONE && v.carriedBy !== BODY_TWO)
+  $: isBodyOne = joined && bodyOneCores.map(([k, v]) => k).includes($playerAddress)
+  $: isBodyTwo = joined && bodyTwoCores.map(([k, v]) => k).includes($playerAddress)
   
   $: bodyCores = [...bodyOneCores, ...bodyTwoCores]
   $: joined = bodyCores.map(([k, v]) => k).includes($playerAddress)
   $: ready = bodyOneCores.length === 2 && bodyTwoCores.length === 2
-  $: console.log(bodyOneCores, ready)
+  $: console.log($playerCore)
 
   let active = false
   let cheerTimeout
@@ -62,8 +61,12 @@
     $network.worldSend(WorldFunctions.Vote, [action])
   }
 
-  function attack() {
-    vote(ActionType.ATTACK)
+  function attackOne() {
+    vote(ActionType.ATTACK_ONE)
+  }
+
+  function attackTwo() {
+    vote(ActionType.ATTACK_TWO)
   }
 
   function block() {
@@ -90,7 +93,13 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="pane left" on:click={() => joinBody(1) }>
       <div class="body-container">
-        <Body {joined} {active} ready={bodyOneCores.length === 2} id="BODY_ONE" />
+        <Body
+          {joined}
+          {active}
+          ready={bodyOneCores.length === 2}
+          id="BODY_ONE"
+          mine={joined && isBodyOne}
+        />
       </div>
       <div>
         <!-- <button on:click={() => joinBody(1) }>BODY 1</button> -->
@@ -110,17 +119,23 @@
       </div>
 
       {#if !active}
-      <div class="statistics">
-        {#if bodyOneCores.length < 2}
-          <div class="">
-            {bodyOneCores.length} / {CORES_REQUIRED} Cores 
-          </div>
-        {:else}
-          <div>
-            READY
-          </div>
-        {/if}
-      </div>
+        <div class="statistics">
+          {#if bodyOneCores.length < 2}
+            <div class="">
+              {bodyOneCores.length} / {CORES_REQUIRED} Cores 
+            </div>
+          {:else}
+            <div>
+              READY
+            </div>
+          {/if}
+        </div>
+      {:else}
+        <div class="votes">
+          <button on:click={attackOne}>ATTACK I</button>
+          <button on:click={attackTwo}>ATTACK II</button>
+          <button on:click={taunt}>TAUNT</button>
+        </div>
       {/if}
 
     </div>
@@ -129,7 +144,13 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="pane right" on:click={() => joinBody(2) }>
       <div class="body-container">
-        <Body {joined} {active} ready={bodyTwoCores.length === 2} id="BODY_TWO" />
+        <Body
+          {joined}
+          {active}
+          ready={bodyTwoCores.length === 2}
+          mine={joined && isBodyTwo}
+          id="BODY_TWO"
+        />
       </div>
       <div>
         {#if active}
@@ -159,6 +180,12 @@
             </div>
           {/if}
         </div>
+      {:else}
+        <div class="votes">
+          <button on:click={attackOne}>ATTACK I</button>
+          <button on:click={attackTwo}>ATTACK II</button>
+          <button on:click={taunt}>TAUNT</button>
+        </div>
       {/if}
     </div>
 
@@ -179,9 +206,9 @@
 
     <div class="mid">
       {#if active}
-        MATCH
+        <!-- MATCH -->
       {:else}
-        LOBBY
+        <!-- LOBBY -->
       {/if}
 
       {#if !active}
@@ -194,9 +221,6 @@
         <button on:click={endMatch}>END</button>
       {/if}
 
-      {#if active && (bodyOneCores.map(([k, v]) => k).includes($playerAddress) || bodyTwoCores.map(([k, v]) => k).includes($playerAddress))}
-        <button on:click={attack}>ATTACK</button>
-      {/if}
       {#if active && (!bodyOneCores.map(([k, v]) => k).includes($playerAddress) && !bodyTwoCores.map(([k, v]) => k).includes($playerAddress))}
         <button on:click={cheer}>
           CHEER
@@ -267,6 +291,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    z-index: -1;
   }
 
   .body-statistics {
