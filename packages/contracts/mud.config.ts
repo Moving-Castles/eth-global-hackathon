@@ -15,7 +15,7 @@ export default mudConfig({
     namespace: "moving_castles",
     enums: {
         GovernanceType: ["NONE", "DEMOCRACY"],
-        ActionType: ["NONE", "ATTACK_ONE", "ATTACK_TWO", "TAUNT"]
+        ActionType: ["NONE", "ATTACK_ONE", "ATTACK_TWO", "ATTACK_THREE", "HEAL", "TAUNT"]
     },
     tables: {
         Core: "bool",

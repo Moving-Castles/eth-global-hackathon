@@ -10,6 +10,8 @@ export enum ActionType {
   NONE,
   ATTACK_ONE,
   ATTACK_TWO,
+  ATTACK_THREE,
+  HEAL,
   TAUNT
 }
 

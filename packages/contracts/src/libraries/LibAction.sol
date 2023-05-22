@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17;
-// import { getKeysWithValue } from "@latticexyz/world/src/modules/keyswithvalue/getKeysWithValue.sol";
-// import { getKeysInTable } from "@latticexyz/world/src/modules/keysintable/getKeysInTable.sol";
+import { console } from "forge-std/console.sol";
 import { ActionType } from "../codegen/Types.sol";
 import { BodyOne, BodyTwo, MatchKey } from "../constants.sol";
 import { Health, Vote, Taunt } from "../codegen/Tables.sol";
-import { LibBody } from "./LibBody.sol";
-import { console } from "forge-std/console.sol";
+import { LibBody, LibUtils } from "./Libraries.sol";
 
 library LibAction {
   function execute(bytes32 _bodyEntity) internal {
@@ -38,6 +36,23 @@ library LibAction {
       Health.set(_bodyEntity, Health.get(_bodyEntity) - 10);
     }
 
+    if (result == ActionType.ATTACK_THREE) {
+      console.log("ATTACK THREE");
+      // Damage to opponent = 0 to 50
+      uint32 oppDamage = uint32((LibUtils.random(block.timestamp, gasleft()) % 6) * 10);
+      uint32 oppResult = Health.get(targetBodyEntity) < oppDamage ? 0 : Health.get(targetBodyEntity) - oppDamage;
+      Health.set(targetBodyEntity, oppResult);
+      // Damage to self = 0 to 50
+      uint32 selfDamage = uint32((LibUtils.random(gasleft(), oppDamage) % 6) * 10);
+      uint32 selfResult = Health.get(targetBodyEntity) < selfDamage ? 0 : Health.get(_bodyEntity) - selfDamage;
+      Health.set(_bodyEntity, selfResult);
+    }
+
+    if (result == ActionType.HEAL) {
+      console.log("HEAL");
+      Health.set(_bodyEntity, Health.get(_bodyEntity) + 10);
+    }
+
     if (result == ActionType.TAUNT) {
       console.log("TAUNT");
       Taunt.set(_bodyEntity, block.number);
@@ -55,12 +70,14 @@ library LibAction {
     ActionType[] memory votes = new ActionType[](cores.length);
 
     // Declare an array to count the votes for each ActionType
-    // The length is 4 because there are four ActionTypes:
+    // The length is 6 because there are six ActionTypes:
     // (1) NONE
-    // (2) ATTACK_ONE
-    // (3) ATTACK_TWO
-    // (4) TAUNT
-    uint[] memory voteCounts = new uint[](4);
+    // (2) ATTACK_ONE => opp. -10 HP
+    // (3) ATTACK_TWO => opp. -30 HP, self -10 HP
+    // (4) ATTACK_THREE => opp. -(0 to 50) HP, self -(0 to 50) HP
+    // (5) HEAL => self +10 HP
+    // (6) TAUNT => (╯°□°)╯
+    uint[] memory voteCounts = new uint[](6);
 
     // Declare a variable to keep track of the maximum vote count
     uint maxVoteCount = 0;
