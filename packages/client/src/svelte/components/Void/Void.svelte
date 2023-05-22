@@ -9,7 +9,7 @@
     ActionType,
   } from "../../modules/entities"
   import { WorldFunctions } from "../../modules/actionSequencer"
-  import { playerAddress, playerCore } from "../../modules/player"
+  import { playerAddress } from "../../modules/player"
   import copy from "copy-to-clipboard"
   import OffChain from "../../components/OffChain/OffChain.svelte"
   import Pane from "../../components/Void/Pane.svelte"
@@ -21,9 +21,24 @@
   const BODY_TWO =
     "0x0000000000000000000000000000000000000000000000000000000000000002"
 
+  let socket
   let cheerTimeout: number
   let cheering = false
   let gameOver = false
+
+  function sendCheer() {
+    const message = JSON.stringify({ topic: "cheer" })
+    cheer()
+    socket.send(message)
+  }
+
+  function processCheer(event) {
+    let msgObj = JSON.parse(event.data)
+
+    if (msgObj.topic === "cheer") {
+      cheer()
+    }
+  }
 
   // b1c
   const bodyOneCores = derived(cores, $c => {
@@ -110,6 +125,10 @@
   setContext("vote", vote)
 
   onMount(() => {
+    socket = new WebSocket("wss://mc.rttskr.com")
+
+    socket.addEventListener("message", processCheer)
+
     playerVote = $entities[$playerAddress].vote
   })
 </script>
@@ -167,7 +186,7 @@
       {/if}
 
       {#if active && $bodilessCores.map(([k, v]) => k).includes($playerAddress)}
-        <button on:click={cheer}> CHEER </button>
+        <button on:click={sendCheer}> CHEER </button>
       {/if}
     </div>
 

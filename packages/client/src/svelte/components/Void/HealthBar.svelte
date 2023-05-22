@@ -2,6 +2,7 @@
   import { entities } from "../../modules/entities"
   import { tweened } from "svelte/motion"
   import { onMount } from "svelte"
+
   export let id: number
 
   let hit = false
@@ -36,9 +37,6 @@
   })
 </script>
 
-<!-- {$health.toFixed(0)} -->
-<!-- NORMAL {$entities[id === 1 ? "0x01" : "0x02"]?.health}
-PROGRESS {progress} -->
 <div class:hit class="health player-{id} bar">
   <div
     style:height="{$health.toFixed(0)}%"
