@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17;
 import { System } from "@latticexyz/world/src/System.sol";
-import { Core, Points, ReadyBlock, Name } from "../codegen/Tables.sol";
+import { Core, Points, Name } from "../codegen/Tables.sol";
 import { LibUtils } from "../libraries/Libraries.sol";
 
 contract SpawnSystem is System {
@@ -11,7 +11,6 @@ contract SpawnSystem is System {
     // ...
     Core.set(coreEntity, true);
     Name.set(coreEntity, _name);
-    ReadyBlock.set(coreEntity, block.number);
     Points.set(coreEntity, 0);
   }
 }
