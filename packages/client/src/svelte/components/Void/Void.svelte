@@ -10,7 +10,7 @@
   } from "../../modules/entities"
   import { WorldFunctions } from "../../modules/actionSequencer"
   import { playerAddress } from "../../modules/player"
-  import copy from "copy-to-clipboard"
+  // import copy from "copy-to-clipboard"
   import OffChain from "../../components/OffChain/OffChain.svelte"
   import Pane from "../../components/Void/Pane.svelte"
   // import Body from "../../components/Bodies/Body.svelte"
@@ -95,7 +95,7 @@
     gameOver = $entities["0x01"]?.health == 0 || $entities["0x02"]?.health == 0
   }
 
-  const invite = () => copy(window.location.href)
+  // const invite = () => copy(window.location.href)
 
   function cheer() {
     clearTimeout(cheerTimeout)
@@ -178,8 +178,8 @@
             disabled={$bodilessCores.includes($playerAddress)}
             on:click={startMatch}>START</button
           >
-        {:else}
-          <button on:click={invite}>INVITE</button>
+          <!-- {:else}
+          <button on:click={invite}>INVITE</button> -->
         {/if}
       {:else if gameOver}
         <button on:click={endMatch}>END</button>
