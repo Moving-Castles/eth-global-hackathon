@@ -77,7 +77,7 @@
   $: active = $matchSingleton?.active
 
   $: {
-    gameOver = $entities["0x01"].health == 0 || $entities["0x02"].health == 0
+    gameOver = $entities["0x01"]?.health == 0 || $entities["0x02"]?.health == 0
   }
 
   const invite = () => copy(window.location.href)
