@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getContext } from "svelte"
   import Body from "../../components/Bodies/Body.svelte"
+  import Icon from "@iconify/svelte"
   import {
     entities,
     cores,
@@ -15,6 +16,13 @@
   export let id: number
   export let joined: boolean
   export let active: boolean
+
+  const icons = {
+    0: id === 1 ? "game-icons:abstract-010" : "game-icons:abstract-033", // NONE
+    1: id === 1 ? "game-icons:alligator-clip" : "game-icons:afterburn", // ATTACK_ONE
+    2: id === 1 ? "game-icons:3d-hammer" : "game-icons:ak47", // ATTACK_TWO
+    4: id === 1 ? "game-icons:anarchy" : "game-icons:android-mask", // TAUNT
+  }
 
   const bodyOneCores = getContext("bodyOneCores")
   const bodyTwoCores = getContext("bodyTwoCores")
@@ -39,7 +47,6 @@
 
   $: bodyCores = id === 1 ? bodyOneCores : bodyTwoCores
   $: playerVote = $entities[$playerAddress]?.vote
-  // $: bodyVotes = $bodyCores.map(([_, v]) => v.vote)
 
   function joinBody(i: 1 | 2) {
     if (!joined) $network.worldSend(WorldFunctions.Join, [i])
@@ -52,11 +59,18 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="pane pane-{id}" class:active on:click={() => joinBody(id)}>
-  <div class="vote-counter">
-    {#each $bodyCores as [k, entry]}
-      {ActionType[entry.vote]}
-    {/each}
-  </div>
+  {#if active}
+    <div class="vote-counter">
+      {#each $bodyCores as [k, entry]}
+        <div
+          class="vote"
+          class:inactive={entry.vote === ActionType.NONE || !entry.vote}
+        >
+          <Icon icon={icons[entry.vote] || icons[0]} />
+        </div>
+      {/each}
+    </div>
+  {/if}
 
   <div class="body-container">
     <Body
@@ -68,8 +82,7 @@
     />
   </div>
   <div>
-    <!-- <button on:click={() => joinBody(1) }>BODY 1</button> -->
-    {#if active}
+    <!-- {#if active}
       <div>
         H: {$entities[id === 1 ? "0x01" : "0x02"]?.health}
       </div>
@@ -81,7 +94,7 @@
           {#if key === $playerAddress}(YOU){/if}
         </div>
       </div>
-    {/each}
+    {/each} -->
   </div>
 
   {#if !active}
@@ -95,15 +108,28 @@
       {/if}
     </div>
   {:else if $bodyCores.map(([k, v]) => k).includes($playerAddress)}
-    <div class="votes">
-      <button disabled={playerVote !== undefined} on:click={attackOne}
-        >ATTACK I</button
+    <div class="votes" class:disabled={!isNaN(playerVote) && playerVote !== 0}>
+      <button
+        class="vote-button"
+        disabled={!isNaN(playerVote) && playerVote !== 0}
+        on:click={attackOne}
       >
-      <button disabled={playerVote !== undefined} on:click={attackTwo}
-        >ATTACK II</button
+        ATTACK 1 <Icon icon={icons[1]} />
+      </button>
+      <button
+        class="vote-button"
+        disabled={!isNaN(playerVote) && playerVote !== 0}
+        on:click={attackTwo}
       >
-      <button disabled={playerVote !== undefined} on:click={taunt}>TAUNT</button
+        ATTACK 2 <Icon icon={icons[2]} />
+      </button>
+      <button
+        class="vote-button"
+        disabled={!isNaN(playerVote) && playerVote !== 0}
+        on:click={taunt}
       >
+        TAUNT <Icon icon={icons[4]} />
+      </button>
     </div>
   {/if}
 </div>
@@ -152,6 +178,7 @@
   .vote-counter {
     position: absolute;
     top: 0;
+    font-size: 4rem;
   }
 
   .body-statistics {
@@ -161,5 +188,62 @@
 
   .statistics {
     align-self: start;
+  }
+
+  .vote-counter {
+    display: flex;
+    flex-flow: row nowrap;
+    padding: 2rem;
+    gap: 2rem;
+  }
+
+  .votes {
+    font-size: 3rem;
+  }
+
+  .vote {
+    font-size: 5rem;
+    opacity: 1;
+    transition: opacity 0.2s;
+  }
+
+  .vote :global(path) {
+    stroke: yellow !important;
+    stroke-width: 10px !important;
+    stroke-opacity: 1 !important;
+  }
+
+  .vote-button {
+    font-size: 3rem;
+  }
+
+  button[disabled] {
+    color: #888 !important;
+  }
+
+  .pane-1 :global(.vote-button) {
+    color: black;
+    background-color: #0f0;
+  }
+
+  .pane-1 :global(.vote) {
+    color: #0f0;
+  }
+
+  .pane-2 :global(.vote-button) {
+    color: black;
+    background-color: #f00;
+  }
+
+  .pane-2 :global(.vote) {
+    color: #f00;
+  }
+
+  .vote.inactive {
+    opacity: 0.2;
+  }
+
+  .disabled {
+    filter: grayscale(2);
   }
 </style>

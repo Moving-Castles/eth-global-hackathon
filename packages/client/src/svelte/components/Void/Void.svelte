@@ -13,7 +13,7 @@
   import copy from "copy-to-clipboard"
   import OffChain from "../../components/OffChain/OffChain.svelte"
   import Pane from "../../components/Void/Pane.svelte"
-  import Body from "../../components/Bodies/Body.svelte"
+  // import Body from "../../components/Bodies/Body.svelte"
   import { onMount } from "svelte"
 
   const BODY_ONE =
@@ -110,9 +110,7 @@
   setContext("vote", vote)
 
   onMount(() => {
-    console.log($entities[$playerAddress])
     playerVote = $entities[$playerAddress].vote
-    console.log(playerVote)
   })
 </script>
 
@@ -126,8 +124,8 @@
 
 <div class="void" class:active class:cheering>
   {#if active}
-    <img class="overlay-r" src="/neubauten.png" />
-    <img class="overlay-l" src="/neubauten-2.png" />
+    <!-- <img class="overlay-r" src="/neubauten.png" /> -->
+    <!-- <img class="overlay-l" src="/neubauten-2.png" /> -->
   {/if}
 
   <div>
