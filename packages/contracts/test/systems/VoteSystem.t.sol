@@ -131,6 +131,30 @@ contract VoteSystemTest is MudV2Test {
     assertEq(uint32(Vote.get(world, LibUtils.addressToEntityKey(bob))), uint32(ActionType.NONE));
   }
 
+  function testRevertInCooldown() public {
+    setUp();
+    fillBodies();
+    world.moving_castles_MatchSystem_start();
+    assertEq(ReadyBlock.get(world, BodyOne), block.number);
+
+    assertTrue(Active.get(world, MatchKey));
+
+    vm.startPrank(alice);
+    world.moving_castles_VoteSystem_vote(ActionType.ATTACK_ONE);
+    vm.stopPrank();
+
+    vm.startPrank(bob);
+    world.moving_castles_VoteSystem_vote(ActionType.ATTACK_ONE);
+    vm.stopPrank();
+
+    assertEq(ReadyBlock.get(world, BodyOne), block.number + 5);
+
+    vm.startPrank(alice);
+    vm.expectRevert(bytes("in cooldown"));
+    world.moving_castles_VoteSystem_vote(ActionType.ATTACK_ONE);
+    vm.stopPrank();
+  }
+
   function testRevertNoGame() public {
     setUp();
     vm.startPrank(alice);

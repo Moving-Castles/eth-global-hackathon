@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17;
 import { System } from "@latticexyz/world/src/System.sol";
-import { Health, Active, CoresPerBody } from "../codegen/Tables.sol";
+import { Health, Active, CoresPerBody, ReadyBlock, Governance } from "../codegen/Tables.sol";
+import { GovernanceType } from "../codegen/Types.sol";
 import { LibUtils, LibBody } from "../libraries/Libraries.sol";
 import { BodyOne, BodyTwo, MatchKey } from "../constants.sol";
 
@@ -13,6 +14,8 @@ contract MatchSystem is System {
     CoresPerBody.set(MatchKey, 2);
     Health.set(BodyOne, 100);
     Health.set(BodyTwo, 100);
+    Governance.set(BodyOne, GovernanceType.NONE);
+    Governance.set(BodyTwo, GovernanceType.NONE);
   }
 
   function start() public {
@@ -26,6 +29,10 @@ contract MatchSystem is System {
     Active.set(MatchKey, true);
     Health.set(BodyOne, 100);
     Health.set(BodyTwo, 100);
+    Governance.set(BodyOne, GovernanceType.DEMOCRACY);
+    Governance.set(BodyTwo, GovernanceType.DEMOCRACY);
+    ReadyBlock.set(BodyOne, block.number);
+    ReadyBlock.set(BodyTwo, block.number);
   }
 
   function end() public {
