@@ -1,13 +1,9 @@
 <script lang="ts">
-  import { getContext } from "svelte"
   import Body from "../../components/Bodies/Body.svelte"
+  import HealthBar from "../../components/Void/HealthBar.svelte"
+  import { getContext } from "svelte"
   import Icon from "@iconify/svelte"
-  import {
-    entities,
-    cores,
-    matchSingleton,
-    ActionType,
-  } from "../../modules/entities"
+  import { entities, matchSingleton, ActionType } from "../../modules/entities"
   import { playerAddress } from "../../modules/player"
   import { network } from "../../modules/network"
   import { WorldFunctions } from "../../modules/actionSequencer"
@@ -82,6 +78,9 @@
     />
   </div>
   <div>
+    {#if active}
+      <HealthBar {id} />
+    {/if}
     <!-- {#if active}
       <div>
         H: {$entities[id === 1 ? "0x01" : "0x02"]?.health}

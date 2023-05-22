@@ -10,9 +10,7 @@ export enum ActionType {
   NONE,
   ATTACK_ONE,
   ATTACK_TWO,
-  BLOCK,
-  TAUNT,
-  CHARGE
+  TAUNT
 }
 
 export enum GovernanceType {
@@ -43,7 +41,6 @@ export type MatchSingleton = {
 
 export type Core = {
   core: boolean;
-  readyBlock: number;
   name: string;
   energy: number;
   points: number;
@@ -53,6 +50,7 @@ export type Core = {
 
 export type Body = {
   health: number;
+  readyBlock: number;
   governance: GovernanceType;
 }
 

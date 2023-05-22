@@ -50,7 +50,9 @@
         // TODO: do this on server
         console.log("verifiedClients", msgObj.verifiedClients)
         verifiedClients = getUniqueValues(
-          msgObj.verifiedClients.map((client: Client) => client.address)
+          msgObj.verifiedClients
+            .filter((client: Client) => $cores[client.address])
+            .map((client: Client) => client.address)
         )
       }
     })
@@ -65,12 +67,10 @@
   </div>
   <div>
     {#each verifiedClients as client}
-      {#if $cores[client]}
-        <div>
-          {$cores[client].name}
-          {#if client === $playerAddress}(YOU){/if}
-        </div>
-      {/if}
+      <div>
+        {$cores[client].name}
+        {#if client === $playerAddress}(YOU){/if}
+      </div>
     {/each}
   </div>
 </div>

@@ -3,7 +3,7 @@ pragma solidity >=0.8.17;
 // import { getKeysWithValue } from "@latticexyz/world/src/modules/keyswithvalue/getKeysWithValue.sol";
 // import { getKeysInTable } from "@latticexyz/world/src/modules/keysintable/getKeysInTable.sol";
 import { ActionType } from "../codegen/Types.sol";
-import { BodyOne, BodyTwo } from "../constants.sol";
+import { BodyOne, BodyTwo, MatchKey } from "../constants.sol";
 import { Health, Vote, Taunt } from "../codegen/Tables.sol";
 import { LibBody } from "./LibBody.sol";
 import { console } from "forge-std/console.sol";
@@ -38,19 +38,9 @@ library LibAction {
       Health.set(_bodyEntity, Health.get(_bodyEntity) - 10);
     }
 
-    if (result == ActionType.BLOCK) {
-      console.log("BLOCK");
-      // TODO: !!!
-    }
-
     if (result == ActionType.TAUNT) {
       console.log("TAUNT");
-      Taunt.emitEphemeral(_bodyEntity);
-    }
-
-    if (result == ActionType.CHARGE) {
-      console.log("CHARGE");
-      // TODO: !!!
+      Taunt.emitEphemeral(MatchKey, _bodyEntity);
     }
   }
 
@@ -64,14 +54,12 @@ library LibAction {
     ActionType[] memory votes = new ActionType[](cores.length);
 
     // Declare an array to count the votes for each ActionType
-    // The length is 6 because there are six ActionTypes:
-    // - NONE
-    // - ATTACK_ONE
-    // - ATTACK_TWO
-    // - BLOCK
-    // - TAUNT
-    // - CHARGE
-    uint[] memory voteCounts = new uint[](6);
+    // The length is 4 because there are four ActionTypes:
+    // (1) NONE
+    // (2) ATTACK_ONE
+    // (3) ATTACK_TWO
+    // (4) TAUNT
+    uint[] memory voteCounts = new uint[](4);
 
     // Declare a variable to keep track of the maximum vote count
     uint maxVoteCount = 0;

@@ -10,12 +10,12 @@ import "@latticexyz/world/snapsync";
 import { resolveTableId } from "@latticexyz/config";
 
 export default mudConfig({
-    snapSync: true,
+    snapSync: false,
     deploysDirectory: "./deploys",
     namespace: "moving_castles",
     enums: {
         GovernanceType: ["NONE", "DEMOCRACY"],
-        ActionType: ["NONE", "ATTACK_ONE", "ATTACK_TWO", "BLOCK", "TAUNT", "CHARGE"]
+        ActionType: ["NONE", "ATTACK_ONE", "ATTACK_TWO", "TAUNT"]
     },
     tables: {
         Core: "bool",
@@ -30,7 +30,6 @@ export default mudConfig({
         Governance: "GovernanceType",
         CoresPerBody: "uint32",
         Taunt: {
-            keySchema: {},
             schema: {
                 taunter: "bytes32",
             },

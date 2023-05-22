@@ -246,18 +246,4 @@
     background: lightgrey;
     color: black;
   }
-
-  .cheering {
-    animation: cheers 0.18s infinite;
-    filter: invert(1);
-  }
-
-  @keyframes cheers {
-    from {
-      filter: invert(0);
-    }
-    to {
-      filter: invert(1);
-    }
-  }
 </style>
