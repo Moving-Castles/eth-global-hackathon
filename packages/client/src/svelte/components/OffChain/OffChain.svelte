@@ -3,6 +3,7 @@
   import { network } from "../../modules/network"
   import { playerAddress } from "../../modules/player"
   import { cores } from "../../modules/entities"
+  // import { v4 as uuid } from "uuid"
 
   type Client = {
     id: string
@@ -11,7 +12,6 @@
 
   let verifiedClients: Client[] = []
   let socket: any
-  let uuid: string
 
   // function sendMessage() {
   //   const message = JSON.stringify({
@@ -32,7 +32,7 @@
   }
 
   onMount(() => {
-    uuid = window.crypto.randomUUID()
+    // uuid = uuid()
     socket = new WebSocket("wss://mc.rttskr.com")
 
     // Connection opened
