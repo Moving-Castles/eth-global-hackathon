@@ -2,8 +2,7 @@
   import { onMount } from "svelte"
   import { network } from "../../modules/network"
   import { playerAddress } from "../../modules/player"
-
-  let uuid = ""
+  import { cores } from "../../modules/entities"
 
   type Client = {
     id: string
@@ -11,9 +10,8 @@
   }
 
   let verifiedClients: Client[] = []
-
-  // Create WebSocket connection.
   let socket: any
+  let uuid: string
 
   // function sendMessage() {
   //   const message = JSON.stringify({
@@ -35,7 +33,7 @@
 
   onMount(() => {
     uuid = window.crypto.randomUUID()
-    socket = new WebSocket("ws://localhost:9001")
+    socket = new WebSocket("wss://mc.rttskr.com")
 
     // Connection opened
     socket.addEventListener("open", event => {
@@ -55,15 +53,18 @@
   })
 </script>
 
-
-<!-- <div>
-  <div>OFF CHAIN CORES:</div>
+<div>
+  <div>
+    <strong>
+      {verifiedClients.length} wizard{verifiedClients.length > 1 ? "s" : ""} present
+    </strong>
+  </div>
   <div>
     {#each verifiedClients as client}
       <div>
-        {client.address}
+        {$cores[client.address]?.name}
         {#if client.address === $playerAddress}(YOU){/if}
       </div>
     {/each}
   </div>
-</div> -->
+</div>

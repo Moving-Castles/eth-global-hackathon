@@ -1,11 +1,16 @@
 <script lang="ts">
   import { network } from "../../modules/network"
-  import { entities, matchSingleton, ActionType } from "../../modules/entities"
+  import {
+    entities,
+    cores,
+    matchSingleton,
+    ActionType,
+  } from "../../modules/entities"
   import { WorldFunctions } from "../../modules/actionSequencer"
-  import { cores } from "../../modules/entities"
   import { playerAddress, playerCore } from "../../modules/player"
   import copy from "copy-to-clipboard"
   import Body from "../../components/Bodies/Body.svelte"
+  import OffChain from "../../components/OffChain/OffChain.svelte"
 
   const BODY_ONE =
     "0x0000000000000000000000000000000000000000000000000000000000000001"
@@ -109,13 +114,13 @@
         <!-- <button on:click={() => joinBody(1) }>BODY 1</button> -->
         {#if active}
           <div>
-            E: {$entities["0x01"]?.health}
+            H: {$entities["0x01"]?.health}
           </div>
         {/if}
         {#each bodyOneCores as [key, value]}
           <div class="core">
             <div class="core__name">
-              {$entities[key].name}
+              {$cores[key]?.name}
               {#if key === $playerAddress}(YOU){/if}
             </div>
           </div>
@@ -149,13 +154,13 @@
       <div>
         {#if active}
           <div>
-            E: {$entities["0x02"]?.health}
+            H: {$entities["0x02"]?.health}
           </div>
         {/if}
         {#each bodyTwoCores as [key, value]}
           <div class="core">
             <div class="core__name">
-              {$entities[key].name}
+              {$cores[key]?.name}
               {#if key === $playerAddress}(YOU){/if}
             </div>
           </div>
@@ -183,13 +188,13 @@
 
     <div class="mid-top">
       {#if !joined && !ready}
-        Pick a body, {$entities[$playerAddress].name}
+        Pick a body, {$cores[$playerAddress].name}
       {/if}
       {#if ready && !joined}
         {#if bodilessCores.length > 0}
           Spectators: <br />
           {#each bodilessCores as spectator}
-            {$entities[spectator[0]].name} <br />
+            {$cores[spectator[0]].name} <br />
             <!-- {spectator[0]} -->
           {/each}
         {/if}
@@ -222,21 +227,9 @@
       {/if}
     </div>
 
-    <!-- <div class="info">
-      <hr />
-      <div>ON CHAIN CORES:</div>
-      {#each Object.entries($cores) as [key, value]}
-        <div class="core">
-          <div class="core__name">
-            {key}
-            {#if key === $playerAddress}(YOU){/if}
-          </div>
-        </div>
-      {/each}
-      <hr />
+    <div class="info">
       <OffChain />
-      <hr />
-    </div> -->
+    </div>
   </div>
 </div>
 
@@ -333,6 +326,7 @@
     background: red;
     transform: translateX(-50%);
   }
+
   .mid {
     position: fixed;
     left: 50%;
@@ -345,7 +339,7 @@
     position: fixed;
     top: 5px;
     right: 5px;
-    font-size: 9px;
+    font-size: 11px;
     padding: 5px;
     background: lightgrey;
     color: black;

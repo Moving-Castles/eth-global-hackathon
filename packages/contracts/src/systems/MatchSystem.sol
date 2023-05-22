@@ -1,16 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17;
 import { System } from "@latticexyz/world/src/System.sol";
-// import { hasKey } from "@latticexyz/world/src/modules/keysintable/getKeysInTable.sol";
 import { Health, Active, CoresPerBody } from "../codegen/Tables.sol";
 import { LibUtils, LibBody } from "../libraries/Libraries.sol";
 import { BodyOne, BodyTwo, MatchKey } from "../constants.sol";
 
 contract MatchSystem is System {
   function init() public {
-    // TODO: restrict this => require(Active does not have MatchKey, "already initialized")
-    // require(!hasKey(ActiveTableId, keyTuple), "already initialized");
-    // !!! TEMP SOLUTION
     require(CoresPerBody.get(MatchKey) == 0, "already initialized");
     // ...
     Active.set(MatchKey, false);
