@@ -3,14 +3,13 @@
   import { network } from "../../modules/network"
   import { playerAddress } from "../../modules/player"
   import { cores } from "../../modules/entities"
-  // import { v4 as uuid } from "uuid"
 
   type Client = {
     id: string
     address: string
   }
 
-  let verifiedClients: Client[] = []
+  let verifiedClients: string[] = []
   let socket: any
 
   // function sendMessage() {
@@ -22,6 +21,10 @@
   //   textInput = ""
   // }
 
+  function getUniqueValues<T>(arr: T[]): T[] {
+    return [...new Set(arr)]
+  }
+
   async function sendVerification() {
     const signature = await $network.network.signer.value_.signMessage("mc")
     const message = JSON.stringify({
@@ -32,12 +35,10 @@
   }
 
   onMount(() => {
-    // uuid = uuid()
     socket = new WebSocket("wss://mc.rttskr.com")
 
     // Connection opened
     socket.addEventListener("open", event => {
-      console.log("Connected")
       sendVerification()
     })
 
@@ -47,7 +48,11 @@
       let msgObj = JSON.parse(event.data)
       console.log(msgObj)
       if (msgObj.topic === "verifiedClients") {
-        verifiedClients = msgObj.verifiedClients
+        // TODO: do this on server
+        console.log("verifiedClients", msgObj.verifiedClients)
+        verifiedClients = getUniqueValues(
+          msgObj.verifiedClients.map((client: Client) => client.address)
+        )
       }
     })
   })
@@ -61,10 +66,12 @@
   </div>
   <div>
     {#each verifiedClients as client}
-      <div>
-        {$cores[client.address]?.name}
-        {#if client.address === $playerAddress}(YOU){/if}
-      </div>
+      {#if $cores[client]}
+        <div>
+          {$cores[client].name}
+          {#if client === $playerAddress}(YOU){/if}
+        </div>
+      {/if}
     {/each}
   </div>
 </div>
