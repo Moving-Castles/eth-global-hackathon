@@ -6,11 +6,16 @@
   import { playerAddress, playerCore } from "../../modules/player"
   import copy from "copy-to-clipboard"
   import Body from "../../components/Bodies/Body.svelte"
+  import { onMount } from "svelte"
 
   const BODY_ONE =
     "0x0000000000000000000000000000000000000000000000000000000000000001"
   const BODY_TWO =
     "0x0000000000000000000000000000000000000000000000000000000000000002"
+  let active = false
+  let cheerTimeout: number
+  let cheering = false
+  let done = false
 
   $: bodyOneCores = Object.entries($cores).filter(
     ([k, v]) => v.carriedBy === BODY_ONE
@@ -32,17 +37,17 @@
   $: ready =
     bodyOneCores.length === $matchSingleton?.coresPerBody &&
     bodyTwoCores.length === $matchSingleton?.coresPerBody
-  $: console.log(bodyOneCores, ready)
+  $: playerVote = $entities[$playerAddress]?.vote
 
-  let active = false
-  let cheerTimeout: number
-  let cheering = false
+  $: if (playerVote) {
+    console.log(playerVote)
+    console.log(ActionType[playerVote])
+  }
 
   const invite = () => copy(window.location.href)
 
   $: active = $matchSingleton?.active
 
-  let done = false
   $: {
     done = $entities["0x01"].health == 0 || $entities["0x02"].health == 0
   }
@@ -86,6 +91,12 @@
   function taunt() {
     vote(ActionType.TAUNT)
   }
+
+  onMount(() => {
+    console.log($entities[$playerAddress])
+    playerVote = $entities[$playerAddress].vote
+    console.log(playerVote)
+  })
 </script>
 
 <div class="void" class:active class:cheering>
@@ -135,9 +146,15 @@
         </div>
       {:else if bodyOneCores.map(([k, v]) => k).includes($playerAddress)}
         <div class="votes">
-          <button on:click={attackOne}>ATTACK I</button>
-          <button on:click={attackTwo}>ATTACK II</button>
-          <button on:click={taunt}>TAUNT</button>
+          <button disabled={playerVote !== undefined} on:click={attackOne}
+            >ATTACK I</button
+          >
+          <button disabled={playerVote !== undefined} on:click={attackTwo}
+            >ATTACK II</button
+          >
+          <button disabled={playerVote !== undefined} on:click={taunt}
+            >TAUNT</button
+          >
         </div>
       {/if}
     </div>
@@ -181,9 +198,15 @@
         </div>
       {:else if bodyTwoCores.map(([k, v]) => k).includes($playerAddress)}
         <div class="votes">
-          <button on:click={attackOne}>ATTACK I</button>
-          <button on:click={attackTwo}>ATTACK II</button>
-          <button on:click={taunt}>TAUNT</button>
+          <button disabled={playerVote !== undefined} on:click={attackOne}
+            >ATTACK I</button
+          >
+          <button disabled={playerVote !== undefined} on:click={attackTwo}
+            >ATTACK II</button
+          >
+          <button disabled={playerVote !== undefined} on:click={taunt}
+            >TAUNT</button
+          >
         </div>
       {/if}
     </div>
@@ -212,7 +235,10 @@
 
       {#if !active}
         {#if ready}
-          <button on:click={startMatch}>START</button>
+          <button
+            disabled={bodilessCores.includes($playerAddress)}
+            on:click={startMatch}>START</button
+          >
         {:else}
           <button on:click={invite}>INVITE</button>
         {/if}
@@ -223,22 +249,6 @@
         <button on:click={cheer}> CHEER </button>
       {/if}
     </div>
-
-    <!-- <div class="info">
-      <hr />
-      <div>ON CHAIN CORES:</div>
-      {#each Object.entries($cores) as [key, value]}
-        <div class="core">
-          <div class="core__name">
-            {key}
-            {#if key === $playerAddress}(YOU){/if}
-          </div>
-        </div>
-      {/each}
-      <hr />
-      <OffChain />
-      <hr />
-    </div> -->
   </div>
 </div>
 
