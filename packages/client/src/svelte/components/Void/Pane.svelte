@@ -39,6 +39,7 @@
 
   $: bodyCores = id === 1 ? bodyOneCores : bodyTwoCores
   $: playerVote = $entities[$playerAddress]?.vote
+  // $: bodyVotes = $bodyCores.map(([_, v]) => v.vote)
 
   function joinBody(i: 1 | 2) {
     if (!joined) $network.worldSend(WorldFunctions.Join, [i])
@@ -49,11 +50,19 @@
   })
 </script>
 
-<div class="pane" class:active on:click={() => joinBody(1)}>
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div class="pane pane-{id}" class:active on:click={() => joinBody(id)}>
+  <div class="vote-counter">
+    {#each $bodyCores as [k, entry]}
+      {ActionType[entry.vote]}
+    {/each}
+  </div>
+
   <div class="body-container">
     <Body
       {joined}
       {active}
+      mine={$bodyCores.map(([k, _]) => k).includes($playerAddress)}
       ready={$bodyCores.length === $matchSingleton?.coresPerBody}
       id={id === 1 ? "BODY_ONE" : "BODY_TWO"}
     />
@@ -62,7 +71,7 @@
     <!-- <button on:click={() => joinBody(1) }>BODY 1</button> -->
     {#if active}
       <div>
-        H: {$entities["0x01"]?.health}
+        H: {$entities[id === 1 ? "0x01" : "0x02"]?.health}
       </div>
     {/if}
     {#each $bodyCores as [key, value]}
@@ -98,3 +107,59 @@
     </div>
   {/if}
 </div>
+
+<style>
+  .pane-1 {
+    left: 0;
+  }
+  .pane-2 {
+    right: 0;
+  }
+  .pane {
+    width: 50%;
+    height: 100vh;
+    display: flex;
+    flex-flow: column;
+    gap: 3rem;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    padding: 3rem;
+
+    &:nth-child(1) {
+      left: 0;
+    }
+    &:nth-child(2) {
+      right: 0;
+    }
+
+    &.active:nth-child(2) {
+      background: transparent;
+    }
+  }
+
+  .body-container {
+    width: 70%;
+    margin: 0 auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+  }
+
+  .vote-counter {
+    position: absolute;
+    top: 0;
+  }
+
+  .body-statistics {
+    position: absolute;
+    bottom: 0;
+  }
+
+  .statistics {
+    align-self: start;
+  }
+</style>

@@ -21,7 +21,6 @@
   const BODY_TWO =
     "0x0000000000000000000000000000000000000000000000000000000000000002"
 
-  let active = false
   let cheerTimeout: number
   let cheering = false
   let gameOver = false
@@ -117,6 +116,14 @@
   })
 </script>
 
+<svelte:head>
+  <title>
+    {active
+      ? `FIGHT | ${$cores[$playerAddress].name}`
+      : `LOBBY | ${$cores[$playerAddress].name}`}
+  </title>
+</svelte:head>
+
 <div class="void" class:active class:cheering>
   {#if active}
     <img class="overlay-r" src="/neubauten.png" />
@@ -210,51 +217,9 @@
     pointer-events: none;
   }
 
-  .body-container {
-    width: 70%;
-    margin: 0 auto;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: -1;
-  }
-
-  .body-statistics {
-    position: absolute;
-  }
-
   button {
     font-size: 32px;
     display: block;
-  }
-
-  :global(.pane) {
-    width: 50%;
-    height: 100vh;
-    display: flex;
-    flex-flow: column;
-    gap: 3rem;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    padding: 3rem;
-
-    &:nth-child(1) {
-      left: 0;
-    }
-    &:nth-child(2) {
-      right: 0;
-    }
-
-    &.active:nth-child(2) {
-      background: transparent;
-    }
-  }
-
-  .statistics {
-    align-self: start;
   }
 
   .pane-mid-top {
