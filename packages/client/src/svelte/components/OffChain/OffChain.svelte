@@ -3,6 +3,7 @@
   import { network } from "../../modules/network"
   import { playerAddress } from "../../modules/player"
   import { cores } from "../../modules/entities"
+
   // import { v4 as uuid } from "uuid"
 
   type Client = {
@@ -43,9 +44,8 @@
 
     // Listen for messages
     socket.addEventListener("message", event => {
-      console.log("Message from server ", event)
+      // console.log("Message from server ", event)
       let msgObj = JSON.parse(event.data)
-      console.log(msgObj)
       if (msgObj.topic === "verifiedClients") {
         verifiedClients = msgObj.verifiedClients
       }
