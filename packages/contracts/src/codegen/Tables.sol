@@ -12,5 +12,6 @@ import { ReadyBlock, ReadyBlockTableId } from "./tables/ReadyBlock.sol";
 import { Health, HealthTableId } from "./tables/Health.sol";
 import { Active, ActiveTableId } from "./tables/Active.sol";
 import { Vote, VoteTableId } from "./tables/Vote.sol";
+import { Governance, GovernanceTableId } from "./tables/Governance.sol";
 import { CoresPerBody, CoresPerBodyTableId } from "./tables/CoresPerBody.sol";
 import { Taunt, TauntTableId } from "./tables/Taunt.sol";

@@ -42,18 +42,16 @@
     mudLayer.network.blockNumber$.subscribe((x: number) => blockNumber.set(x))
 
     // !!! Dev mode
-    mountDevTools()
+    // mountDevTools()
   })
 </script>
 
 <main>
   {#if !$ready || UIState === 0}
-    <Loading on:next={() => UIState = 1} />
+    <Loading on:next={() => (UIState = 1)} />
+  {:else if !$playerCore}
+    <Spawn />
   {:else}
-    {#if !$playerCore}
-      <Spawn />
-    {:else}
-      <Void />
-    {/if}
+    <Void />
   {/if}
 </main>

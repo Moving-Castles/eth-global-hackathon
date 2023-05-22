@@ -14,6 +14,7 @@ export default mudConfig({
     deploysDirectory: "./deploys",
     namespace: "moving_castles",
     enums: {
+        GovernanceType: ["NONE", "DEMOCRACY"],
         ActionType: ["NONE", "ATTACK_ONE", "ATTACK_TWO", "BLOCK", "TAUNT", "CHARGE"]
     },
     tables: {
@@ -26,6 +27,7 @@ export default mudConfig({
         Health: "uint32",
         Active: "bool",
         Vote: "ActionType",
+        Governance: "GovernanceType",
         CoresPerBody: "uint32",
         Taunt: {
             keySchema: {},
