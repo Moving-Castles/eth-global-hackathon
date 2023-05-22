@@ -30,7 +30,8 @@ library Taunt {
   }
 
   function getKeySchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](0);
+    SchemaType[] memory _schema = new SchemaType[](1);
+    _schema[0] = SchemaType.BYTES32;
 
     return SchemaLib.encode(_schema);
   }
@@ -65,19 +66,21 @@ library Taunt {
   }
 
   /** Emit the ephemeral event using individual values */
-  function emitEphemeral(bytes32 taunter) internal {
+  function emitEphemeral(bytes32 key, bytes32 taunter) internal {
     bytes memory _data = encode(taunter);
 
-    bytes32[] memory _keyTuple = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((key));
 
     StoreSwitch.emitEphemeralRecord(_tableId, _keyTuple, _data);
   }
 
   /** Emit the ephemeral event using individual values (using the specified store) */
-  function emitEphemeral(IStore _store, bytes32 taunter) internal {
+  function emitEphemeral(IStore _store, bytes32 key, bytes32 taunter) internal {
     bytes memory _data = encode(taunter);
 
-    bytes32[] memory _keyTuple = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((key));
 
     _store.emitEphemeralRecord(_tableId, _keyTuple, _data);
   }
@@ -88,7 +91,8 @@ library Taunt {
   }
 
   /** Encode keys as a bytes32 array using this table's schema */
-  function encodeKeyTuple() internal pure returns (bytes32[] memory _keyTuple) {
-    _keyTuple = new bytes32[](0);
+  function encodeKeyTuple(bytes32 key) internal pure returns (bytes32[] memory _keyTuple) {
+    _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((key));
   }
 }

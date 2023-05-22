@@ -90,10 +90,6 @@
     vote(ActionType.ATTACK_TWO)
   }
 
-  function block() {
-    vote(ActionType.BLOCK)
-  }
-
   function taunt() {
     vote(ActionType.TAUNT)
   }

@@ -10,9 +10,7 @@ export enum ActionType {
   NONE,
   ATTACK_ONE,
   ATTACK_TWO,
-  BLOCK,
-  TAUNT,
-  CHARGE
+  TAUNT
 }
 
 export enum GovernanceType {
