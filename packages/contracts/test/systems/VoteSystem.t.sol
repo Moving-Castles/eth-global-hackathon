@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.17;
+import { console } from "forge-std/console.sol";
 import { MudV2Test } from "../MudV2Test.t.sol";
 import { ActionType } from "../../src/codegen/Types.sol";
 import { BodyOne, BodyTwo, MatchKey } from "../../src/constants.sol";
 import "../../src/codegen/Tables.sol";
 import "../../src/libraries/Libraries.sol";
-import { console } from "forge-std/console.sol";
 
 contract VoteSystemTest is MudV2Test {
   function testSingleVote() public {

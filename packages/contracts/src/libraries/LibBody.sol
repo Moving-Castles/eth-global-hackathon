@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17;
 import { getKeysWithValue } from "@latticexyz/world/src/modules/keyswithvalue/getKeysWithValue.sol";
-import { CarriedBy, CarriedByTableId, Vote } from "../codegen/Tables.sol";
+import { CarriedBy, CarriedByTableId, Vote, Points } from "../codegen/Tables.sol";
 import { ActionType } from "../codegen/Types.sol";
 import { BodyOne, BodyTwo } from "../constants.sol";
 
@@ -32,6 +32,13 @@ library LibBody {
     bytes32[] memory cores = getCores(_bodyEntity);
     for (uint256 i = 0; i < cores.length; i++) {
       CarriedBy.set(cores[i], 0);
+    }
+  }
+
+  function givePoints(bytes32 _bodyEntity) internal {
+    bytes32[] memory cores = getCores(_bodyEntity);
+    for (uint256 i = 0; i < cores.length; i++) {
+      Points.set(cores[i], Points.get(cores[i]) + 1);
     }
   }
 }

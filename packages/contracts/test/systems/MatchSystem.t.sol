@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.17;
+import { console } from "forge-std/console.sol";
 import { MudV2Test } from "../MudV2Test.t.sol";
 import { BodyOne, BodyTwo, MatchKey } from "../../src/constants.sol";
 import "../../src/codegen/Tables.sol";
@@ -25,6 +26,8 @@ contract MatchSystemTest is MudV2Test {
     assertTrue(!Active.get(world, MatchKey));
     bytes32 coreEntity = LibUtils.addressToEntityKey(alice);
     assertEq(CarriedBy.get(world, coreEntity), 0);
+    console.log(Points.get(world, coreEntity));
+    assertEq(Points.get(world, coreEntity), 1);
   }
 
   function testRevertNotOver() public {
