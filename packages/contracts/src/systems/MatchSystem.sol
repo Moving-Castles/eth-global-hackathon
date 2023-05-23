@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17;
 import { System } from "@latticexyz/world/src/System.sol";
-import { Health, Active, CoresPerBody, ReadyBlock, Governance, Taunt } from "../codegen/Tables.sol";
-import { GovernanceType } from "../codegen/Types.sol";
+import { Health, Active, CoresPerBody, ReadyBlock, Governance, Taunt, LastAction } from "../codegen/Tables.sol";
+import { GovernanceType, ActionType } from "../codegen/Types.sol";
 import { LibUtils, LibBody } from "../libraries/Libraries.sol";
 import { BodyOne, BodyTwo, MatchKey } from "../constants.sol";
 
@@ -11,11 +11,13 @@ contract MatchSystem is System {
     require(CoresPerBody.get(MatchKey) == 0, "already initialized");
     // ...
     Active.set(MatchKey, false);
-    CoresPerBody.set(MatchKey, 1);
+    CoresPerBody.set(MatchKey, 2);
     Health.set(BodyOne, 100);
     Health.set(BodyTwo, 100);
     Governance.set(BodyOne, GovernanceType.NONE);
     Governance.set(BodyTwo, GovernanceType.NONE);
+    LastAction.set(BodyOne, ActionType.NONE);
+    LastAction.set(BodyTwo, ActionType.NONE);
     Taunt.set(BodyOne, 0);
     Taunt.set(BodyTwo, 0);
   }
@@ -44,6 +46,9 @@ contract MatchSystem is System {
     Active.set(MatchKey, false);
     // ...
     LibBody.givePoints(Health.get(BodyOne) == 0 ? BodyTwo : BodyOne);
+    // ...
+    LastAction.set(BodyOne, ActionType.NONE);
+    LastAction.set(BodyTwo, ActionType.NONE);
     // ...
     LibBody.resetVotes(BodyOne);
     LibBody.resetVotes(BodyTwo);

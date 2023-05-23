@@ -3,7 +3,7 @@ pragma solidity >=0.8.17;
 import { console } from "forge-std/console.sol";
 import { ActionType } from "../codegen/Types.sol";
 import { BodyOne, BodyTwo, MatchKey } from "../constants.sol";
-import { Health, Vote, Taunt } from "../codegen/Tables.sol";
+import { Health, Vote, Taunt, LastAction } from "../codegen/Tables.sol";
 import { LibBody, LibUtils } from "./Libraries.sol";
 
 library LibAction {
@@ -58,6 +58,8 @@ library LibAction {
       Taunt.set(_bodyEntity, block.number);
       // Taunt.emitEphemeral(MatchKey, _bodyEntity);
     }
+
+    LastAction.set(_bodyEntity, result);
   }
 
   // This function counts the votes for different actions and returns the action with maximum votes.

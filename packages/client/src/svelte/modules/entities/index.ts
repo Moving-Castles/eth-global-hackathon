@@ -34,6 +34,7 @@ export type Entity = {
   governance?: GovernanceType;
   taunt?: number;
   coresPerBody?: number;
+  lastAction?: ActionType;
 };
 
 export type MatchSingleton = {
@@ -55,6 +56,7 @@ export type Body = {
   readyBlock: number;
   governance: GovernanceType;
   taunt: number;
+  lastAction: ActionType;
 }
 
 // - - - -

@@ -42,6 +42,7 @@ contract VoteSystemTest is MudV2Test {
 
     // Vote complete, Action should be executed
 
+    assertEq(uint32(LastAction.get(world, BodyOne)), uint32(ActionType.ATTACK_ONE));
     assertEq(Health.get(world, BodyOne), 100);
     assertEq(Health.get(world, BodyTwo), 90);
     assertEq(uint32(Vote.get(world, LibUtils.addressToEntityKey(alice))), uint32(ActionType.NONE));
