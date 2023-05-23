@@ -171,8 +171,11 @@
     background: transparent;
   }
 
+  .pane.lobby.joined.mine {
+    /* filter: saturate(500%); */
+  }
   .pane.lobby.joined.opponent {
-    filter: grayscale(1);
+    filter: saturate(50%);
   }
 
   .pane {
@@ -186,7 +189,7 @@
     position: fixed;
     top: 0;
     padding: 3rem;
-    transition: all 0.3s ease;
+    transition: all 1s ease;
 
     &:nth-child(1) {
       left: 0;
@@ -201,7 +204,7 @@
   }
 
   .body-container {
-    width: 70%;
+    width: 80%;
     margin: 0 auto;
     position: absolute;
     top: 50%;

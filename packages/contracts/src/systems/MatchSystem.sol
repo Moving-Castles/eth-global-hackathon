@@ -11,7 +11,7 @@ contract MatchSystem is System {
     require(CoresPerBody.get(MatchKey) == 0, "already initialized");
     // ...
     Active.set(MatchKey, false);
-    CoresPerBody.set(MatchKey, 1);
+    CoresPerBody.set(MatchKey, 2);
     Health.set(BodyOne, 100);
     Health.set(BodyTwo, 100);
     Governance.set(BodyOne, GovernanceType.NONE);
