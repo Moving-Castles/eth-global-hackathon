@@ -25,6 +25,8 @@
   let cheerTimeout: number
   let cheering = false
   let gameOver = false
+  let blink = false
+  let interval = setInterval(() => (blink = !blink), 800)
 
   function sendCheer() {
     const message = JSON.stringify({ topic: "cheer" })
@@ -167,6 +169,9 @@
             {#if spectator[0] === $playerAddress}(YOU){/if} <br />
           {/each}
         {/if}
+      {/if}
+      {#if active}
+        {#if blink}VOTE TO WIN{/if}
       {/if}
     </div>
 

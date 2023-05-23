@@ -1,7 +1,7 @@
 /* @import url("../../public/fonts/style.css"); */
 /* @import url("tippy.js/dist/tippy.css"); */
-@import url('https://fonts.googleapis.com/css2?family=Rock+Salt&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Rock+Salt&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap");
 
 :root {
   /* Colors */
@@ -33,7 +33,7 @@
   --titlebar-height: 30px;
   /* "DMTLLVIPWebTrial-Regular", */
   /* Fonts */
-  --font-family-special: 'Rock Salt', Courier, monospaced;
+  --font-family-special: "Rock Salt", Courier, monospaced;
   --font-family: Courier, monospaced;
   --font-size: 12px;
   --font-size-large: 18px;
@@ -122,4 +122,62 @@ html {
   to {
     filter: invert(1);
   }
+}
+
+.vote-counter {
+  display: flex;
+  flex-flow: row nowrap;
+  padding: 3rem;
+  gap: 3rem;
+}
+
+.votes {
+  font-size: 3rem;
+}
+
+.vote {
+  font-size: 5rem;
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+
+.vote path {
+  stroke: yellow !important;
+  stroke-width: 10px !important;
+  stroke-opacity: 1 !important;
+}
+
+.button {
+  font-size: 3rem;
+  cursor: pointer;
+}
+
+button[disabled] {
+  color: #888 !important;
+}
+
+.pane-1 .vote-button {
+  color: black;
+  background-color: #0f0;
+}
+
+.pane-1 .vote {
+  color: #0f0;
+}
+
+.pane-2 .vote-button {
+  color: black;
+  background-color: #f00;
+}
+
+.pane-2 .vote {
+  color: #f00;
+}
+
+.vote.inactive {
+  opacity: 0.2;
+}
+
+.disabled {
+  /* filter: grayscale(2); */
 }
