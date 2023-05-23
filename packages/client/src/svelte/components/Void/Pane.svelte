@@ -1,7 +1,8 @@
 <script lang="ts">
   import Body from "../../components/Bodies/Body.svelte"
   import HealthBar from "../../components/Void/HealthBar.svelte"
-  import { getContext } from "svelte"
+  import Votes from "../../components/Void/Votes.svelte"
+  import { setContext, getContext } from "svelte"
   import Icon from "@iconify/svelte"
   import { entities, matchSingleton, ActionType } from "../../modules/entities"
   import { playerAddress } from "../../modules/player"
@@ -21,6 +22,8 @@
     4: id === 1 ? "game-icons:health-potion" : "game-icons:health-potion", // HEAL
     5: id === 1 ? "game-icons:anarchy" : "game-icons:anarchy", // TAUNT
   }
+
+  setContext("icons", icons)
 
   const bodyOneCores = getContext("bodyOneCores")
   const bodyTwoCores = getContext("bodyTwoCores")
@@ -117,43 +120,7 @@
       {/if}
     </div>
   {:else if $bodyCores.map(([k, v]) => k).includes($playerAddress)}
-    <div class="votes" class:disabled={!isNaN(playerVote) && playerVote !== 0}>
-      <button
-        class="button vote-button"
-        disabled={!isNaN(playerVote) && playerVote !== 0}
-        on:click={attackOne}
-      >
-        ATTACK 1 <Icon icon={icons[1]} />
-      </button>
-      <button
-        class="button vote-button"
-        disabled={!isNaN(playerVote) && playerVote !== 0}
-        on:click={attackTwo}
-      >
-        ATTACK 2 <Icon icon={icons[2]} />
-      </button>
-      <button
-        class="button vote-button"
-        disabled={!isNaN(playerVote) && playerVote !== 0}
-        on:click={attackThree}
-      >
-        ATTACK 3 <Icon icon={icons[3]} />
-      </button>
-      <button
-        class="button vote-button"
-        disabled={!isNaN(playerVote) && playerVote !== 0}
-        on:click={heal}
-      >
-        HEAL <Icon icon={icons[4]} />
-      </button>
-      <button
-        class="button vote-button"
-        disabled={!isNaN(playerVote) && playerVote !== 0}
-        on:click={taunt}
-      >
-        TAUNT <Icon icon={icons[5]} />
-      </button>
-    </div>
+    <Votes {playerVote} />
   {/if}
 </div>
 
@@ -251,63 +218,5 @@
     color: white;
     background: black;
     font-size: 3rem;
-  }
-
-  .vote-counter {
-    display: flex;
-    flex-flow: row nowrap;
-    padding: 3rem;
-    gap: 3rem;
-  }
-
-  .votes {
-    font-size: 3rem;
-  }
-
-  .vote {
-    font-size: 5rem;
-    opacity: 1;
-    transition: opacity 0.2s;
-  }
-
-  .vote :global(path) {
-    stroke: yellow !important;
-    stroke-width: 10px !important;
-    stroke-opacity: 1 !important;
-  }
-
-  .button {
-    font-size: 3rem;
-    cursor: pointer;
-  }
-
-  button[disabled] {
-    color: #888 !important;
-  }
-
-  .pane-1 :global(.vote-button) {
-    color: black;
-    background-color: #0f0;
-  }
-
-  .pane-1 :global(.vote) {
-    color: #0f0;
-  }
-
-  .pane-2 :global(.vote-button) {
-    color: black;
-    background-color: #f00;
-  }
-
-  .pane-2 :global(.vote) {
-    color: #f00;
-  }
-
-  .vote.inactive {
-    opacity: 0.2;
-  }
-
-  .disabled {
-    /* filter: grayscale(2); */
   }
 </style>

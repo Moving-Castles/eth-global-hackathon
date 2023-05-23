@@ -3,8 +3,12 @@
   import { network } from "../../modules/network"
   import { playerAddress } from "../../modules/player"
   import { cores } from "../../modules/entities"
+  import { getContext } from "svelte"
   import throttle from "just-throttle"
   import Icon from "@iconify/svelte"
+
+  const bodyOneCores = getContext("bodyOneCores")
+  const bodyTwoCores = getContext("bodyTwoCores")
 
   type Client = {
     id: string
@@ -15,7 +19,10 @@
   let cursors: { [key: string]: { x: number; y: number } } = {}
   let socket: any
 
-  $: console.log("cursors", cursors)
+  $: colors = Object.fromEntries([
+    ...$bodyOneCores.map(([k, _]) => [k, "#0f0"]),
+    ...$bodyTwoCores.map(([k, _]) => [k, "#f00"]),
+  ])
 
   function sendPosition(e) {
     const message = JSON.stringify({
@@ -98,12 +105,14 @@
     class="cursor"
     id={key}
     style={`transform: translateX(${value.x}px) translateY(${value.y}px);`}
+    style:color={colors[key]}
   >
     <div class="cursor-icon">
       <Icon icon="game-icons:fairy-wand" />
     </div>
     <div class="cursor-text">
       {$cores[key]?.name}
+      {$bodyTwoCores.map(([k, _]) => k).includes(key)}
     </div>
   </div>
 {/each}
@@ -117,7 +126,7 @@
 </div> -->
 
 <div>
-  <div>
+  <!-- <div>
     <strong>
       {verifiedClients.length} wizard{verifiedClients.length > 1 ? "s" : ""} present
     </strong>
@@ -129,7 +138,7 @@
         {#if client === $playerAddress}(YOU){/if}
       </div>
     {/each}
-  </div>
+  </div> -->
 </div>
 
 <style>
