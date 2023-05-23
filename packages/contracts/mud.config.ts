@@ -27,6 +27,7 @@ export default mudConfig({
         Health: "uint32",
         Active: "bool",
         Vote: "ActionType",
+        LastAction: "ActionType",
         Governance: "GovernanceType",
         CoresPerBody: "uint32",
         Taunt: "uint256"

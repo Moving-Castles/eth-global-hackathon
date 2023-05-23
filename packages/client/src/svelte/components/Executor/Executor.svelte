@@ -8,10 +8,7 @@
     sequencerState,
     SequencerState,
   } from "../../modules/actionSequencer"
-  import { idToAvatarIndex } from "../../utils/name"
-  import { playerCore, playerAddress } from "../../modules/player"
   import { playSound } from "../../../howler"
-  import { staticContent } from "../../modules/staticContent"
 
   function toggleSequencer() {
     sequencerState.set($sequencerState)
@@ -110,19 +107,6 @@
 </script>
 
 <div class="executor">
-  <!-- AVATAR -->
-  <!-- ENERGY INDICATOR -->
-  <div class="core-item">Energy: {$playerCore.energy}</div>
-  <div class="core-item"><progress value={$playerCore.energy} max="200" /></div>
-  <!-- ENERGY NUMBER -->
-  <div class="core-item">
-    <img
-      draggable="false"
-      class="core-avatar"
-      src={$staticContent.cores[idToAvatarIndex($playerAddress)].w400}
-      alt="core"
-    />
-  </div>
   <div class="connector"><div class="line" bind:this={coreConnector} /></div>
   <div class="node queue" bind:this={queueElement}>
     <div>{localQueuedActionsCount}</div>
@@ -136,16 +120,6 @@
     <div>
       {localCompletedActionsCount}/{localFailedActionsCount}
     </div>
-  </div>
-  <div>
-    <button on:click={toggleSequencer}>
-      {$sequencerState === SequencerState.Running ? "stop" : "start"}
-    </button>
-    <!-- <button on:click={animateQueuedAction}>TEST Q</button>
-    <button on:click={animateActiveAction}>TEST A</button>
-    <button on:click={animateCompletedAction}>TEST C</button>
-    <button on:click={animateFailedAction}>TEST F</button>
-    <button on:click={clearConnectors}>CLEAR</button> -->
   </div>
 </div>
 
