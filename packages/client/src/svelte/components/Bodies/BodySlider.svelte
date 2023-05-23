@@ -2,6 +2,7 @@
   export let sources = []
   export let ready
   export let target
+  export let active
   export let id: "BODY_ONE" | "BODY_TWO"
   import { mask } from "../../transitions"
 
@@ -39,7 +40,7 @@
         on:click={next}
       >
         <img class:first={i === 0} {src} />
-        <p class="name">{name}</p>
+        {#if !active}<p class="name">{name}</p>{/if}
       </div>
     {/key}
   {/each}

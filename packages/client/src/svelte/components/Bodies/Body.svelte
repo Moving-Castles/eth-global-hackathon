@@ -1,19 +1,19 @@
 <script lang="ts">
   import BodySlider from "./BodySlider.svelte"
   import { lore } from "../../modules/lore"
+  import { entities, ActionType } from "../../modules/entities"
+  import { onMount } from "svelte"
+
   export let id: string
   export let joined: boolean
   export let ready: boolean
   export let active: boolean
   export let mine: boolean
-  export let actionType = "NONE"
 
+  let previousActionType = "NONE"
+  let actionType = "NONE"
   let modelSources = []
-
-  // $: sources = {
-  //   BODY_ONE: active ? "/bodies/active-1.gif" : "/bodies/1.png",
-  //   BODY_TWO: active ? "/bodies/active-2.gif" : "/bodies/2.png",
-  // }
+  let timeout
 
   $: states = {
     NONE: `/states/${id}/idle.gif`,
@@ -35,7 +35,6 @@
   $: {
     let i = 1
     modelSources = lore[modelsKey].map(name => {
-      console.log(i)
       let result
       if (i === 1) {
         result = {
@@ -52,12 +51,38 @@
 
       return result
     })
-
-    console.log(modelSources)
   }
+
+  const setState = (state, delay) => {
+    clearTimeout(timeout)
+    actionType = state
+    timeout = setTimeout(() => {
+      actionType = "NONE"
+    }, delay)
+  }
+
+  $: console.log(actionType)
+
+  onMount(() => {
+    const entKey = id === 1 ? "0x01" : "0x02"
+    previousActionType = $entities[entKey].lastAction
+    actionType = "NONE"
+
+    entities.subscribe(newEntities => {
+      const ent = newEntities[entKey]
+
+      if (ent) {
+        if (ent.lastAction !== previousActionType) {
+          // Who does the action?
+          setState(ActionType[ent?.lastAction], 400)
+          previousActionType = ActionType[ent?.lastAction]
+        }
+      }
+    })
+  })
 </script>
 
-<BodySlider {id} sources={modelSources} {ready} />
+<BodySlider {id} {active} sources={modelSources} {ready} />
 
 <style>
   .body {
