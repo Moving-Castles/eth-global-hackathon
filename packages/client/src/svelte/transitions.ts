@@ -76,7 +76,6 @@ const rightToLeft = (t: number, feather = 5) => {
 }
 
 const angled = (t: number, angle: number, feather = 5) => {
-  console.log('angled')
   return `
   position: fixed;
   z-index: 9;
@@ -119,8 +118,6 @@ export function mask (node, {
     delay,
     duration,
     css: t => {
-      console.log(type)
-
       switch (type) {
         case ('radial'):
           return radial(t, feather)
