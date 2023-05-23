@@ -6,7 +6,7 @@
   export let id: "BODY_ONE" | "BODY_TWO"
   import { mask } from "../../transitions"
 
-  let navigable = true
+  let navigable = !ready
   let index = 0
 
   const next = () => {
