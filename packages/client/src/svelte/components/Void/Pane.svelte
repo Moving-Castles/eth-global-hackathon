@@ -15,9 +15,11 @@
 
   const icons = {
     0: id === 1 ? "game-icons:abstract-010" : "game-icons:abstract-033", // NONE
-    1: id === 1 ? "game-icons:alligator-clip" : "game-icons:afterburn", // ATTACK_ONE
-    2: id === 1 ? "game-icons:3d-hammer" : "game-icons:ak47", // ATTACK_TWO
-    4: id === 1 ? "game-icons:anarchy" : "game-icons:android-mask", // TAUNT
+    1: id === 1 ? "game-icons:alligator-clip" : "game-icons:alligator-clip", // ATTACK_ONE
+    2: id === 1 ? "game-icons:3d-hammer" : "game-icons:3d-hammer", // ATTACK_TWO
+    3: id === 1 ? "game-icons:magick-trick" : "game-icons:magick-trick", // ATTACK_THREE
+    4: id === 1 ? "game-icons:health-potion" : "game-icons:health-potion", // HEAL
+    5: id === 1 ? "game-icons:anarchy" : "game-icons:anarchy", // TAUNT
   }
 
   const bodyOneCores = getContext("bodyOneCores")
@@ -33,8 +35,12 @@
     vote(ActionType.ATTACK_TWO)
   }
 
-  function block() {
-    vote(ActionType.BLOCK)
+  function attackThree() {
+    vote(ActionType.ATTACK_THREE)
+  }
+
+  function heal() {
+    vote(ActionType.HEAL)
   }
 
   function taunt() {
@@ -112,9 +118,23 @@
       <button
         class="vote-button"
         disabled={!isNaN(playerVote) && playerVote !== 0}
+        on:click={attackThree}
+      >
+        ATTACK 3 <Icon icon={icons[3]} />
+      </button>
+      <button
+        class="vote-button"
+        disabled={!isNaN(playerVote) && playerVote !== 0}
+        on:click={heal}
+      >
+        HEAL <Icon icon={icons[4]} />
+      </button>
+      <button
+        class="vote-button"
+        disabled={!isNaN(playerVote) && playerVote !== 0}
         on:click={taunt}
       >
-        TAUNT <Icon icon={icons[4]} />
+        TAUNT <Icon icon={icons[5]} />
       </button>
     </div>
   {/if}

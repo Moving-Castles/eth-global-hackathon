@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte"
   import { setup } from "../mud/setup"
-  import { mount as mountDevTools } from "@latticexyz/dev-tools"
+  // import { mount as mountDevTools } from "@latticexyz/dev-tools"
   import { createComponentSystem, createLoadingStateSystem } from "./systems"
   import { network, ready, blockNumber } from "./modules/network"
   import { playerCore } from "./modules/player"
