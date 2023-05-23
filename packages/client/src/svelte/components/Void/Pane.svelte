@@ -80,9 +80,6 @@
       {/each}
     </div>
   {/if}
-  {#if !joined && $bodyCores.length < $matchSingleton?.coresPerBody}
-    <button class="button" on:click|once={() => joinBody(id)}> JOIN </button>
-  {/if}
 
   <div class="body-container">
     <Body
@@ -102,11 +99,21 @@
   {#if !active}
     <div class="statistics">
       {#if $bodyCores.length < $matchSingleton?.coresPerBody}
-        <div class="">
-          {$bodyCores.length} / {$matchSingleton?.coresPerBody} Cores
+        <div class="statistics-content">
+          <div class="statistics-content-main">
+            {$matchSingleton?.coresPerBody - $bodyCores.length} spots left
+          </div>
+          {#if !joined && $bodyCores.length < $matchSingleton?.coresPerBody}
+            <button
+              class="statistics-button"
+              on:click|once={() => joinBody(id)}
+            >
+              JOIN
+            </button>
+          {/if}
         </div>
       {:else}
-        <div>READY</div>
+        <div class="statistics-content statistics-content-main">READY</div>
       {/if}
     </div>
   {:else if $bodyCores.map(([k, v]) => k).includes($playerAddress)}
@@ -153,11 +160,11 @@
 <style>
   .pane-1 {
     left: 0;
-    background: blue;
+    background: #00ff00;
   }
   .pane-2 {
     right: 0;
-    background: orange;
+    background: #ff0000;
   }
   .pane-2.active,
   .pane-1.active {
@@ -216,13 +223,38 @@
 
   .statistics {
     align-self: start;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+  }
+
+  .statistics-content {
+    color: black;
+    background: white;
+    width: auto;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    flex-shrink: 1;
+    font-size: 3rem;
+  }
+  .statistics-content-main,
+  .statistics-button {
+    padding: 12px 20px;
+  }
+
+  .statistics-button {
+    color: white;
+    background: black;
+    font-size: 3rem;
   }
 
   .vote-counter {
     display: flex;
     flex-flow: row nowrap;
-    padding: 2rem;
-    gap: 2rem;
+    padding: 3rem;
+    gap: 3rem;
   }
 
   .votes {
@@ -243,6 +275,7 @@
 
   .button {
     font-size: 3rem;
+    cursor: pointer;
   }
 
   button[disabled] {

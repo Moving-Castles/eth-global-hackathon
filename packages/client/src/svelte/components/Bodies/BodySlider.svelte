@@ -38,7 +38,7 @@
         class:visible={i === index}
         on:click={next}
       >
-        <img {src} />
+        <img class:first={i === 0} {src} />
         <p class="name">{name}</p>
       </div>
     {/key}
@@ -66,13 +66,19 @@
     object-fit: contain;
   }
 
+  img:not(.first) {
+    transform: translateY(15px);
+  }
+
   .name {
     position: absolute;
-    width: 400px;
+    padding: 10px 20px;
     text-align: center;
-    bottom: 0;
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, 200%);
+    transform: translate(-50%, -50%);
+    background: white;
+    color: black;
   }
 
   .visible {
