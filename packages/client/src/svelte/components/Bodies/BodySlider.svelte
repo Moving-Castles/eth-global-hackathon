@@ -13,6 +13,12 @@
     if (navigable) index = (index + 1) % sources.length
   }
 
+  const prev = () => {
+    console.log("prev")
+    // (tabIndex - 1 + items.length) % items.length
+    if (navigable) index = (index - 1 + sources.length) % sources.length
+  }
+
   $: if (ready) {
     index = 0
     navigable = false
@@ -37,10 +43,40 @@
         }}
         class="slide"
         class:visible={i === index}
-        on:click={next}
       >
         <img class:first={i === 0} {src} />
-        {#if !active}<p class="name">{name}</p>{/if}
+        {#if !active}
+          <p class="name">{name}</p>
+          <svg
+            class="prevButton"
+            on:click={prev}
+            width="63"
+            height="74"
+            viewBox="0 0 63 74"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M63 37L-3.4258e-06 73.3731L-2.45961e-07 0.626931L63 37Z"
+              fill="#fff"
+            />
+          </svg>
+
+          <svg
+            class="nextButton"
+            on:click={next}
+            width="63"
+            height="74"
+            viewBox="0 0 63 74"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M63 37L-3.4258e-06 73.3731L-2.45961e-07 0.626931L63 37Z"
+              fill="#fff"
+            />
+          </svg>
+        {/if}
       </div>
     {/key}
   {/each}
@@ -89,5 +125,19 @@
   .nav-next {
     position: absolute;
     z-index: 99;
+  }
+
+  .prevButton {
+    position: absolute;
+    top: 50%;
+    transform: scale(-0.5, 0.5);
+    left: 0;
+  }
+
+  .nextButton {
+    position: absolute;
+    top: 50%;
+    transform: scale(0.5);
+    right: 0;
   }
 </style>
