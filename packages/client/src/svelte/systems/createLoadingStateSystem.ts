@@ -8,7 +8,7 @@ export function createLoadingStateSystem() {
     loadingMessage.set(update.value[0]?.msg + ": " + update.value[0]?.percentage.toFixed(2));
     if (update.value[0]?.state === 2) {
       ready.set(true);
-      loadingMessage.set(lore.ready)
+      loadingMessage.set(lore.instructions.loading.ready)
     }
   });
 }
