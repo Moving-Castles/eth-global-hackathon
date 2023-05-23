@@ -11,12 +11,13 @@
   $: if ($playerCore && $ready) next()
 </script>
 
-<div class="">
+<div>
   <div class="loading" class:story={$ready} on:click={next}>
-    <div class="loading-message">{$loadingMessage}</div>
+    <div class="loading-message" class:story-inner={$ready}>
+      {$loadingMessage}
+    </div>
   </div>
 </div>
-
 
 <style lang="scss">
   .loading {
@@ -35,8 +36,21 @@
 
     &.story {
       background: #000;
-      font-size: 3rem;
+      font-size: 4rem;
+      line-height: 4rem;
       color: red;
+      background: black;
+    }
+
+    .story-inner {
+      background: #000;
+      font-size: 4rem;
+      line-height: 4.5rem;
+      color: red;
+      max-width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+      font-family: var(--font-family-special);
     }
   }
 </style>
