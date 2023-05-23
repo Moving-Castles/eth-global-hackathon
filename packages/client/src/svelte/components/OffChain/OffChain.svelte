@@ -108,13 +108,13 @@
   </div>
 {/each}
 
-<div class="cursors">
+<!-- <div class="cursors">
   {#each Object.entries(cursors) as [key, value]}
     <div>
       {$cores[key]?.name} : {value.x}, {value.y}
     </div>
   {/each}
-</div>
+</div> -->
 
 <div>
   <div>
