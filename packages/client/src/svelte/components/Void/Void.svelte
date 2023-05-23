@@ -157,7 +157,7 @@
     <!-- INSTRUCTIONS, META -->
     <div class="pane-mid-top">
       {#if !joined && !ready}
-        Pick a body, {$cores[$playerAddress].name}
+        Pick a side, {$cores[$playerAddress].name}
       {/if}
       {#if ready && !joined}
         {#if $bodilessCores.length > 0}
@@ -210,8 +210,8 @@
     font-size: 18px;
 
     &.active {
-      background: orangered;
-      background-image: url("/worls.png");
+      // background: orangered;
+      background-image: url("/stage.png");
       background-position: center;
     }
   }
@@ -245,6 +245,7 @@
     top: 10%;
     background: red;
     transform: translateX(-50%);
+    font-size: 32px;
   }
 
   .pane-mid-bottom {

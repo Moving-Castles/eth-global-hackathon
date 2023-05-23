@@ -60,7 +60,14 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="pane pane-{id}" class:active on:click={() => joinBody(id)}>
+<div
+  class="pane pane-{id}"
+  class:active
+  class:lobby={!active}
+  class:joined
+  class:opponent={!$bodyCores.map(([k, _]) => k).includes($playerAddress)}
+  class:mine={$bodyCores.map(([k, _]) => k).includes($playerAddress)}
+>
   {#if active}
     <div class="vote-counter">
       {#each $bodyCores as [k, entry]}
@@ -72,6 +79,9 @@
         </div>
       {/each}
     </div>
+  {/if}
+  {#if !joined && $bodyCores.length < $matchSingleton?.coresPerBody}
+    <button class="button" on:click|once={() => joinBody(id)}> JOIN </button>
   {/if}
 
   <div class="body-container">
@@ -102,35 +112,35 @@
   {:else if $bodyCores.map(([k, v]) => k).includes($playerAddress)}
     <div class="votes" class:disabled={!isNaN(playerVote) && playerVote !== 0}>
       <button
-        class="vote-button"
+        class="button vote-button"
         disabled={!isNaN(playerVote) && playerVote !== 0}
         on:click={attackOne}
       >
         ATTACK 1 <Icon icon={icons[1]} />
       </button>
       <button
-        class="vote-button"
+        class="button vote-button"
         disabled={!isNaN(playerVote) && playerVote !== 0}
         on:click={attackTwo}
       >
         ATTACK 2 <Icon icon={icons[2]} />
       </button>
       <button
-        class="vote-button"
+        class="button vote-button"
         disabled={!isNaN(playerVote) && playerVote !== 0}
         on:click={attackThree}
       >
         ATTACK 3 <Icon icon={icons[3]} />
       </button>
       <button
-        class="vote-button"
+        class="button vote-button"
         disabled={!isNaN(playerVote) && playerVote !== 0}
         on:click={heal}
       >
         HEAL <Icon icon={icons[4]} />
       </button>
       <button
-        class="vote-button"
+        class="button vote-button"
         disabled={!isNaN(playerVote) && playerVote !== 0}
         on:click={taunt}
       >
@@ -143,10 +153,21 @@
 <style>
   .pane-1 {
     left: 0;
+    background: blue;
   }
   .pane-2 {
     right: 0;
+    background: orange;
   }
+  .pane-2.active,
+  .pane-1.active {
+    background: transparent;
+  }
+
+  .pane.lobby.joined.opponent {
+    filter: grayscale(1);
+  }
+
   .pane {
     width: 50%;
     height: 100vh;
@@ -158,6 +179,7 @@
     position: fixed;
     top: 0;
     padding: 3rem;
+    transition: all 0.3s ease;
 
     &:nth-child(1) {
       left: 0;
@@ -166,8 +188,8 @@
       right: 0;
     }
 
-    &.active:nth-child(2) {
-      background: transparent;
+    &.active {
+      background: transparent !important;
     }
   }
 
@@ -219,7 +241,7 @@
     stroke-opacity: 1 !important;
   }
 
-  .vote-button {
+  .button {
     font-size: 3rem;
   }
 
@@ -250,6 +272,6 @@
   }
 
   .disabled {
-    filter: grayscale(2);
+    /* filter: grayscale(2); */
   }
 </style>

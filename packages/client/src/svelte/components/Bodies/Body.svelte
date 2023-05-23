@@ -1,23 +1,63 @@
 <script lang="ts">
-  export let id
+  import BodySlider from "./BodySlider.svelte"
+  import { lore } from "../../modules/lore"
+  export let id: string
   export let joined: boolean
   export let ready: boolean
   export let active: boolean
   export let mine: boolean
+  export let actionType = "NONE"
 
-  $: sources = {
-    BODY_ONE: active ? "/bodies/active-1.gif" : "/bodies/1.png",
-    BODY_TWO: active ? "/bodies/active-2.gif" : "/bodies/2.png",
+  let modelSources = []
+
+  // $: sources = {
+  //   BODY_ONE: active ? "/bodies/active-1.gif" : "/bodies/1.png",
+  //   BODY_TWO: active ? "/bodies/active-2.gif" : "/bodies/2.png",
+  // }
+
+  $: states = {
+    NONE: `/states/${id}/idle.gif`,
+    HEAL: `/states/${id}/heal.gif`,
+    ATTACK_ONE: `/states/${id}/hit.gif`,
+    ATTACK_TWO: `/states/${id}/hit.gif`,
+    ATTACK_THREE: `/states/${id}/hit.gif`,
+    TAUNT: `/states/${id}/taunt.gif`,
+    // NOT IN
+    WIN: `/states/${id}/win.gif`,
+    DIE: `/states/${id}/die.gif`,
+  }
+
+  $: stateSrc = states[actionType]
+
+  $: modelsKey =
+    id === "BODY_ONE" ? "governance_models_P1" : "governance_models_P2"
+
+  $: {
+    let i = 1
+    modelSources = lore[modelsKey].map(name => {
+      console.log(i)
+      let result
+      if (i === 1) {
+        result = {
+          src: stateSrc,
+          name,
+        }
+      } else {
+        result = {
+          src: `/_bodiess/${id}/000${i}.png`,
+          name,
+        }
+      }
+      i++
+
+      return result
+    })
+
+    console.log(modelSources)
   }
 </script>
 
-<img
-  class="body"
-  class:active
-  class:joined={joined || ready}
-  class:other={!active && !mine && joined}
-  src={sources[id]}
-/>
+<BodySlider {id} sources={modelSources} {ready} />
 
 <style>
   .body {
