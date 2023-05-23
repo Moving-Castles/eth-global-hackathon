@@ -158,13 +158,6 @@
     padding: 3rem;
     transition: all 1s ease;
 
-    &:nth-child(1) {
-      left: 0;
-    }
-    &:nth-child(2) {
-      right: 0;
-    }
-
     &.active {
       background: transparent !important;
     }

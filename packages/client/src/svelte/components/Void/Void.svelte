@@ -80,8 +80,6 @@
     ...$b2c,
   ])
 
-  $: console.log("$bodilessCores", $bodilessCores)
-
   $: joined = $bodyCores.map(([k, v]) => k).includes($playerAddress)
   $: ready =
     $bodyOneCores.length === $matchSingleton?.coresPerBody &&
@@ -92,12 +90,13 @@
     console.log(ActionType[playerVote])
   }
   $: active = $matchSingleton?.active
-
   $: {
     gameOver = $entities["0x01"]?.health == 0 || $entities["0x02"]?.health == 0
   }
 
-  // const invite = () => copy(window.location.href)
+  function reset() {
+    active = false
+  }
 
   function cheer() {
     clearTimeout(cheerTimeout)
@@ -113,6 +112,7 @@
 
   function endMatch() {
     $network.worldSend(WorldFunctions.End, [])
+    reset()
   }
 
   function vote(action: ActionType) {
@@ -158,7 +158,7 @@
 
     <!-- INSTRUCTIONS, META -->
     <div class="pane-mid-top">
-      {#if !joined && !ready}
+      {#if !joined && !ready && !active}
         Pick a side, {$cores[$playerAddress].name}
       {/if}
       {#if ready && !joined}
@@ -186,7 +186,7 @@
           <!-- {:else}
           <button on:click={invite}>INVITE</button> -->
         {/if}
-      {:else if gameOver}
+      {:else if gameOver && active}
         <button on:click={endMatch}>END</button>
       {/if}
 
