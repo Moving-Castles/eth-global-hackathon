@@ -103,9 +103,10 @@ export function initActionSequencer() {
 
   // Listen to ECS system calls to determine when an action has been executed
   get(network).ecsEvent$.subscribe(event => {
-    if (event.type === "SystemCall") {
-      console.log('SystemCall', event)
-      const action = get(activeActions).find((a) => a.tx === event.tx.hash);
+    console.log(event);
+    if (event.type === "NetworkComponentUpdate") {
+      console.log("NetworkComponentUpdate", event)
+      const action = get(activeActions).find((a) => a.tx === event.txHash);
       if (!action) return;
       console.timeEnd("action")
       // Remove action from active list
