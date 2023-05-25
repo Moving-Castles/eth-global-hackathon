@@ -56,20 +56,15 @@
 
   onMount(() => {
     const entKey = id === "BODY_ONE" ? "0x0000000000000000000000000000000000000000000000000000000000000001" : "0x0000000000000000000000000000000000000000000000000000000000000002"
-
+    
     entities.subscribe((newEnts) => {
       const core = Object.entries(newEnts).find(([k, v]) => k === $playerAddress)
-      const body = newEnts[id === 1 ? "0x01" : "0x02"]
-      console.log(!!core, !!body)
+      const body = newEnts[id === "BODY_ONE" ? "0x01" : "0x02"]
       if (core[1]?.carriedBy === entKey) {
-        // console.log(id, entKey)
-
         $delayedActionType = ActionType[body.lastAction]
       }
     })
   })
-
-
 </script>
 
 <BodySlider {id} {active} sources={modelSources} {ready} />

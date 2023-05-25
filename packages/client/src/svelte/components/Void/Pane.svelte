@@ -1,15 +1,14 @@
 <script lang="ts">
   import Body from "../../components/Bodies/Body.svelte"
   import HealthBar from "../../components/Void/HealthBar.svelte"
-  import ActionTypeButton from "../ActionTypeButton/ActionTypeButton.svelte"
   import Votes from "../../components/Void/Votes.svelte"
   import { setContext, getContext } from "svelte"
-  import Icon from "@iconify/svelte"
-  import { entities, matchSingleton, ActionType } from "../../modules/entities"
+  import { entities, matchSingleton } from "../../modules/entities"
   import { playerAddress } from "../../modules/player"
   import { network } from "../../modules/network"
   import { WorldFunctions } from "../../modules/actionSequencer"
   import { onMount } from "svelte"
+  import { lore } from "../../modules/lore"
 
   export let id: number
   export let joined: boolean
@@ -61,6 +60,13 @@
   <div>
     {#if active}
       <HealthBar {id} />
+      <div
+        class="name"
+        style:left={id === 1 ? '20px' : 'auto'}
+        style:right={id === 2 ? '20px' : 'auto'}
+      >
+        {lore[id === 1 ? "governance_models_P1" : "governance_models_P2"][0]}
+      </div>
     {/if}
   </div>
 
@@ -176,5 +182,10 @@
     color: white;
     background: black;
     font-size: 3rem;
+  }
+
+  .name {
+    position: fixed;
+    top: 80px;
   }
 </style>
