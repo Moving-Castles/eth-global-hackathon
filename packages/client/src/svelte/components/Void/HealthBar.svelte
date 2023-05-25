@@ -39,7 +39,9 @@
 
 <div class:hit class="health player-{id} bar">
   <div
-    style:height="{$health.toFixed(0)}%"
+    style:right={id === 2 ? 0 : 'auto'}
+    style:left={id === 1 ? 0 : 'auto'}
+    style:width="{$health.toFixed(0)}%"
     style:background-color={id === 1 ? "#0f0" : "#f00"}
     class="bar-inner"
   />
@@ -49,11 +51,10 @@
   .health {
     pointer-events: none;
     position: fixed;
-    top: 120px;
-    background: #000;
-    margin: 0 2rem;
-    clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
-    border: 5px solid yellow;
+    top: 0;
+    background: #737373;
+    margin: 2rem 1rem;
+    border: 2px solid black;
   }
 
   .player-1 {
@@ -65,13 +66,13 @@
   }
 
   .bar {
-    height: 200px;
-    width: 30px;
+    width: 30vw;
+    height: 30px;
   }
 
   .bar-inner {
     position: absolute;
-    bottom: 0;
-    width: 100%;
+    height: 100%;
+    /* bottom: 0; */
   }
 </style>

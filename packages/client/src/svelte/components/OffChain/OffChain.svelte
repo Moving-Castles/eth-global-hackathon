@@ -116,7 +116,6 @@
     </div>
     <div class="cursor-text">
       {$cores[key]?.name}
-      {$bodyTwoCores.map(([k, _]) => k).includes(key)}
     </div>
   </div>
 {/each}

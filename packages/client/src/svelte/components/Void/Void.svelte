@@ -183,8 +183,6 @@
             disabled={$bodilessCores.includes($playerAddress)}
             on:click={startMatch}>START</button
           >
-          <!-- {:else}
-          <button on:click={invite}>INVITE</button> -->
         {/if}
       {:else if gameOver && active}
         <button on:click={endMatch}>END</button>
@@ -217,6 +215,7 @@
     &.active {
       // background: orangered;
       background-image: url("/stage.png");
+      background-size: contain;
       background-position: center;
     }
   }
@@ -268,7 +267,5 @@
     right: 5px;
     font-size: 11px;
     padding: 5px;
-    background: lightgrey;
-    color: black;
   }
 </style>
