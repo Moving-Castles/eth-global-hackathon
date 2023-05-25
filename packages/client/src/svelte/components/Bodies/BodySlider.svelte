@@ -44,7 +44,11 @@
         class="slide"
         class:visible={i === index}
       >
-        <img class:first={i === 0} {src} />
+        <img
+          class:first={i === 0}
+          {src}
+          style:transform={id === "BODY_ONE" ? "scale(1)" : "scale(-1, 1)"}
+        />
         {#if !active}
           <p class="name">{name}</p>
           <svg

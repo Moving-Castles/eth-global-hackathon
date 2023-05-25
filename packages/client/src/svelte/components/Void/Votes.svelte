@@ -1,68 +1,63 @@
 <script lang="ts">
   import { ActionType } from "../../modules/entities"
+  import ActionTypeButton from "../../components/ActionTypeButton/ActionTypeButton.svelte"
   import { getContext } from "svelte"
-  import Icon from "@iconify/svelte"
-
+  
+  export let id: number
   export let playerVote: number
+  
+  const bodyOneCores = getContext("bodyOneCores")
+  const bodyTwoCores = getContext("bodyTwoCores")
 
-  const vote = getContext("vote")
-  const icons = getContext("icons")
+  let voteProgress = []
 
-  function attackOne() {
-    vote(ActionType.ATTACK_ONE)
-  }
+  $: bodyCores = id === 1 ? bodyOneCores : bodyTwoCores
 
-  function attackTwo() {
-    vote(ActionType.ATTACK_TWO)
-  }
+  $: {
+    console.log($bodyCores.length)
+    voteProgress = [...Array(Object.keys(ActionType).length / 2).keys()].map((actionTypeIndex) => {
+      const count = $bodyCores.filter(([k, core]) => core.vote === actionTypeIndex)?.length || 0
 
-  function attackThree() {
-    vote(ActionType.ATTACK_THREE)
-  }
+      const progress = count / $bodyCores.length
 
-  function heal() {
-    vote(ActionType.HEAL)
-  }
-
-  function taunt() {
-    vote(ActionType.TAUNT)
+      return progress
+    })
   }
 </script>
 
-<div class="votes" class:disabled={!isNaN(playerVote) && playerVote !== 0}>
-  <button
-    class="button vote-button"
-    disabled={!isNaN(playerVote) && playerVote !== 0}
-    on:click={attackOne}
-  >
-    ATTACK 1 <Icon icon={icons[1]} />
-  </button>
-  <button
-    class="button vote-button"
-    disabled={!isNaN(playerVote) && playerVote !== 0}
-    on:click={attackTwo}
-  >
-    ATTACK 2 <Icon icon={icons[2]} />
-  </button>
-  <button
-    class="button vote-button"
-    disabled={!isNaN(playerVote) && playerVote !== 0}
-    on:click={attackThree}
-  >
-    ATTACK 3 <Icon icon={icons[3]} />
-  </button>
-  <button
-    class="button vote-button"
-    disabled={!isNaN(playerVote) && playerVote !== 0}
-    on:click={heal}
-  >
-    HEAL <Icon icon={icons[4]} />
-  </button>
-  <button
-    class="button vote-button"
-    disabled={!isNaN(playerVote) && playerVote !== 0}
-    on:click={taunt}
-  >
-    TAUNT <Icon icon={icons[5]} />
-  </button>
+<div
+  class="votes"
+  class:disabled={!isNaN(playerVote) && playerVote !== 0}
+  style:right={id === 1 ? 'auto' : '40px'}
+  style:left={id === 2 ? 'auto' : '40px'}
+>
+  {#each Object.keys(ActionType).filter(key => isNaN(key) && key !== 'NONE') as type, i (type)}
+    <ActionTypeButton
+      disabled={!isNaN(playerVote) && playerVote !== 0}
+      {playerVote}
+      actionType={type}
+      progress={voteProgress[i + 1]}
+    />
+  {/each}
 </div>
+
+<style>
+  .votes {
+    position: absolute;
+    right: 40px;
+    height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .votes-grid {
+    position: absolute;
+    height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    gap: 20px;
+  }
+</style>

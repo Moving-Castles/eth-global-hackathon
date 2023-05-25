@@ -1,6 +1,7 @@
 <script lang="ts">
   import Body from "../../components/Bodies/Body.svelte"
   import HealthBar from "../../components/Void/HealthBar.svelte"
+  import ActionTypeButton from "../ActionTypeButton/ActionTypeButton.svelte"
   import Votes from "../../components/Void/Votes.svelte"
   import { setContext, getContext } from "svelte"
   import Icon from "@iconify/svelte"
@@ -24,31 +25,8 @@
   }
 
   setContext("icons", icons)
-
   const bodyOneCores = getContext("bodyOneCores")
   const bodyTwoCores = getContext("bodyTwoCores")
-
-  const vote = getContext("vote")
-
-  function attackOne() {
-    vote(ActionType.ATTACK_ONE)
-  }
-
-  function attackTwo() {
-    vote(ActionType.ATTACK_TWO)
-  }
-
-  function attackThree() {
-    vote(ActionType.ATTACK_THREE)
-  }
-
-  function heal() {
-    vote(ActionType.HEAL)
-  }
-
-  function taunt() {
-    vote(ActionType.TAUNT)
-  }
 
   $: bodyCores = id === 1 ? bodyOneCores : bodyTwoCores
   $: playerVote = $entities[$playerAddress]?.vote
@@ -71,8 +49,8 @@
   class:opponent={!$bodyCores.map(([k, _]) => k).includes($playerAddress)}
   class:mine={$bodyCores.map(([k, _]) => k).includes($playerAddress)}
 >
-  {#if active}
-    <div class="vote-counter">
+<!-- {#if active} -->
+    <!-- <div class="vote-counter">
       {#each $bodyCores as [k, entry]}
         <div
           class="vote"
@@ -81,8 +59,8 @@
           <Icon icon={icons[entry.vote] || icons[0]} />
         </div>
       {/each}
-    </div>
-  {/if}
+    </div> -->
+  <!-- {/if} -->
 
   <div class="body-container">
     <Body
@@ -120,7 +98,7 @@
       {/if}
     </div>
   {:else if $bodyCores.map(([k, v]) => k).includes($playerAddress)}
-    <Votes {playerVote} />
+    <Votes {id} {playerVote} />
   {/if}
 </div>
 

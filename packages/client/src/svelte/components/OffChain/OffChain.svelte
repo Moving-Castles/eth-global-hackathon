@@ -112,34 +112,9 @@
     </div>
     <div class="cursor-text">
       {$cores[key]?.name}
-      {$bodyTwoCores.map(([k, _]) => k).includes(key)}
     </div>
   </div>
 {/each}
-
-<!-- <div class="cursors">
-  {#each Object.entries(cursors) as [key, value]}
-    <div>
-      {$cores[key]?.name} : {value.x}, {value.y}
-    </div>
-  {/each}
-</div> -->
-
-<div>
-  <!-- <div>
-    <strong>
-      {verifiedClients.length} wizard{verifiedClients.length > 1 ? "s" : ""} present
-    </strong>
-  </div>
-  <div>
-    {#each verifiedClients as client}
-      <div>
-        {$cores[client].name}
-        {#if client === $playerAddress}(YOU){/if}
-      </div>
-    {/each}
-  </div> -->
-</div>
 
 <style>
   .cursors {
