@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { entities } from "../../modules/entities"
+  import { entities, ActionType } from "../../modules/gameState"
   import { tweened } from "svelte/motion"
   import { getContext, onMount } from "svelte"
 

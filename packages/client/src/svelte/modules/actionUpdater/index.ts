@@ -1,7 +1,6 @@
 import { get } from "svelte/store";
 import { queuedActions, completedActions, failedActions } from "../actionSequencer";
-import { entities } from "../entities";
-import { playerCore, playerAddress } from "../player";
+import { entities, playerCore, playerAddress  } from "../gameState";
 import type { Action } from "../actionSequencer";
 
 export enum Activity {

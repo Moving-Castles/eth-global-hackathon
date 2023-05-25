@@ -7,7 +7,7 @@
 import type { SystemTypes } from "contracts/types/SystemTypes";
 import { writable, get } from "svelte/store";
 import { network, blockNumber } from "../network";
-import { playerCore } from "../player";
+import { playerCore } from "../gameState";
 import { playSound } from "../../../howler";
 import { toastMessage } from "../../modules/toast"
 

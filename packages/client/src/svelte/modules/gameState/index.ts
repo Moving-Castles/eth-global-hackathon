@@ -3,6 +3,7 @@
  * 
  */
 import { writable, derived } from "svelte/store";
+import { network } from "../network";
 
 // --- TYPES -----------------------------------------------------------------
 
@@ -79,9 +80,27 @@ export type Cores = {
 export const entities = writable({} as Entities);
 
 export const cores = derived(entities, ($entities) => {
-  return Object.fromEntries(Object.entries($entities).filter(([key, entity]) => entity.core)) as Cores;
+  return Object.fromEntries(Object.entries($entities).filter(([, entity]) => entity.core)) as Cores;
 });
+
+// => SINGLETONS
 
 export const matchSingleton = derived(entities, ($entities) => {
   return $entities["0x0666"] as MatchSingleton;
 });
+
+// => PLAYER
+
+export const playerAddress = derived(network, ($network) => $network.network?.connectedAddress.get() || "0x0");
+
+export const playerCore = derived(
+  [entities, playerAddress],
+  ([$entities, $playerAddress]) => $entities[$playerAddress] as Core
+);
+
+export const playerBody = derived([entities, playerCore], ([$entities, $playerCore]) => {
+  if (!$entities || !$playerCore) return {} as Body;
+  return $entities[$playerCore.carriedBy] as Body;
+});
+
+

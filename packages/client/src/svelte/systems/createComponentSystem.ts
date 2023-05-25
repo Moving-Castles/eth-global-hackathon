@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { entities } from "../modules/entities";
+import { entities } from "../modules/gameState";
 import { network } from "../modules/network";
 import { toCamelCase } from "../utils/misc";
 

@@ -4,7 +4,7 @@
   // import { mount as mountDevTools } from "@latticexyz/dev-tools"
   import { createComponentSystem, createLoadingStateSystem } from "./systems"
   import { network, ready, blockNumber } from "./modules/network"
-  import { playerCore } from "./modules/player"
+  import { entities, playerCore } from "./modules/gameState"
   // import { initStaticContent } from "./modules/staticContent"
   import { initActionSequencer } from "./modules/actionSequencer"
   import { initActionUpdater } from "./modules/actionUpdater"
@@ -14,7 +14,6 @@
   import Void from "./components/Void/Void.svelte"
 
   // - - - - -
-  import { entities } from "./modules/entities"
   $: console.log("$entities", $entities)
   $: console.log("$network", $network)
   $: console.log($playerCore)

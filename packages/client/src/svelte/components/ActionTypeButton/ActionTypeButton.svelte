@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { ActionType } from "../../modules/entities"
-  import { playerCore } from "../../modules/player"
-  import { blockNumber } from "../../modules/network"
+  import { ActionType } from "../../modules/gameState"
+  import { delayedTweened } from "../../modules/stores"
   import { getContext } from "svelte"
   import { tweened } from "svelte/motion"
   export let actionType: string
