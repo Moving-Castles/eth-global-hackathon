@@ -29,14 +29,14 @@
   const bodyTwoCores = getContext("bodyTwoCores")
 
   $: bodyCores = id === 1 ? bodyOneCores : bodyTwoCores
-  $: playerVote = $entities[$playerAddress]?.vote
+  $: coreVote = $entities[$playerAddress]?.vote
 
   function joinBody(i: 1 | 2) {
     if (!joined) $network.worldSend(WorldFunctions.Join, [i])
   }
 
   onMount(() => {
-    playerVote = $entities[$playerAddress]?.vote
+    coreVote = $entities[$playerAddress]?.vote
   })
 </script>
 
@@ -98,7 +98,7 @@
       {/if}
     </div>
   {:else if $bodyCores.map(([k, v]) => k).includes($playerAddress)}
-    <Votes {id} {playerVote} />
+    <Votes {id} {coreVote} />
   {/if}
 </div>
 

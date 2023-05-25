@@ -4,7 +4,7 @@
   import { getContext } from "svelte"
   
   export let id: number
-  export let playerVote: number
+  export let coreVote: number
   
   const bodyOneCores = getContext("bodyOneCores")
   const bodyTwoCores = getContext("bodyTwoCores")
@@ -14,7 +14,6 @@
   $: bodyCores = id === 1 ? bodyOneCores : bodyTwoCores
 
   $: {
-    console.log($bodyCores.length)
     voteProgress = [...Array(Object.keys(ActionType).length / 2).keys()].map((actionTypeIndex) => {
       const count = $bodyCores.filter(([k, core]) => core.vote === actionTypeIndex)?.length || 0
 
@@ -23,18 +22,19 @@
       return progress
     })
   }
+
+  $: console.log($bodyCores.map(core => core))
 </script>
 
 <div
   class="votes"
-  class:disabled={!isNaN(playerVote) && playerVote !== 0}
+  class:disabled={!isNaN(coreVote) && coreVote !== 0}
   style:right={id === 1 ? 'auto' : '40px'}
   style:left={id === 2 ? 'auto' : '40px'}
 >
   {#each Object.keys(ActionType).filter(key => isNaN(key) && key !== 'NONE') as type, i (type)}
     <ActionTypeButton
-      disabled={!isNaN(playerVote) && playerVote !== 0}
-      {playerVote}
+      disabled={!isNaN(coreVote) && coreVote !== 0}
       actionType={type}
       progress={voteProgress[i + 1]}
     />

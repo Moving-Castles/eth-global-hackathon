@@ -86,10 +86,10 @@
   $: ready =
     $bodyOneCores.length === $matchSingleton?.coresPerBody &&
     $bodyTwoCores.length === $matchSingleton?.coresPerBody
-  $: playerVote = $entities[$playerAddress]?.vote
-  $: if (playerVote) {
-    console.log(playerVote)
-    console.log(ActionType[playerVote])
+  $: coreVote = $entities[$playerAddress]?.vote
+  $: if (coreVote) {
+    console.log(coreVote)
+    console.log(ActionType[coreVote])
   }
   $: active = $matchSingleton?.active
   $: {
@@ -131,7 +131,7 @@
   onMount(() => {
     socket = new WebSocket("wss://mc.rttskr.com")
     socket.addEventListener("message", processCheer)
-    playerVote = $entities[$playerAddress].vote
+    coreVote = $entities[$playerAddress].vote
   })
 </script>
 
