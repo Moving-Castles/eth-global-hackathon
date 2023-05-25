@@ -20,14 +20,18 @@ contract MatchSystemTest is MudV2Test {
     setUp();
     fillBodies();
     world.moving_castles_MatchSystem_start();
+    assertEq(MatchIndex.get(world, MatchKey), 0);
     // Set body two's health to 0
     world.moving_castles_DevSystem_set(HealthTableId, BodyTwo, abi.encodePacked(uint32(0)));
     world.moving_castles_MatchSystem_end();
+    // ...
     assertTrue(!Active.get(world, MatchKey));
+    assertEq(MatchIndex.get(world, MatchKey), 1);
+    // ...
     bytes32 coreEntity = LibUtils.addressToEntityKey(alice);
     assertEq(CarriedBy.get(world, coreEntity), 0);
-    console.log(Points.get(world, coreEntity));
     assertEq(Points.get(world, coreEntity), 1);
+    assertEq(RoundIndex.get(world, coreEntity), 0);
   }
 
   function testRevertNotOver() public {

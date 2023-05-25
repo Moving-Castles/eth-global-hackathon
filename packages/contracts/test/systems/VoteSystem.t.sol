@@ -15,12 +15,16 @@ contract VoteSystemTest is MudV2Test {
 
     assertTrue(Active.get(world, MatchKey));
 
+    bytes32 coreEntity = LibUtils.addressToEntityKey(alice);
+
+    assertEq(RoundIndex.get(world, coreEntity), 0);
+    assertEq(RoundIndex.get(world, BodyOne), 0);
+
     vm.startPrank(alice);
     world.moving_castles_VoteSystem_vote(ActionType.ATTACK_ONE);
     vm.stopPrank();
 
-    bytes32 coreEntity = LibUtils.addressToEntityKey(alice);
-
+    assertEq(RoundIndex.get(world, coreEntity), 1);
     assertEq(uint32(Vote.get(world, coreEntity)), uint32(ActionType.ATTACK_ONE));
   }
 
@@ -34,7 +38,8 @@ contract VoteSystemTest is MudV2Test {
     vm.startPrank(alice);
     world.moving_castles_VoteSystem_vote(ActionType.ATTACK_ONE);
     vm.stopPrank();
-    // assertEq(uint32(Vote.get(world, LibUtils.addressToEntityKey(alice))), uint32(ActionType.ATTACK_ONE));
+
+    assertEq(Health.get(world, BodyOne), 100);
 
     vm.startPrank(bob);
     world.moving_castles_VoteSystem_vote(ActionType.ATTACK_ONE);
@@ -45,8 +50,6 @@ contract VoteSystemTest is MudV2Test {
     assertEq(uint32(LastAction.get(world, BodyOne)), uint32(ActionType.ATTACK_ONE));
     assertEq(Health.get(world, BodyOne), 100);
     assertEq(Health.get(world, BodyTwo), 90);
-    assertEq(uint32(Vote.get(world, LibUtils.addressToEntityKey(alice))), uint32(ActionType.NONE));
-    assertEq(uint32(Vote.get(world, LibUtils.addressToEntityKey(bob))), uint32(ActionType.NONE));
   }
 
   function testAttackTwo() public {
@@ -66,11 +69,9 @@ contract VoteSystemTest is MudV2Test {
     vm.stopPrank();
 
     // Vote complete, Action should be executed
-
     assertEq(Health.get(world, BodyOne), 90);
     assertEq(Health.get(world, BodyTwo), 70);
-    assertEq(uint32(Vote.get(world, LibUtils.addressToEntityKey(alice))), uint32(ActionType.NONE));
-    assertEq(uint32(Vote.get(world, LibUtils.addressToEntityKey(bob))), uint32(ActionType.NONE));
+    assertEq(RoundIndex.get(world, BodyOne), 1);
   }
 
   function testUnderflow() public {
@@ -154,7 +155,11 @@ contract VoteSystemTest is MudV2Test {
     world.moving_castles_MatchSystem_start();
     assertEq(ReadyBlock.get(world, BodyOne), block.number);
 
+    bytes32 coreEntity = LibUtils.addressToEntityKey(alice);
+
     assertTrue(Active.get(world, MatchKey));
+    assertEq(RoundIndex.get(world, coreEntity), 0);
+    assertEq(RoundIndex.get(world, BodyOne), 0);
 
     vm.startPrank(alice);
     world.moving_castles_VoteSystem_vote(ActionType.ATTACK_ONE);
@@ -164,7 +169,11 @@ contract VoteSystemTest is MudV2Test {
     world.moving_castles_VoteSystem_vote(ActionType.ATTACK_ONE);
     vm.stopPrank();
 
+    // Action should be taken
+
     assertEq(ReadyBlock.get(world, BodyOne), block.number + 5);
+    assertEq(RoundIndex.get(world, coreEntity), 1);
+    assertEq(RoundIndex.get(world, BodyOne), 1);
 
     vm.startPrank(alice);
     vm.expectRevert(bytes("in cooldown"));
@@ -188,6 +197,31 @@ contract VoteSystemTest is MudV2Test {
     vm.startPrank(xavier);
     world.moving_castles_SpawnSystem_spawn("Xavier");
     vm.expectRevert(bytes("not in body"));
+    world.moving_castles_VoteSystem_vote(ActionType.ATTACK_ONE);
+    vm.stopPrank();
+  }
+
+  function testRevertAlreadyVoted() public {
+    setUp();
+    fillBodies();
+    world.moving_castles_MatchSystem_start();
+
+    assertTrue(Active.get(world, MatchKey));
+
+    bytes32 coreEntity = LibUtils.addressToEntityKey(alice);
+
+    assertEq(RoundIndex.get(world, coreEntity), 0);
+    assertEq(RoundIndex.get(world, BodyOne), 0);
+
+    vm.startPrank(alice);
+    world.moving_castles_VoteSystem_vote(ActionType.ATTACK_ONE);
+    vm.stopPrank();
+
+    assertEq(RoundIndex.get(world, coreEntity), 1);
+    assertEq(uint32(Vote.get(world, coreEntity)), uint32(ActionType.ATTACK_ONE));
+
+    vm.startPrank(alice);
+    vm.expectRevert(bytes("already voted"));
     world.moving_castles_VoteSystem_vote(ActionType.ATTACK_ONE);
     vm.stopPrank();
   }

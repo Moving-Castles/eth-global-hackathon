@@ -35,11 +35,14 @@ export type Entity = {
   taunt?: number;
   coresPerBody?: number;
   lastAction?: ActionType;
+  matchIndex?: number;
+  roundIndex?: number;
 };
 
 export type MatchSingleton = {
   active: boolean;
   coresPerBody: number;
+  matchIndex: number;
 }
 
 export type Core = {
@@ -49,6 +52,7 @@ export type Core = {
   points: number;
   carriedBy: string;
   vote: ActionType;
+  roundIndex: number;
 };
 
 export type Body = {
@@ -57,6 +61,7 @@ export type Body = {
   governance: GovernanceType;
   taunt: number;
   lastAction: ActionType;
+  roundIndex: number;
 }
 
 // - - - -
