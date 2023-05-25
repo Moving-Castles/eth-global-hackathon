@@ -2,6 +2,8 @@
   import BodySlider from "./BodySlider.svelte"
   import { lore } from "../../modules/lore"
   import { entities, ActionType } from "../../modules/entities"
+  import { playerAddress } from "../../modules/player"
+  import { delayedWritable } from "../../modules/stores"
   import { onMount } from "svelte"
 
   export let id: string
@@ -10,10 +12,7 @@
   export let active: boolean
   export let mine: boolean
 
-  let previousActionType = "NONE"
-  let actionType = "NONE"
   let modelSources = []
-  let timeout
 
   $: states = {
     NONE: `/states/${id}/idle.gif`,
@@ -27,7 +26,7 @@
     DIE: `/states/${id}/die.gif`,
   }
 
-  $: stateSrc = states[actionType]
+  $: stateSrc = states[$delayedActionType]
 
   $: modelsKey =
     id === "BODY_ONE" ? "governance_models_P1" : "governance_models_P2"
@@ -53,31 +52,24 @@
     })
   }
 
-  const setState = (state, delay) => {
-    clearTimeout(timeout)
-    actionType = state
-    timeout = setTimeout(() => {
-      actionType = "NONE"
-    }, delay)
-  }
+  const delayedActionType = delayedWritable("NONE", 500)
 
   onMount(() => {
-    const entKey = id === 1 ? "0x01" : "0x02"
-    previousActionType = $entities[entKey].lastAction
-    actionType = "NONE"
+    const entKey = id === "BODY_ONE" ? "0x0000000000000000000000000000000000000000000000000000000000000001" : "0x0000000000000000000000000000000000000000000000000000000000000002"
 
-    entities.subscribe(newEntities => {
-      const ent = newEntities[entKey]
+    entities.subscribe((newEnts) => {
+      const core = Object.entries(newEnts).find(([k, v]) => k === $playerAddress)
+      const body = newEnts[id === 1 ? "0x01" : "0x02"]
+      console.log(!!core, !!body)
+      if (core[1]?.carriedBy === entKey) {
+        // console.log(id, entKey)
 
-      if (ent) {
-        if (ent.lastAction !== previousActionType) {
-          // Who does the action?
-          setState(ActionType[ent?.lastAction], 400)
-          previousActionType = ActionType[ent?.lastAction]
-        }
+        $delayedActionType = ActionType[body.lastAction]
       }
     })
   })
+
+
 </script>
 
 <BodySlider {id} {active} sources={modelSources} {ready} />

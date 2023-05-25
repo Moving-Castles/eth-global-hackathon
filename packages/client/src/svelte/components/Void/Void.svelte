@@ -85,10 +85,6 @@
     $bodyOneCores.length === $matchSingleton?.coresPerBody &&
     $bodyTwoCores.length === $matchSingleton?.coresPerBody
   $: playerVote = $entities[$playerAddress]?.vote
-  $: if (playerVote) {
-    console.log(playerVote)
-    console.log(ActionType[playerVote])
-  }
   $: active = $matchSingleton?.active
   $: {
     gameOver = $entities["0x01"]?.health == 0 || $entities["0x02"]?.health == 0

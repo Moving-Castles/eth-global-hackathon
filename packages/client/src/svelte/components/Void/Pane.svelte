@@ -49,19 +49,6 @@
   class:opponent={!$bodyCores.map(([k, _]) => k).includes($playerAddress)}
   class:mine={$bodyCores.map(([k, _]) => k).includes($playerAddress)}
 >
-<!-- {#if active} -->
-    <!-- <div class="vote-counter">
-      {#each $bodyCores as [k, entry]}
-        <div
-          class="vote"
-          class:inactive={entry.vote === ActionType.NONE || !entry.vote}
-        >
-          <Icon icon={icons[entry.vote] || icons[0]} />
-        </div>
-      {/each}
-    </div> -->
-  <!-- {/if} -->
-
   <div class="body-container">
     <Body
       {joined}

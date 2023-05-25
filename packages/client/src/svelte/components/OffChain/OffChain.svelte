@@ -27,7 +27,7 @@
   function sendPosition(e) {
     const message = JSON.stringify({
       topic: "MousePosition",
-      data: { x: e.clientX, y: e.clientY },
+      data: { x: e.clientX, y: e.clientY }
       // data: { x: e.offsetX, y: e.offsetY },
     })
     socket.send(message)
@@ -72,9 +72,9 @@
 
     // Listen for messages
     socket.addEventListener("message", event => {
-      console.log("Message from server", event)
+      // console.log("Message from server", event)
       let msgObj = JSON.parse(event.data)
-      console.log("msgObj", msgObj)
+      // console.log("msgObj", msgObj)
 
       // MOUSE POSITION
       if (msgObj.topic === "MousePosition") {

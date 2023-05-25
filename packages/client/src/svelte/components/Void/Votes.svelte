@@ -9,15 +9,14 @@
   const bodyOneCores = getContext("bodyOneCores")
   const bodyTwoCores = getContext("bodyTwoCores")
 
-  let voteProgress = []
+  const actionTypeStrings = [...Array(Object.keys(ActionType).length / 2).keys()]
+  let voteProgress = actionTypeStrings.map(_ => 0)
 
   $: bodyCores = id === 1 ? bodyOneCores : bodyTwoCores
 
   $: {
-    console.log($bodyCores.length)
-    voteProgress = [...Array(Object.keys(ActionType).length / 2).keys()].map((actionTypeIndex) => {
-      const count = $bodyCores.filter(([k, core]) => core.vote === actionTypeIndex)?.length || 0
-
+    voteProgress = actionTypeStrings.map((actionTypeIndex) => {
+      const count = $bodyCores.filter(([_, core]) => core.vote === actionTypeIndex)?.length || 0
       const progress = count / $bodyCores.length
 
       return progress
@@ -33,6 +32,7 @@
 >
   {#each Object.keys(ActionType).filter(key => isNaN(key) && key !== 'NONE') as type, i (type)}
     <ActionTypeButton
+      {id}
       disabled={!isNaN(playerVote) && playerVote !== 0}
       {playerVote}
       actionType={type}

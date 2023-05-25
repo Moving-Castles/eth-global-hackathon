@@ -14,8 +14,6 @@
   }
 
   const prev = () => {
-    console.log("prev")
-    // (tabIndex - 1 + items.length) % items.length
     if (navigable) index = (index - 1 + sources.length) % sources.length
   }
 
@@ -29,7 +27,6 @@
   <!-- <button class="nav-next" on:click={next}>next</button> -->
   {#each sources as { name, src }, i (src)}
     {#key index}
-      <!-- in:fly={{ x: id === "BODY_ONE" ? -400 : 400 }} -->
       <div
         in:mask={{
           feather: 10,
