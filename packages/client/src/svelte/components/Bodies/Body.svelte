@@ -12,6 +12,9 @@
   export let active: boolean
   export let mine: boolean
 
+  let gameOver = false
+  let endActionType = "NONE"
+
   let modelSources = []
 
   $: states = {
@@ -26,7 +29,7 @@
     DIE: `/states/${id}/die.gif`,
   }
 
-  $: stateSrc = states[$delayedActionType]
+  $: stateSrc = states[gameOver ? endActionType : $delayedActionType]
 
   $: modelsKey =
     id === "BODY_ONE" ? "governance_models_P1" : "governance_models_P2"
@@ -53,6 +56,22 @@
   }
 
   const delayedActionType = delayedWritable("NONE", 500)
+
+  $: {
+    const body = $entities[id === "BODY_ONE" ? "0x01" : "0x02"]
+    const opponentBody = $entities[id === "BODY_ONE" ? "0x02" : "0x01"]
+    console.log(body, opponentBody, $entities)
+    if (body?.health === 0 || opponentBody?.health === 0) {
+      gameOver = true
+      if (body.health === 0) {
+        // You lose some
+        endActionType = "DIE"
+      } else if (opponentBody.health === 0) {
+        // You win some
+        endActionType = "WIN"
+      }
+    }
+  }
 
   onMount(() => {
     const entKey = id === "BODY_ONE" ? "0x0000000000000000000000000000000000000000000000000000000000000001" : "0x0000000000000000000000000000000000000000000000000000000000000002"

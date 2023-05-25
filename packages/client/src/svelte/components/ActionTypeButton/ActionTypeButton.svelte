@@ -14,7 +14,6 @@
 
   const voteThis = () => vote(ActionType[actionType])
 
-  $: console.log(progress)
   $: tweenedProgress.set(progress)
 </script>
 

@@ -10,10 +10,10 @@
   } from "../../modules/entities"
   import { WorldFunctions } from "../../modules/actionSequencer"
   import { playerAddress } from "../../modules/player"
-  // import copy from "copy-to-clipboard"
+
   import OffChain from "../../components/OffChain/OffChain.svelte"
   import Pane from "../../components/Void/Pane.svelte"
-  // import Body from "../../components/Bodies/Body.svelte"
+
   import { onMount } from "svelte"
 
   const BODY_ONE =

@@ -5,7 +5,7 @@
   import { setContext, getContext } from "svelte"
   import { entities, matchSingleton } from "../../modules/entities"
   import { playerAddress } from "../../modules/player"
-  import { network } from "../../modules/network"
+  import { network, blockNumber } from "../../modules/network"
   import { WorldFunctions } from "../../modules/actionSequencer"
   import { onMount } from "svelte"
   import { lore } from "../../modules/lore"
@@ -29,6 +29,8 @@
 
   $: bodyCores = id === 1 ? bodyOneCores : bodyTwoCores
   $: playerVote = $entities[$playerAddress]?.vote
+  $: readyBlock = $entities[id === 1 ? "0x01" : "0x02"].readyBlock
+  $: cooldownTime = Number(readyBlock) - Number($blockNumber)
 
   function joinBody(i: 1 | 2) {
     if (!joined) $network.worldSend(WorldFunctions.Join, [i])
@@ -62,10 +64,11 @@
       <HealthBar {id} />
       <div
         class="name"
+        style:text-align={id === 1 ? "left" : "right"}
         style:left={id === 1 ? '20px' : 'auto'}
         style:right={id === 2 ? '20px' : 'auto'}
       >
-        {lore[id === 1 ? "governance_models_P1" : "governance_models_P2"][0]}
+        {lore[id === 1 ? "governance_models_P1" : "governance_models_P2"][0]}<br>{#if cooldownTime > 0}{cooldownTime}{/if}
       </div>
     {/if}
   </div>
@@ -91,7 +94,7 @@
       {/if}
     </div>
   {:else if $bodyCores.map(([k, v]) => k).includes($playerAddress)}
-    <Votes {id} {playerVote} />
+    <Votes {id} {playerVote} {cooldownTime} />
   {/if}
 </div>
 
