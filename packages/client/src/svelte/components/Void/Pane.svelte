@@ -3,7 +3,7 @@
   import HealthBar from "../../components/Void/HealthBar.svelte"
   import Votes from "../../components/Void/Votes.svelte"
   import { setContext, getContext } from "svelte"
-  import { entities, matchSingleton } from "../../modules/entities"
+  import { entities, matchSingleton } from "../../modules/gameState"
   import { playerAddress } from "../../modules/player"
   import { network, blockNumber } from "../../modules/network"
   import { WorldFunctions } from "../../modules/actionSequencer"

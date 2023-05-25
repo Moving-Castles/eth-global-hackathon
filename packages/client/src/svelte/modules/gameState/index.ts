@@ -85,3 +85,4 @@ export const cores = derived(entities, ($entities) => {
 export const matchSingleton = derived(entities, ($entities) => {
   return $entities["0x0666"] as MatchSingleton;
 });
+

@@ -2,7 +2,7 @@
   import { onMount } from "svelte"
   import { network } from "../../modules/network"
   import { playerAddress } from "../../modules/player"
-  import { cores } from "../../modules/entities"
+  import { cores } from "../../modules/gameState"
   import { getContext } from "svelte"
   import throttle from "just-throttle"
   import Icon from "@iconify/svelte"

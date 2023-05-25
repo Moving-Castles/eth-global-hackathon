@@ -1,7 +1,7 @@
 import { derived } from "svelte/store";
 import { network } from "../network";
-import type { Core, BaseEntity } from "../entities";
-import { entities, cores } from "../entities";
+import type { Core, BaseEntity } from "../gameState";
+import { entities, cores } from "../gameState";
 
 // --- STORES -----------------------------------------------------------------
 

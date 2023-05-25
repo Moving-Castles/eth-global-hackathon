@@ -14,7 +14,7 @@
   import Void from "./components/Void/Void.svelte"
 
   // - - - - -
-  import { entities } from "./modules/entities"
+  import { entities } from "./modules/gameState"
   $: console.log("$entities", $entities)
   $: console.log("$network", $network)
   $: console.log($playerCore)

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ActionType } from "../../modules/entities"
+  import { ActionType } from "../../modules/gameState"
   import { delayedTweened } from "../../modules/stores"
   import { getContext } from "svelte"
   import { tweened } from "svelte/motion"

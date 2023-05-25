@@ -7,7 +7,7 @@
     cores,
     matchSingleton,
     ActionType,
-  } from "../../modules/entities"
+  } from "../../modules/gameState"
   import { WorldFunctions } from "../../modules/actionSequencer"
   import { playerAddress } from "../../modules/player"
 

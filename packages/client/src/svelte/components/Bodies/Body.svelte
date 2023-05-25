@@ -1,7 +1,7 @@
 <script lang="ts">
   import BodySlider from "./BodySlider.svelte"
   import { lore } from "../../modules/lore"
-  import { entities, ActionType } from "../../modules/entities"
+  import { entities, ActionType } from "../../modules/gameState"
   import { playerAddress } from "../../modules/player"
   import { delayedWritable } from "../../modules/stores"
   import { onMount } from "svelte"
