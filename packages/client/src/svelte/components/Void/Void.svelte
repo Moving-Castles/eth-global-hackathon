@@ -145,12 +145,16 @@
     <!-- <img class="overlay-l" src="/neubauten-2.png" /> -->
   {/if}
 
-  <div>
-    <!-- PLAYER ONE -->
-    <Pane id={1} {active} {joined} />
+  {$matchSingleton.matchIndex}
 
-    <!-- PLAYER TWO -->
-    <Pane id={2} {active} {joined} />
+  <div>
+    {#key $matchSingleton.matchIndex}
+      <!-- PLAYER ONE -->
+      <Pane id={1} {active} {joined} />
+
+      <!-- PLAYER TWO -->
+      <Pane id={2} {active} {joined} />
+    {/key}
 
     <!-- INSTRUCTIONS, META -->
     <div class="pane-mid-top">

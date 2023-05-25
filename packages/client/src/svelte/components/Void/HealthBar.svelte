@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { entities, ActionType } from "../../modules/entities"
+  import { entities } from "../../modules/entities"
   import { tweened } from "svelte/motion"
-  import { onMount } from "svelte"
+  import { getContext, onMount } from "svelte"
 
-  export let id: number
+  const id = getContext('id')
 
   let hit = false
   let timeout

@@ -1,27 +1,52 @@
 <script lang="ts">
   import { ActionType } from "../../modules/entities"
-  import { delayedTweened } from "../../modules/stores"
+  import { playerCore } from "../../modules/player"
+  import { blockNumber } from "../../modules/network"
   import { getContext } from "svelte"
   import { tweened } from "svelte/motion"
-  export let id: number
   export let actionType: string
-  export let disabled: boolean
-  export let progress: number
 
-  const tweenedProgress = tweened(progress, 1000)
 
-  const vote = getContext("vote")
+  // Import state
+  const id = getContext('id')
+  const body = getContext('body')
+  const cores = getContext('cores')
+  const vote = getContext("vote")  
+  const increment = 1 / $cores.length
 
-  const voteThis = () => vote(ActionType[actionType])
+  $: roundIndex = $body?.roundIndex || 0
+  $: voted = roundIndex !== $playerCore.roundIndex
+  $: votesForThis = $cores.filter(([_, c]) => c.vote === ActionType[actionType])
+  $: readyBlock = $body.readyBlock
+  $: cooldownTime = Number(readyBlock) - Number($blockNumber)
 
-  $: tweenedProgress.set(progress)
+  const progress = tweened(0, { duration: 200 })
+
+  const voteThis = () => {
+    vote(ActionType[actionType])
+  }
+
+  $: $progress = votesForThis.length * increment
+
+  $: if (cooldownTime === -1) {
+    // console.log('reset now')
+  }
 </script>
 
-<div class:disabled class="button" on:click={voteThis}>
+
+<div class="button" class:disabled={voted || cooldownTime > -1} on:click={voteThis}>
+  <!-- {voted} {votedFirstRound} -->
+  <!-- Round index: {roundIndex}<br> -->
+  <!-- core votes: {coreVotesForThisAction}<br> -->
+  <!-- core votes: {coreVotes} -->
+  <!-- cores amount: {$cores.length} -->
+
+
   <img class="image {actionType}" src="/icons/{actionType}.png" alt={actionType} >
-  <div class="progress" style:height="{$tweenedProgress * 100}%" style:background-color={id === 1 ? '#0f0' : '#f00' } />
+  <div class="progress" style:height="{$progress * 100}%" style:background-color={id === 1 ? '#0f0' : '#f00' } />
   <div class="background" />
 </div>
+<!-- <small>{$progress}</small> -->
 
 <style>
   .button {
@@ -54,6 +79,11 @@
   .disabled {
     cursor: auto;
     pointer-events: none;
+    background: #7a7a7a;
+  }
+
+  .disabled .image {
+    opacity: 0.2;
   }
 
   .progress {

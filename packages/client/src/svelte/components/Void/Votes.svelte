@@ -1,47 +1,34 @@
 <script lang="ts">
   import { ActionType } from "../../modules/entities"
   import ActionTypeButton from "../../components/ActionTypeButton/ActionTypeButton.svelte"
-  import { getContext } from "svelte"
+  import { getContext, onMount } from "svelte"
+  import { playerCore } from "../../modules/player"
   
   export let id: number
   export let playerVote: number
   export let cooldownTime: number
   
-  const bodyOneCores = getContext("bodyOneCores")
-  const bodyTwoCores = getContext("bodyTwoCores")
+  const body = getContext('body')
+  const cores = getContext('cores')
 
   const actionTypeStrings = [...Array(Object.keys(ActionType).length / 2).keys()]
-  let voteProgress = actionTypeStrings.map(_ => 0)
 
-  $: bodyCores = id === 1 ? bodyOneCores : bodyTwoCores
-  $: disabled = !isNaN(playerVote) && playerVote !== 0 || cooldownTime > -1
-
-  $: {
-    voteProgress = actionTypeStrings.map((actionTypeIndex) => {
-      const count = $bodyCores.filter(([_, core]) => core.vote === actionTypeIndex)?.length || 0
-      const progress = count / $bodyCores.length
-
-      return progress
-    })
-  }
+  onMount(() => {
+    console.log('on mount')
+  })
 </script>
 
+{#key $body.roundIndex}
 <div
   class="votes"
-  class:disabled
   style:right={id === 1 ? 'auto' : '40px'}
   style:left={id === 2 ? 'auto' : '40px'}
 >
   {#each Object.keys(ActionType).filter(key => isNaN(key) && key !== 'NONE') as type, i (type)}
-    <ActionTypeButton
-      {id}
-      {disabled}
-      {playerVote}
-      actionType={type}
-      progress={voteProgress[i + 1]}
-    />
+    <ActionTypeButton actionType={type} />
   {/each}
 </div>
+{/key}
 
 <style>
   .votes {

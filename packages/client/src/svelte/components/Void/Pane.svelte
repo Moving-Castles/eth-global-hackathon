@@ -1,8 +1,11 @@
 <script lang="ts">
+  import type { Core, Body as BodyType } from "../../modules/entities"
+  import type { Derived } from "svelte/store"
   import Body from "../../components/Bodies/Body.svelte"
   import HealthBar from "../../components/Void/HealthBar.svelte"
   import Votes from "../../components/Void/Votes.svelte"
   import { setContext, getContext } from "svelte"
+  import { derived } from "svelte/store"
   import { entities, matchSingleton } from "../../modules/entities"
   import { playerAddress } from "../../modules/player"
   import { network, blockNumber } from "../../modules/network"
@@ -14,22 +17,17 @@
   export let joined: boolean
   export let active: boolean
 
-  const icons = {
-    0: id === 1 ? "game-icons:abstract-010" : "game-icons:abstract-033", // NONE
-    1: id === 1 ? "game-icons:alligator-clip" : "game-icons:alligator-clip", // ATTACK_ONE
-    2: id === 1 ? "game-icons:3d-hammer" : "game-icons:3d-hammer", // ATTACK_TWO
-    3: id === 1 ? "game-icons:magick-trick" : "game-icons:magick-trick", // ATTACK_THREE
-    4: id === 1 ? "game-icons:health-potion" : "game-icons:health-potion", // HEAL
-    5: id === 1 ? "game-icons:anarchy" : "game-icons:anarchy", // TAUNT
-  }
+  const bodyOneCores: Core[] = getContext("bodyOneCores")
+  const bodyTwoCores: Core[] = getContext("bodyTwoCores")
+  const body: Derived<BodyType[]> = derived(entities, ($ents) => $ents[id === 1 ? "0x01" : "0x02"])
+  const cores: Derived<CoreType[]> = derived([bodyOneCores, bodyTwoCores], ([$b1c, $b2c]) => (id === 1 ? $b1c : $b2c))
+  
+  setContext('body', body)
+  setContext('cores', cores)
+  setContext('id', id)
 
-  setContext("icons", icons)
-  const bodyOneCores = getContext("bodyOneCores")
-  const bodyTwoCores = getContext("bodyTwoCores")
-
-  $: bodyCores = id === 1 ? bodyOneCores : bodyTwoCores
   $: playerVote = $entities[$playerAddress]?.vote
-  $: readyBlock = $entities[id === 1 ? "0x01" : "0x02"].readyBlock
+  $: readyBlock = $body.readyBlock
   $: cooldownTime = Number(readyBlock) - Number($blockNumber)
 
   function joinBody(i: 1 | 2) {
@@ -47,40 +45,40 @@
   class:active
   class:lobby={!active}
   class:joined
-  class:opponent={!$bodyCores.map(([k, _]) => k).includes($playerAddress)}
-  class:mine={$bodyCores.map(([k, _]) => k).includes($playerAddress)}
+  class:opponent={!$cores.map(([k, _]) => k).includes($playerAddress)}
+  class:mine={$cores.map(([k, _]) => k).includes($playerAddress)}
 >
   <div class="body-container">
     <Body
       {joined}
       {active}
-      mine={$bodyCores.map(([k, _]) => k).includes($playerAddress)}
-      ready={$bodyCores.length === $matchSingleton?.coresPerBody}
+      mine={$cores.map(([k, _]) => k).includes($playerAddress)}
+      ready={$cores.length === $matchSingleton?.coresPerBody}
       id={id === 1 ? "BODY_ONE" : "BODY_TWO"}
     />
   </div>
   <div>
     {#if active}
-      <HealthBar {id} />
+      <HealthBar />
       <div
         class="name"
         style:text-align={id === 1 ? "left" : "right"}
         style:left={id === 1 ? '20px' : 'auto'}
         style:right={id === 2 ? '20px' : 'auto'}
       >
-        {lore[id === 1 ? "governance_models_P1" : "governance_models_P2"][0]}<br>{#if cooldownTime > 0}{cooldownTime}{/if}
+        {lore[id === 1 ? "governance_models_P1" : "governance_models_P2"][0]}<br>{#if cooldownTime > 0}{cooldownTime}{/if} roundindex: {$body.roundIndex}
       </div>
     {/if}
   </div>
 
   {#if !active}
     <div class="statistics">
-      {#if $bodyCores.length < $matchSingleton?.coresPerBody}
+      {#if $cores.length < $matchSingleton?.coresPerBody}
         <div class="statistics-content">
           <div class="statistics-content-main">
-            {$matchSingleton?.coresPerBody - $bodyCores.length} spots left
+            {$matchSingleton?.coresPerBody - $cores.length} spots left
           </div>
-          {#if !joined && $bodyCores.length < $matchSingleton?.coresPerBody}
+          {#if !joined && $cores.length < $matchSingleton?.coresPerBody}
             <button
               class="statistics-button"
               on:click|once={() => joinBody(id)}
@@ -93,7 +91,7 @@
         <div class="statistics-content statistics-content-main">READY</div>
       {/if}
     </div>
-  {:else if $bodyCores.map(([k, v]) => k).includes($playerAddress)}
+  {:else if $cores.map(([k, v]) => k).includes($playerAddress)}
     <Votes {id} {playerVote} {cooldownTime} />
   {/if}
 </div>
