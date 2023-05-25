@@ -7,9 +7,9 @@
     cores,
     matchSingleton,
     ActionType,
+    playerAddress
   } from "../../modules/gameState"
   import { WorldFunctions } from "../../modules/actionSequencer"
-  import { playerAddress } from "../../modules/player"
 
   import OffChain from "../../components/OffChain/OffChain.svelte"
   import Pane from "../../components/Void/Pane.svelte"
