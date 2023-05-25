@@ -30,7 +30,9 @@
       data: { x: e.clientX, y: e.clientY },
       // data: { x: e.offsetX, y: e.offsetY },
     })
-    socket.send(message)
+    if (socket && socket.send) {
+      socket.send(message)
+    }
   }
 
   function getUniqueValues<T>(arr: T[]): T[] {
@@ -58,7 +60,9 @@
       topic: "verify",
       data: { signature: signature },
     })
-    socket.send(message)
+    if (socket && socket.send) {
+      socket.send(message)
+    }
   }
 
   onMount(() => {
@@ -126,7 +130,7 @@
 </div> -->
 
 <div>
-  <!-- <div>
+  <div>
     <strong>
       {verifiedClients.length} wizard{verifiedClients.length > 1 ? "s" : ""} present
     </strong>
@@ -138,7 +142,7 @@
         {#if client === $playerAddress}(YOU){/if}
       </div>
     {/each}
-  </div> -->
+  </div>
 </div>
 
 <style>

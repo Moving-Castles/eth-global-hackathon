@@ -29,9 +29,11 @@
   let interval = setInterval(() => (blink = !blink), 800)
 
   function sendCheer() {
-    const message = JSON.stringify({ topic: "cheer" })
-    cheer()
-    socket.send(message)
+    if (socket && socket.send) {
+      const message = JSON.stringify({ topic: "cheer" })
+      cheer()
+      socket.send(message)
+    }
   }
 
   function processCheer(event) {
@@ -128,9 +130,7 @@
 
   onMount(() => {
     socket = new WebSocket("wss://mc.rttskr.com")
-
     socket.addEventListener("message", processCheer)
-
     playerVote = $entities[$playerAddress].vote
   })
 </script>

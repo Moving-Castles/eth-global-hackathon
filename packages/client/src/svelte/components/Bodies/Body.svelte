@@ -63,7 +63,7 @@
 
   onMount(() => {
     const entKey = id === 1 ? "0x01" : "0x02"
-    previousActionType = $entities[entKey].lastAction
+    previousActionType = $entities[entKey]?.lastAction
     actionType = "NONE"
 
     entities.subscribe(newEntities => {

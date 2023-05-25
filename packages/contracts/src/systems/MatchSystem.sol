@@ -40,8 +40,8 @@ contract MatchSystem is System {
   }
 
   function end() public {
-    require(Active.get(MatchKey) == true, "match ended");
-    require(Health.get(BodyOne) == 0 || Health.get(BodyTwo) == 0, "not over");
+    // require(Active.get(MatchKey) == true, "match ended");
+    // require(Health.get(BodyOne) == 0 || Health.get(BodyTwo) == 0, "not over");
     // ...
     Active.set(MatchKey, false);
     // ...
