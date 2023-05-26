@@ -11,20 +11,27 @@
   const cooldown = getContext("cooldown")
   const progress = tweened(0, { duration: 200 })
 
+  // Player voted when their own roundIndex is larger than the body's
   $: playerVoted = $playerCore.roundIndex > $body.roundIndex
+  // All votes are in when the cores roundIndeces are all same as body's
   $: allVotesAreIn = $cores
     .map(([_, core]) => core.roundIndex)
     .every(roundIndex => roundIndex === $body.roundIndex)
+  // Get the unfiltered count of votes
   $: count = $cores
     .map(([_, core]) => core.vote)
     .filter(v => v === ActionType[actionType]).length
+  // Get the count of votes filtered by those who already voted
   $: filteredCount = $cores
     .filter(([_, core]) => core.roundIndex !== $body.roundIndex)
     .map(([_, core]) => core.vote)
     .filter(v => v === ActionType[actionType]).length
 
+  // Only set the unfiltered count when we are in cooldown
+  // NB: Doing this when “allVotesAreIn” would give us the wrong result bc it would also show the previous round's votes in the next one
   $: progress.set(($cooldown < 0 ? filteredCount : count) / $cores.length)
 
+  // Reset to 0 when cooldown is over
   $: if ($cooldown < 0 && allVotesAreIn) progress.set(0)
 </script>
 
@@ -58,7 +65,7 @@
     aspect-ratio: 1;
     display: block;
     position: relative;
-    width: 80px;
+    width: 4rem;
     cursor: pointer;
     background-color: #fff;
   }

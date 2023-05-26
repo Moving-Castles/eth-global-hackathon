@@ -4,10 +4,14 @@
   import { ActionType } from "../../modules/action"
   import { entities, playerAddress, matchOver } from "../../modules/state"
   import { delayedWritable } from "../../modules/ui/stores"
-  import { onMount } from "svelte"
+  import { getContext, onMount } from "svelte"
 
   export let id: string
   export let mine: boolean
+
+  const body = getContext("body")
+  const cores = getContext("cores")
+  const cooldown = getContext("cooldown")
 
   let endActionType = "NONE"
 
@@ -51,12 +55,13 @@
     })
   }
 
+  //
   const delayedActionType = delayedWritable("NONE", 500)
 
   $: {
     const body = $entities[id === "BODY_ONE" ? "0x01" : "0x02"]
     const opponentBody = $entities[id === "BODY_ONE" ? "0x02" : "0x01"]
-    console.log(body, opponentBody, $entities)
+
     if (body?.health === 0 || opponentBody?.health === 0) {
       if (body.health === 0) {
         // You lose some
@@ -68,22 +73,29 @@
     }
   }
 
-  onMount(() => {
-    const entKey =
-      id === "BODY_ONE"
-        ? "0x0000000000000000000000000000000000000000000000000000000000000001"
-        : "0x0000000000000000000000000000000000000000000000000000000000000002"
+  $: allVotesAreIn = $cores
+    .map(([_, core]) => core.roundIndex)
+    .every(roundIndex => roundIndex === $body.roundIndex)
 
-    entities.subscribe(newEnts => {
-      const core = Object.entries(newEnts).find(
-        ([k, v]) => k === $playerAddress
-      )
-      const body = newEnts[id === "BODY_ONE" ? "0x01" : "0x02"]
-      if (core[1]?.carriedBy === entKey) {
-        $delayedActionType = ActionType[body.lastAction]
-      }
-    })
-  })
+  $: if (allVotesAreIn && $cooldown === 5) {
+    console.log("NOW")
+    $delayedActionType = ActionType[$body.lastAction]
+  }
+
+  // onMount(() => {
+  //   const entKey =
+  //     id === "BODY_ONE"
+  //       ? "0x0000000000000000000000000000000000000000000000000000000000000001"
+  //       : "0x0000000000000000000000000000000000000000000000000000000000000002"
+
+  //   // entities.subscribe(newEnts => {
+
+  //   //   $delayedActionType = ActionType[$body.lastAction]
+  //   //   if (core[1]?.carriedBy === entKey) {
+  //   //     console.log("setting action")
+  //   //   }
+  //   // })
+  // })
 </script>
 
 <BodySlider {id} sources={modelSources} />
