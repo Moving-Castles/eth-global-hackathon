@@ -5,10 +5,6 @@
 
   const id = getContext("id")
   const cooldown = getContext("cooldown")
-
-  const actionTypeStrings = [
-    ...Array(Object.keys(ActionType).length / 2).keys(),
-  ]
 </script>
 
 <div

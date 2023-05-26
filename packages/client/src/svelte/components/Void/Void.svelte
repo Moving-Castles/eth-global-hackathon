@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte"
   import {
     cores,
     playerAddress,
@@ -12,51 +11,25 @@
     matchOver,
   } from "../../modules/state"
   import { start, end } from "../../modules/action"
+  import { sendCheer, cheering } from "../../modules/signal"
 
   import OffChain from "../../components/OffChain/OffChain.svelte"
   import Pane from "../../components/Void/Pane.svelte"
 
-  let socket: any
   let cheerTimeout: NodeJS.Timeout
-  let cheering = false
   let blink = false
 
-  // => move to signal layer
-  // -----------
-
-  function sendCheer() {
-    const message = JSON.stringify({ topic: "cheer" })
-    cheer()
-    socket.send(message)
-  }
-
-  function processCheer(event) {
-    let msgObj = JSON.parse(event.data)
-    if (msgObj.topic === "cheer") {
-      cheer()
-    }
-  }
-
-  function cheer() {
+  $: if ($cheering) {
     clearTimeout(cheerTimeout)
-    cheering = true
     cheerTimeout = setTimeout(() => {
-      cheering = false
+      cheering.set(false)
     }, 1000)
   }
 
-  onMount(() => {
-    socket = new WebSocket("wss://mc.rttskr.com")
-    socket.addEventListener("message", processCheer)
-  })
-
-  $: joined = $bodyCores.map(([k, v]) => k)
+  $: joined = $bodyCores.map(([k]) => k)
 
   $: console.log(joined, $playerAddress)
-
   $: console.log($playerJoinedBody)
-
-  // -----------
 </script>
 
 <svelte:head>
@@ -67,7 +40,7 @@
   </title>
 </svelte:head>
 
-<div class="void" class:active={$matchActive} class:cheering>
+<div class="void" class:active={$matchActive} class:cheering={$cheering}>
   <div>
     <!-- BODY ONE -->
     <Pane id={1} />
@@ -109,7 +82,7 @@
       {#if $matchActive && $freeCores
           .map(([k, v]) => k)
           .includes($playerAddress)}
-        <button on:click={sendCheer}> CHEER </button>
+        <button on:click={sendCheer}>CHEER</button>
       {/if}
     </div>
 

@@ -18,6 +18,12 @@ export enum ActionType {
     TAUNT
 }
 
+export const actionTypeStrings = [
+    ...Array(Object.keys(ActionType).length / 2).keys(),
+]
+
+// --- API --------------------------------------------------------------
+
 export function start() {
     get(network).worldSend(WorldFunctions.Start, [])
 }

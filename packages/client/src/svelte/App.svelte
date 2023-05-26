@@ -1,13 +1,13 @@
 <script lang="ts">
   import { onMount } from "svelte"
   import { setup } from "../mud/setup"
-  // import { mount as mountDevTools } from "@latticexyz/dev-tools"
   import { createComponentSystem, createLoadingStateSystem } from "./systems"
   import { network, ready, blockNumber } from "./modules/network"
   import { entities, playerCore } from "./modules/state"
   // import { initStaticContent } from "./modules/staticContent"
   import { initActionSequencer } from "./modules/action/actionSequencer"
   import { initActionUpdater } from "./modules/action/actionUpdater"
+  import { initSignalNetwork } from "./modules/signal"
 
   import Loading from "./components/Loading/Loading.svelte"
   import Spawn from "./components/Spawn/Spawn.svelte"
@@ -40,8 +40,8 @@
     // For convenience, we store the block number in a svelte store
     mudLayer.network.blockNumber$.subscribe((x: number) => blockNumber.set(x))
 
-    // !!! Dev mode
-    // mountDevTools()
+    // !! HACK
+    setTimeout(initSignalNetwork, 3000)
   })
 </script>
 
