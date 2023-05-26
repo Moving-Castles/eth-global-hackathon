@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Core, Body as BodyType } from "../../modules/entities"
   import type { Derived } from "svelte/store"
+  import { derived } from "svelte/store"
   import Body from "../../components/Bodies/Body.svelte"
   import HealthBar from "../../components/Void/HealthBar.svelte"
   import Votes from "../../components/Void/Votes.svelte"

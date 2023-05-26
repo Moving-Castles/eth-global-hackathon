@@ -40,7 +40,6 @@
   <!-- core votes: {coreVotes} -->
   <!-- cores amount: {$cores.length} -->
 
-
   <img class="image {actionType}" src="/icons/{actionType}.png" alt={actionType} >
   <div class="progress" style:height="{$progress * 100}%" style:background-color={id === 1 ? '#0f0' : '#f00' } />
   <div class="background" />

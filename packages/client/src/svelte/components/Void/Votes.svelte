@@ -2,7 +2,6 @@
   import { ActionType } from "../../modules/gameState"
   import ActionTypeButton from "../../components/ActionTypeButton/ActionTypeButton.svelte"
   import { getContext, onMount } from "svelte"
-  import { playerCore } from "../../modules/player"
   
   export let id: number
   export let playerVote: number
