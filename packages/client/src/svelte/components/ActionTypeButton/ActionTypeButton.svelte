@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getContext } from "svelte"
+  import { playerCore } from "../../modules/state"
   import { vote, ActionType } from "../../modules/action"
   import { tweened } from "svelte/motion"
   export let actionType: string
@@ -10,18 +11,26 @@
   const cooldown = getContext("cooldown")
   const progress = tweened(0, { duration: 200 })
 
-  $: previousRoundIndex = $body.roundIndex - 1
+  $: playerVoted = $playerCore.roundIndex > $body.roundIndex
+  $: allVotesAreIn = $cores
+    .map(([_, core]) => core.roundIndex)
+    .every(roundIndex => roundIndex === $body.roundIndex)
   $: count = $cores
     .map(([_, core]) => core.vote)
     .filter(v => v === ActionType[actionType]).length
+  $: filteredCount = $cores
+    .filter(([_, core]) => core.roundIndex !== $body.roundIndex)
+    .map(([_, core]) => core.vote)
+    .filter(v => v === ActionType[actionType]).length
 
-  $: progress.set(count / $cores.length)
+  $: progress.set(($cooldown < 0 ? filteredCount : count) / $cores.length)
 
-  $: if ($cooldown < 0) progress.set(0)
+  $: if ($cooldown < 0 && allVotesAreIn) progress.set(0)
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
+  class:disabled={playerVoted || $cooldown > -1}
   class="button"
   on:click={() => {
     vote(ActionType[actionType])
