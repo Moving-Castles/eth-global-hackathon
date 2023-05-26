@@ -69,7 +69,7 @@ export const playerBody = derived([entities, playerCore], ([$entities, $playerCo
 // *** GAME STATE -------------------------------------------------------------
 
 // True if the local player has joined a body
-export const playerJoinedBody = derived([bodyCores, playerAddress], ([$bodyCores, $playerAddress]) => Object.keys($bodyCores).includes($playerAddress))
+export const playerJoinedBody = derived([bodyCores, playerAddress], ([$bodyCores, $playerAddress]) => $bodyCores.map(([key, value]) => key).includes($playerAddress))
 
 // True if both bodies have reached the required number of cores
 export const bodiesReady = derived([bodyOneCores, bodyTwoCores, matchSingleton], ([$bodyOneCores, $bodyTwoCores, $matchSingleton]) => {

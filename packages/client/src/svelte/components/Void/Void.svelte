@@ -8,6 +8,7 @@
     matchActive,
     playerJoinedBody,
     bodiesReady,
+    bodyCores,
     matchOver,
   } from "../../modules/state"
   import { start, end } from "../../modules/action"
@@ -48,6 +49,12 @@
     socket = new WebSocket("wss://mc.rttskr.com")
     socket.addEventListener("message", processCheer)
   })
+
+  $: joined = $bodyCores.map(([k, v]) => k)
+
+  $: console.log(joined, $playerAddress)
+
+  $: console.log($playerJoinedBody)
 
   // -----------
 </script>

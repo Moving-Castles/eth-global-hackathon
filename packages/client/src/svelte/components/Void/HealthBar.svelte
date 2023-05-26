@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { entities} from "../../modules/state"
+  import { entities } from "../../modules/state"
   import { tweened } from "svelte/motion"
   import { getContext, onMount } from "svelte"
 
-  const id = getContext('id')
+  const id = getContext("id")
+  const body = getContext("body")
 
   let hit = false
   let timeout: any
@@ -22,7 +23,7 @@
   }
 
   onMount(() => {
-    $health = $entities[id === 1 ? "0x01" : "0x02"]?.health
+    $health = $body.health
     entities.subscribe(newEntities => {
       const entity = newEntities[id === 1 ? "0x01" : "0x02"]
 
@@ -39,8 +40,8 @@
 
 <div class:hit class="health player-{id} bar">
   <div
-    style:right={id === 2 ? 0 : 'auto'}
-    style:left={id === 1 ? 0 : 'auto'}
+    style:right={id === 2 ? 0 : "auto"}
+    style:left={id === 1 ? 0 : "auto"}
     style:width="{$health.toFixed(0)}%"
     style:background-color={id === 1 ? "#0f0" : "#f00"}
     class="bar-inner"

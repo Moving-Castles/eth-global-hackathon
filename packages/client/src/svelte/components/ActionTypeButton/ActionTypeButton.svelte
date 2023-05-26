@@ -1,21 +1,27 @@
 <script lang="ts">
+  import { getContext } from "svelte"
   import { vote, ActionType } from "../../modules/action"
-  import { delayedTweened } from "../../modules/ui/stores"
   import { tweened } from "svelte/motion"
   export let actionType: string
 
+  const id = getContext("id")
+  const body = getContext("body")
+  const cores = getContext("cores")
+  const cooldown = getContext("cooldown")
   const progress = tweened(0, { duration: 200 })
 
-  $: $progress = votesForThis.length * increment
+  $: previousRoundIndex = $body.roundIndex - 1
+  $: count = $cores
+    .map(([_, core]) => core.vote)
+    .filter(v => v === ActionType[actionType]).length
 
-  $: if (cooldownTime === -1) {
-    // console.log('reset now')
-  }
+  $: progress.set(count / $cores.length)
+
+  $: if ($cooldown < 0) progress.set(0)
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
-  class:disabled
   class="button"
   on:click={() => {
     vote(ActionType[actionType])

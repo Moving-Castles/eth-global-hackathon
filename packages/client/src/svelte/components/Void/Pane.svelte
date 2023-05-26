@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { setContext } from "svelte"
+  // import { setContext } from "svelte"
   import {
     entities,
     matchSingleton,
@@ -9,6 +9,8 @@
     playerJoinedBody,
     matchActive,
   } from "../../modules/state"
+  import { setContext } from "svelte"
+  import { derived } from "svelte/store"
   import { blockNumber } from "../../modules/network"
   import { join } from "../../modules/action"
   import { lore } from "../../modules/content/lore"
@@ -27,14 +29,19 @@
     [bodyOneCores, bodyTwoCores],
     ([$b1c, $b2c]) => (id === 1 ? $b1c : $b2c)
   )
+  const cooldown: Derived<Number> = derived(
+    [blockNumber, body],
+    ([$r, $b]) => Number($b.readyBlock) - Number($r)
+  )
 
-  setContext("body", body)
-  setContext("cores", cores)
+  $: isPlayerBody = $cores.map(([key]) => key).includes($playerAddress)
+
+  // LOCAL CONTEXT
   setContext("id", id)
-
-  $: playerIsInCurrentBody = $body.map(([key]) => key).includes($playerAddress)
-  $: readyBlock = $entities[id === 1 ? "0x01" : "0x02"].readyBlock
-  $: cooldownTime = Number(readyBlock) - Number($blockNumber)
+  setContext("body", body)
+  setContext("isPlayerBody", isPlayerBody)
+  setContext("cooldown", cooldown)
+  setContext("cores", cores)
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -43,19 +50,19 @@
   class:active={$matchActive}
   class:lobby={!$matchActive}
   class:joined={$playerJoinedBody}
-  class:opponent={!playerIsInCurrentBody}
-  class:mine={playerIsInCurrentBody}
+  class:opponent={!isPlayerBody}
+  class:mine={isPlayerBody}
 >
   <div class="body-container">
     <Body
-      mine={playerIsInCurrentBody}
+      mine={isPlayerBody}
       ready={$cores.length === $matchSingleton?.coresPerBody}
       id={id === 1 ? "BODY_ONE" : "BODY_TWO"}
     />
   </div>
   <div>
     {#if $matchActive}
-      <HealthBar {id} />
+      <HealthBar />
       <div
         class="name"
         style:text-align={id === 1 ? "left" : "right"}
@@ -63,12 +70,15 @@
         style:right={id === 2 ? "20px" : "auto"}
       >
         {lore[id === 1 ? "governance_models_P1" : "governance_models_P2"][0]}<br
-        />{#if cooldownTime > 0}{cooldownTime}{/if}
+        />{#if $cooldown > 0}{$cooldown}{/if}
       </div>
+      {#if isPlayerBody}
+        <Votes />
+      {/if}
     {/if}
   </div>
 
-  {#if !playerJoinedBody}
+  {#if !$playerJoinedBody}
     <div class="statistics">
       {#if $cores.length < $matchSingleton?.coresPerBody}
         <div class="statistics-content">
@@ -85,8 +95,6 @@
         <div class="statistics-content statistics-content-main">READY</div>
       {/if}
     </div>
-  {:else if playerIsInCurrentBody}
-    <Votes {id} {cooldownTime} />
   {/if}
 </div>
 
