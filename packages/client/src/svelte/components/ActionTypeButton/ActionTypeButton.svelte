@@ -2,20 +2,25 @@
   import { vote, ActionType } from "../../modules/action"
   import { delayedTweened } from "../../modules/ui/stores"
   import { tweened } from "svelte/motion"
-  export let id: number
   export let actionType: string
-  export let disabled: boolean
-  export let progress: number
 
-  const tweenedProgress = tweened(progress, 1000)
+  const progress = tweened(0, { duration: 200 })
 
-  const voteThis = () => vote(ActionType[actionType])
+  $: $progress = votesForThis.length * increment
 
-  $: tweenedProgress.set(progress)
+  $: if (cooldownTime === -1) {
+    // console.log('reset now')
+  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class:disabled class="button" on:click={voteThis}>
+<div
+  class:disabled
+  class="button"
+  on:click={() => {
+    vote(ActionType[actionType])
+  }}
+>
   <img
     class="image {actionType}"
     src="/icons/{actionType}.png"
@@ -28,6 +33,8 @@
   />
   <div class="background" />
 </div>
+
+<!-- <small>{$progress}</small> -->
 
 <style>
   .button {
@@ -60,6 +67,11 @@
   .disabled {
     cursor: auto;
     pointer-events: none;
+    background: #7a7a7a;
+  }
+
+  .disabled .image {
+    opacity: 0.2;
   }
 
   .progress {

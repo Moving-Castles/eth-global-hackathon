@@ -19,14 +19,20 @@
 
   export let id: number
 
-  const icons = {
-    0: id === 1 ? "game-icons:abstract-010" : "game-icons:abstract-033", // NONE
-    1: id === 1 ? "game-icons:alligator-clip" : "game-icons:alligator-clip", // ATTACK_ONE
-    2: id === 1 ? "game-icons:3d-hammer" : "game-icons:3d-hammer", // ATTACK_TWO
-    3: id === 1 ? "game-icons:magick-trick" : "game-icons:magick-trick", // ATTACK_THREE
-    4: id === 1 ? "game-icons:health-potion" : "game-icons:health-potion", // HEAL
-    5: id === 1 ? "game-icons:anarchy" : "game-icons:anarchy", // TAUNT
-  }
+  const bodyOneCores: Core[] = getContext("bodyOneCores")
+  const bodyTwoCores: Core[] = getContext("bodyTwoCores")
+  const body: Derived<BodyType[]> = derived(
+    entities,
+    $ents => $ents[id === 1 ? "0x01" : "0x02"]
+  )
+  const cores: Derived<CoreType[]> = derived(
+    [bodyOneCores, bodyTwoCores],
+    ([$b1c, $b2c]) => (id === 1 ? $b1c : $b2c)
+  )
+
+  setContext("body", body)
+  setContext("cores", cores)
+  setContext("id", id)
 
   setContext("icons", icons)
 
@@ -58,7 +64,7 @@
     />
   </div>
   <div>
-    {#if playerJoinedBody}
+    {#if $matchActive}
       <HealthBar {id} />
       <div
         class="name"

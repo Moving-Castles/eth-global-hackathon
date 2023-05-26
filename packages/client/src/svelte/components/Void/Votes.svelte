@@ -26,21 +26,23 @@
   }
 </script>
 
-<div
-  class="votes"
-  class:disabled
-  style:right={id === 1 ? "auto" : "40px"}
-  style:left={id === 2 ? "auto" : "40px"}
->
-  {#each Object.keys(ActionType).filter(key => isNaN(key) && key !== "NONE") as type, i (type)}
-    <ActionTypeButton
-      {id}
-      {disabled}
-      actionType={type}
-      progress={voteProgress[i + 1]}
-    />
-  {/each}
-</div>
+{#key $body.roundIndex}
+  <div
+    class="votes"
+    class:disabled
+    style:right={id === 1 ? "auto" : "40px"}
+    style:left={id === 2 ? "auto" : "40px"}
+  >
+    {#each Object.keys(ActionType).filter(key => isNaN(key) && key !== "NONE") as type, i (type)}
+      <ActionTypeButton
+        {id}
+        {disabled}
+        actionType={type}
+        progress={voteProgress[i + 1]}
+      />
+    {/each}
+  </div>
+{/key}
 
 <style>
   .votes {
