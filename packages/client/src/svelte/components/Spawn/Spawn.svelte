@@ -1,23 +1,25 @@
 <script lang="ts">
-  import { network } from "../../modules/network"
-  import { WorldFunctions } from "../../modules/actionSequencer"
-  import { lore } from "../../modules/lore"
-
+  import { lore } from "../../modules/content/lore"
+  import { spawn } from "../../modules/action"
   let name = lore.names[Math.floor(Math.random() * lore.names.length)]
-
-  function spawn() {
-    $network.worldSend(WorldFunctions.Spawn, [name])
-  }
 </script>
 
 <div class="spawn">
-  We welcome <br>
+  We welcome <br />
   <div class="avatar-creation">
-    <form on:submit|preventDefault={spawn}>
-      <input id="name" type="text" bind:value={name}  />
-    </form>      
+    <form
+      on:submit|preventDefault={() => {
+        spawn(name)
+      }}
+    >
+      <input id="name" type="text" bind:value={name} />
+    </form>
   </div>
-  <button on:click={spawn}>SPAWN</button>
+  <button
+    on:click={() => {
+      spawn(name)
+    }}>SPAWN</button
+  >
 </div>
 
 <style lang="scss">

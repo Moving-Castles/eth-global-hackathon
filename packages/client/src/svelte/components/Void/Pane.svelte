@@ -1,87 +1,82 @@
 <script lang="ts">
-  import type { Core, Body as BodyType } from "../../modules/entities"
-  import type { Derived } from "svelte/store"
-  import { derived } from "svelte/store"
+  import { setContext } from "svelte"
+  import {
+    entities,
+    matchSingleton,
+    playerAddress,
+    bodyOneCores,
+    bodyTwoCores,
+    playerJoinedBody,
+    matchActive,
+  } from "../../modules/state"
+  import { blockNumber } from "../../modules/network"
+  import { join } from "../../modules/action"
+  import { lore } from "../../modules/content/lore"
+
   import Body from "../../components/Bodies/Body.svelte"
   import HealthBar from "../../components/Void/HealthBar.svelte"
   import Votes from "../../components/Void/Votes.svelte"
-  import { setContext, getContext } from "svelte"
-  import { entities, matchSingleton, playerAddress } from "../../modules/gameState"
-  import { network, blockNumber } from "../../modules/network"
-  import { WorldFunctions } from "../../modules/actionSequencer"
-  import { onMount } from "svelte"
-  import { lore } from "../../modules/lore"
 
   export let id: number
-  export let joined: boolean
-  export let active: boolean
 
-  const bodyOneCores: Core[] = getContext("bodyOneCores")
-  const bodyTwoCores: Core[] = getContext("bodyTwoCores")
-  const body: Derived<BodyType[]> = derived(entities, ($ents) => $ents[id === 1 ? "0x01" : "0x02"])
-  const cores: Derived<CoreType[]> = derived([bodyOneCores, bodyTwoCores], ([$b1c, $b2c]) => (id === 1 ? $b1c : $b2c))
-  
-  setContext('body', body)
-  setContext('cores', cores)
-  setContext('id', id)
+  const body: Derived<BodyType[]> = derived(
+    entities,
+    $ents => $ents[id === 1 ? "0x01" : "0x02"]
+  )
+  const cores: Derived<CoreType[]> = derived(
+    [bodyOneCores, bodyTwoCores],
+    ([$b1c, $b2c]) => (id === 1 ? $b1c : $b2c)
+  )
 
-  $: playerVote = $entities[$playerAddress]?.vote
-  $: readyBlock = $body.readyBlock
+  setContext("body", body)
+  setContext("cores", cores)
+  setContext("id", id)
+
+  $: playerIsInCurrentBody = $body.map(([key]) => key).includes($playerAddress)
+  $: readyBlock = $entities[id === 1 ? "0x01" : "0x02"].readyBlock
   $: cooldownTime = Number(readyBlock) - Number($blockNumber)
-
-  function joinBody(i: 1 | 2) {
-    if (!joined) $network.worldSend(WorldFunctions.Join, [i])
-  }
-
-  onMount(() => {
-    playerVote = $entities[$playerAddress]?.vote
-  })
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
   class="pane pane-{id}"
-  class:active
-  class:lobby={!active}
-  class:joined
-  class:opponent={!$cores.map(([k, _]) => k).includes($playerAddress)}
-  class:mine={$cores.map(([k, _]) => k).includes($playerAddress)}
+  class:active={$matchActive}
+  class:lobby={!$matchActive}
+  class:joined={$playerJoinedBody}
+  class:opponent={!playerIsInCurrentBody}
+  class:mine={playerIsInCurrentBody}
 >
   <div class="body-container">
     <Body
-      {joined}
-      {active}
-      mine={$cores.map(([k, _]) => k).includes($playerAddress)}
+      mine={playerIsInCurrentBody}
       ready={$cores.length === $matchSingleton?.coresPerBody}
       id={id === 1 ? "BODY_ONE" : "BODY_TWO"}
     />
   </div>
   <div>
-    {#if active}
-      <HealthBar />
+    {#if $matchActive}
+      <HealthBar {id} />
       <div
         class="name"
         style:text-align={id === 1 ? "left" : "right"}
-        style:left={id === 1 ? '20px' : 'auto'}
-        style:right={id === 2 ? '20px' : 'auto'}
+        style:left={id === 1 ? "20px" : "auto"}
+        style:right={id === 2 ? "20px" : "auto"}
       >
-        {lore[id === 1 ? "governance_models_P1" : "governance_models_P2"][0]}<br>{#if cooldownTime > 0}{cooldownTime}{/if} roundindex: {$body.roundIndex}
+        {lore[id === 1 ? "governance_models_P1" : "governance_models_P2"][0]}<br
+        />{#if cooldownTime > 0}{cooldownTime}{/if}
       </div>
     {/if}
   </div>
 
-  {#if !active}
+  {#if !playerJoinedBody}
     <div class="statistics">
       {#if $cores.length < $matchSingleton?.coresPerBody}
         <div class="statistics-content">
           <div class="statistics-content-main">
             {$matchSingleton?.coresPerBody - $cores.length} spots left
           </div>
-          {#if !joined && $cores.length < $matchSingleton?.coresPerBody}
-            <button
-              class="statistics-button"
-              on:click|once={() => joinBody(id)}
-            >
+          {#if !$playerJoinedBody && $cores.length < $matchSingleton?.coresPerBody}
+            <button class="statistics-button" on:click|once={() => join(id)}>
               JOIN
             </button>
           {/if}
@@ -90,8 +85,8 @@
         <div class="statistics-content statistics-content-main">READY</div>
       {/if}
     </div>
-  {:else if $cores.map(([k, v]) => k).includes($playerAddress)}
-    <Votes {id} {playerVote} {cooldownTime} />
+  {:else if playerIsInCurrentBody}
+    <Votes {id} {cooldownTime} />
   {/if}
 </div>
 

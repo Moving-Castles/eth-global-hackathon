@@ -1,29 +1,10 @@
 <script lang="ts">
-  import { ActionType } from "../../modules/gameState"
-  import { delayedTweened } from "../../modules/stores"
-  import { getContext } from "svelte"
+  import { vote, ActionType } from "../../modules/action"
+  import { delayedTweened } from "../../modules/ui/stores"
   import { tweened } from "svelte/motion"
   export let actionType: string
 
-
-  // Import state
-  const id = getContext('id')
-  const body = getContext('body')
-  const cores = getContext('cores')
-  const vote = getContext("vote")  
-  const increment = 1 / $cores.length
-
-  $: roundIndex = $body?.roundIndex || 0
-  $: voted = roundIndex !== $playerCore.roundIndex
-  $: votesForThis = $cores.filter(([_, c]) => c.vote === ActionType[actionType])
-  $: readyBlock = $body.readyBlock
-  $: cooldownTime = Number(readyBlock) - Number($blockNumber)
-
   const progress = tweened(0, { duration: 200 })
-
-  const voteThis = () => {
-    vote(ActionType[actionType])
-  }
 
   $: $progress = votesForThis.length * increment
 
@@ -32,18 +13,27 @@
   }
 </script>
 
-
-<div class="button" class:disabled={voted || cooldownTime > -1} on:click={voteThis}>
-  <!-- {voted} {votedFirstRound} -->
-  <!-- Round index: {roundIndex}<br> -->
-  <!-- core votes: {coreVotesForThisAction}<br> -->
-  <!-- core votes: {coreVotes} -->
-  <!-- cores amount: {$cores.length} -->
-
-  <img class="image {actionType}" src="/icons/{actionType}.png" alt={actionType} >
-  <div class="progress" style:height="{$progress * 100}%" style:background-color={id === 1 ? '#0f0' : '#f00' } />
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div
+  class:disabled
+  class="button"
+  on:click={() => {
+    vote(ActionType[actionType])
+  }}
+>
+  <img
+    class="image {actionType}"
+    src="/icons/{actionType}.png"
+    alt={actionType}
+  />
+  <div
+    class="progress"
+    style:height="{$progress * 100}%"
+    style:background-color={id === 1 ? "#0f0" : "#f00"}
+  />
   <div class="background" />
 </div>
+
 <!-- <small>{$progress}</small> -->
 
 <style>

@@ -1,20 +1,17 @@
 <script lang="ts">
   import BodySlider from "./BodySlider.svelte"
-  import { lore } from "../../modules/lore"
-  import { entities, ActionType, playerAddress } from "../../modules/gameState"
-  import { delayedWritable } from "../../modules/stores"
+  import { lore } from "../../modules/content/lore"
+  import { ActionType } from "../../modules/action"
+  import { entities, playerAddress, matchOver } from "../../modules/state"
+  import { delayedWritable } from "../../modules/ui/stores"
   import { onMount } from "svelte"
 
   export let id: string
-  export let joined: boolean
-  export let ready: boolean
-  export let active: boolean
   export let mine: boolean
 
-  let gameOver = false
   let endActionType = "NONE"
 
-  let modelSources = []
+  let modelSources: any[] = []
 
   $: states = {
     NONE: `/states/${id}/idle.gif`,
@@ -28,7 +25,7 @@
     DIE: `/states/${id}/die.gif`,
   }
 
-  $: stateSrc = states[gameOver ? endActionType : $delayedActionType]
+  $: stateSrc = states[$matchOver ? endActionType : $delayedActionType]
 
   $: modelsKey =
     id === "BODY_ONE" ? "governance_models_P1" : "governance_models_P2"
@@ -61,7 +58,6 @@
     const opponentBody = $entities[id === "BODY_ONE" ? "0x02" : "0x01"]
     console.log(body, opponentBody, $entities)
     if (body?.health === 0 || opponentBody?.health === 0) {
-      gameOver = true
       if (body.health === 0) {
         // You lose some
         endActionType = "DIE"
@@ -73,10 +69,15 @@
   }
 
   onMount(() => {
-    const entKey = id === "BODY_ONE" ? "0x0000000000000000000000000000000000000000000000000000000000000001" : "0x0000000000000000000000000000000000000000000000000000000000000002"
-    
-    entities.subscribe((newEnts) => {
-      const core = Object.entries(newEnts).find(([k, v]) => k === $playerAddress)
+    const entKey =
+      id === "BODY_ONE"
+        ? "0x0000000000000000000000000000000000000000000000000000000000000001"
+        : "0x0000000000000000000000000000000000000000000000000000000000000002"
+
+    entities.subscribe(newEnts => {
+      const core = Object.entries(newEnts).find(
+        ([k, v]) => k === $playerAddress
+      )
       const body = newEnts[id === "BODY_ONE" ? "0x01" : "0x02"]
       if (core[1]?.carriedBy === entKey) {
         $delayedActionType = ActionType[body.lastAction]
@@ -85,7 +86,7 @@
   })
 </script>
 
-<BodySlider {id} {active} sources={modelSources} {ready} />
+<BodySlider {id} sources={modelSources} />
 
 <style>
   .body {

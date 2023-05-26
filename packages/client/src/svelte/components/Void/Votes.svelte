@@ -1,32 +1,41 @@
 <script lang="ts">
-  import { ActionType } from "../../modules/gameState"
+  import { ActionType } from "../../modules/action"
+  import { bodyOneCores, bodyTwoCores, playerCore } from "../../modules/state"
   import ActionTypeButton from "../../components/ActionTypeButton/ActionTypeButton.svelte"
-  import { getContext, onMount } from "svelte"
-  
   export let id: number
-  export let playerVote: number
   export let cooldownTime: number
-  
-  const body = getContext('body')
-  const cores = getContext('cores')
 
-  const actionTypeStrings = [...Array(Object.keys(ActionType).length / 2).keys()]
+  const actionTypeStrings = [
+    ...Array(Object.keys(ActionType).length / 2).keys(),
+  ]
+  let voteProgress = actionTypeStrings.map(_ => 0)
 
-  onMount(() => {
-    console.log('on mount')
-  })
+  $: bodyCores = id === 1 ? bodyOneCores : bodyTwoCores
+  $: disabled =
+    (!isNaN($playerCore.vote) && $playerCore.vote !== 0) || cooldownTime > -1
+
+  $: {
+    voteProgress = actionTypeStrings.map(actionTypeIndex => {
+      const count =
+        $bodyCores.filter(([_, core]) => core.vote === actionTypeIndex)
+          ?.length || 0
+      const progress = count / $bodyCores.length
+      return progress
+    })
+  }
 </script>
 
 {#key $body.roundIndex}
-<div
-  class="votes"
-  style:right={id === 1 ? 'auto' : '40px'}
-  style:left={id === 2 ? 'auto' : '40px'}
->
-  {#each Object.keys(ActionType).filter(key => isNaN(key) && key !== 'NONE') as type, i (type)}
-    <ActionTypeButton actionType={type} />
-  {/each}
-</div>
+  <div
+    class="votes"
+    class:disabled
+    style:right={id === 1 ? "auto" : "40px"}
+    style:left={id === 2 ? "auto" : "40px"}
+  >
+    {#each Object.keys(ActionType).filter(key => isNaN(key) && key !== "NONE") as type, i (type)}
+      <ActionTypeButton {disabled} actionType={type} />
+    {/each}
+  </div>
 {/key}
 
 <style>
@@ -40,7 +49,7 @@
     gap: 20px;
     transition: opacity 0.1s ease;
   }
-  
+
   .votes-grid {
     position: absolute;
     height: 100%;

@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { entities, ActionType } from "../../modules/gameState"
+  import { entities} from "../../modules/state"
   import { tweened } from "svelte/motion"
   import { getContext, onMount } from "svelte"
 
   const id = getContext('id')
 
   let hit = false
-  let timeout
+  let timeout: any
   let previousHealth = 0
 
   const health = tweened(previousHealth, {

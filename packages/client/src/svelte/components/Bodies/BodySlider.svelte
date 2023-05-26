@@ -1,12 +1,10 @@
 <script lang="ts">
-  export let sources = []
-  export let ready
-  export let target
-  export let active
+  import { bodiesReady, matchActive } from "../../modules/state"
+  export let sources: string | any[] = []
   export let id: "BODY_ONE" | "BODY_TWO"
-  import { mask } from "../../transitions"
+  import { mask } from "../../utils/transitions"
 
-  let navigable = !ready
+  let navigable = !$bodiesReady
   let index = 0
 
   const next = () => {
@@ -17,7 +15,7 @@
     if (navigable) index = (index - 1 + sources.length) % sources.length
   }
 
-  $: if (ready) {
+  $: if ($bodiesReady) {
     index = 0
     navigable = false
   }
@@ -45,9 +43,11 @@
           class:first={i === 0}
           {src}
           style:transform={id === "BODY_ONE" ? "scale(1)" : "scale(-1, 1)"}
+          alt="img"
         />
-        {#if !active}
+        {#if !$matchActive}
           <p class="name">{name}</p>
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
           <svg
             class="prevButton"
             on:click={prev}
@@ -63,6 +63,7 @@
             />
           </svg>
 
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
           <svg
             class="nextButton"
             on:click={next}
