@@ -1,15 +1,13 @@
 import { get } from "svelte/store";
-import { entities } from "../modules/gameState";
+import { entities } from "../modules/state";
 import { network } from "../modules/network";
 import { toCamelCase } from "../utils/misc";
 
 export function createComponentSystem(componentKey: string) {
 
-  console.log(':::: Setting up', componentKey)
-
   get(network).components[componentKey].update$.subscribe(update => {
     console.log("==>", componentKey, update);
-    const [nextValue, prevValue] = update.value
+    const [nextValue] = update.value
 
     // Single-value components have a "value" property, structs do not
     const newValue =

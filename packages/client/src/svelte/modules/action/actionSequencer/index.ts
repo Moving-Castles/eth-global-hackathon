@@ -6,20 +6,12 @@
 
 import type { SystemTypes } from "contracts/types/SystemTypes";
 import { writable, get } from "svelte/store";
-import { network, blockNumber } from "../network";
-import { playerCore } from "../gameState";
-import { playSound } from "../../../howler";
-import { toastMessage } from "../../modules/toast"
+import { network, blockNumber } from "../../network";
+import { playerCore } from "../../state";
+import { playSound } from "../../../../howler";
+import { toastMessage } from "../../ui/toast"
 
 // --- TYPES -----------------------------------------------------------------
-
-export enum WorldFunctions {
-  Spawn = "moving_castles_SpawnSystem_spawn",
-  Join = "moving_castles_JoinSystem_join",
-  Start = "moving_castles_MatchSystem_start",
-  End = "moving_castles_MatchSystem_end",
-  Vote = "moving_castles_VoteSystem_vote",
-}
 
 export enum SequencerState {
   Running,

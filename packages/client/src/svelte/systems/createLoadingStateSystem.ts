@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
 import { network, ready, loadingMessage } from "../modules/network";
-import { lore } from "../modules/lore"
+import { lore } from "../modules/content/lore"
 
 export function createLoadingStateSystem() {
   get(network).components.LoadingState.update$.subscribe(update => {

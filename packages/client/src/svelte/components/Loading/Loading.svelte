@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte"
   import { loadingMessage, ready } from "../../modules/network"
-  import { playerCore } from "../../modules/gameState"
+  import { playerCore } from "../../modules/state"
 
   const dispatch = createEventDispatcher()
 

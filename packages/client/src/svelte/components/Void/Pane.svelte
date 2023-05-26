@@ -1,17 +1,23 @@
 <script lang="ts">
+  import { setContext } from "svelte"
+  import {
+    entities,
+    matchSingleton,
+    playerAddress,
+    bodyOneCores,
+    bodyTwoCores,
+    playerJoinedBody,
+    matchActive,
+  } from "../../modules/state"
+  import { blockNumber } from "../../modules/network"
+  import { join } from "../../modules/action"
+  import { lore } from "../../modules/content/lore"
+
   import Body from "../../components/Bodies/Body.svelte"
   import HealthBar from "../../components/Void/HealthBar.svelte"
   import Votes from "../../components/Void/Votes.svelte"
-  import { setContext, getContext } from "svelte"
-  import { entities, matchSingleton, playerAddress } from "../../modules/gameState"
-  import { network, blockNumber } from "../../modules/network"
-  import { WorldFunctions } from "../../modules/actionSequencer"
-  import { onMount } from "svelte"
-  import { lore } from "../../modules/lore"
 
   export let id: number
-  export let joined: boolean
-  export let active: boolean
 
   const icons = {
     0: id === 1 ? "game-icons:abstract-010" : "game-icons:abstract-033", // NONE
@@ -23,67 +29,58 @@
   }
 
   setContext("icons", icons)
-  const bodyOneCores = getContext("bodyOneCores")
-  const bodyTwoCores = getContext("bodyTwoCores")
 
-  $: bodyCores = id === 1 ? bodyOneCores : bodyTwoCores
-  $: playerVote = $entities[$playerAddress]?.vote
+  let coresInCurrentBody
+  $: coresInCurrentBody = id === 1 ? $bodyOneCores : $bodyTwoCores
+  let playerIsInCurrentBody = false
+  $: playerIsInCurrentBody = coresInCurrentBody
+    .map(([key]) => key)
+    .includes($playerAddress)
+
   $: readyBlock = $entities[id === 1 ? "0x01" : "0x02"].readyBlock
   $: cooldownTime = Number(readyBlock) - Number($blockNumber)
-
-  function joinBody(i: 1 | 2) {
-    if (!joined) $network.worldSend(WorldFunctions.Join, [i])
-  }
-
-  onMount(() => {
-    playerVote = $entities[$playerAddress]?.vote
-  })
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
   class="pane pane-{id}"
-  class:active
-  class:lobby={!active}
-  class:joined
-  class:opponent={!$bodyCores.map(([k, _]) => k).includes($playerAddress)}
-  class:mine={$bodyCores.map(([k, _]) => k).includes($playerAddress)}
+  class:active={$matchActive}
+  class:lobby={!$matchActive}
+  class:joined={$playerJoinedBody}
+  class:opponent={!playerIsInCurrentBody}
+  class:mine={playerIsInCurrentBody}
 >
   <div class="body-container">
     <Body
-      {joined}
-      {active}
-      mine={$bodyCores.map(([k, _]) => k).includes($playerAddress)}
-      ready={$bodyCores.length === $matchSingleton?.coresPerBody}
+      mine={playerIsInCurrentBody}
+      ready={coresInCurrentBody.length === $matchSingleton?.coresPerBody}
       id={id === 1 ? "BODY_ONE" : "BODY_TWO"}
     />
   </div>
   <div>
-    {#if active}
+    {#if playerJoinedBody}
       <HealthBar {id} />
       <div
         class="name"
         style:text-align={id === 1 ? "left" : "right"}
-        style:left={id === 1 ? '20px' : 'auto'}
-        style:right={id === 2 ? '20px' : 'auto'}
+        style:left={id === 1 ? "20px" : "auto"}
+        style:right={id === 2 ? "20px" : "auto"}
       >
-        {lore[id === 1 ? "governance_models_P1" : "governance_models_P2"][0]}<br>{#if cooldownTime > 0}{cooldownTime}{/if}
+        {lore[id === 1 ? "governance_models_P1" : "governance_models_P2"][0]}<br
+        />{#if cooldownTime > 0}{cooldownTime}{/if}
       </div>
     {/if}
   </div>
 
-  {#if !active}
+  {#if !playerJoinedBody}
     <div class="statistics">
-      {#if $bodyCores.length < $matchSingleton?.coresPerBody}
+      {#if coresInCurrentBody.length < $matchSingleton?.coresPerBody}
         <div class="statistics-content">
           <div class="statistics-content-main">
-            {$matchSingleton?.coresPerBody - $bodyCores.length} spots left
+            {$matchSingleton?.coresPerBody - coresInCurrentBody.length} spots left
           </div>
-          {#if !joined && $bodyCores.length < $matchSingleton?.coresPerBody}
-            <button
-              class="statistics-button"
-              on:click|once={() => joinBody(id)}
-            >
+          {#if !$playerJoinedBody && coresInCurrentBody.length < $matchSingleton?.coresPerBody}
+            <button class="statistics-button" on:click|once={() => join(id)}>
               JOIN
             </button>
           {/if}
@@ -92,8 +89,8 @@
         <div class="statistics-content statistics-content-main">READY</div>
       {/if}
     </div>
-  {:else if $bodyCores.map(([k, v]) => k).includes($playerAddress)}
-    <Votes {id} {playerVote} {cooldownTime} />
+  {:else if playerIsInCurrentBody}
+    <Votes {id} {cooldownTime} />
   {/if}
 </div>
 

@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { ActionType } from "../../modules/gameState"
-  import { delayedTweened } from "../../modules/stores"
-  import { getContext } from "svelte"
+  import { vote, ActionType } from "../../modules/action"
+  import { delayedTweened } from "../../modules/ui/stores"
   import { tweened } from "svelte/motion"
   export let id: number
   export let actionType: string
@@ -10,16 +9,23 @@
 
   const tweenedProgress = tweened(progress, 1000)
 
-  const vote = getContext("vote")
-
   const voteThis = () => vote(ActionType[actionType])
 
   $: tweenedProgress.set(progress)
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class:disabled class="button" on:click={voteThis}>
-  <img class="image {actionType}" src="/icons/{actionType}.png" alt={actionType} >
-  <div class="progress" style:height="{$tweenedProgress * 100}%" style:background-color={id === 1 ? '#0f0' : '#f00' } />
+  <img
+    class="image {actionType}"
+    src="/icons/{actionType}.png"
+    alt={actionType}
+  />
+  <div
+    class="progress"
+    style:height="{$tweenedProgress * 100}%"
+    style:background-color={id === 1 ? "#0f0" : "#f00"}
+  />
   <div class="background" />
 </div>
 

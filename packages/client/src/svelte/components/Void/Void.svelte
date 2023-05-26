@@ -1,32 +1,27 @@
 <script lang="ts">
-  import { network } from "../../modules/network"
-  import { derived } from "svelte/store"
-  import { setContext } from "svelte"
+  import { onMount } from "svelte"
   import {
-    entities,
     cores,
-    matchSingleton,
-    ActionType,
-    playerAddress
-  } from "../../modules/gameState"
-  import { WorldFunctions } from "../../modules/actionSequencer"
+    playerAddress,
+    playerCore,
+    freeCores,
+    matchActive,
+    playerJoinedBody,
+    bodiesReady,
+    matchOver,
+  } from "../../modules/state"
+  import { start, end } from "../../modules/action"
 
   import OffChain from "../../components/OffChain/OffChain.svelte"
   import Pane from "../../components/Void/Pane.svelte"
 
-  import { onMount } from "svelte"
-
-  const BODY_ONE =
-    "0x0000000000000000000000000000000000000000000000000000000000000001"
-  const BODY_TWO =
-    "0x0000000000000000000000000000000000000000000000000000000000000002"
-
-  let socket
-  let cheerTimeout: number
+  let socket: any
+  let cheerTimeout: NodeJS.Timeout
   let cheering = false
-  let gameOver = false
   let blink = false
-  let interval = setInterval(() => (blink = !blink), 800)
+
+  // => move to signal layer
+  // -----------
 
   function sendCheer() {
     const message = JSON.stringify({ topic: "cheer" })
@@ -36,62 +31,9 @@
 
   function processCheer(event) {
     let msgObj = JSON.parse(event.data)
-
     if (msgObj.topic === "cheer") {
       cheer()
     }
-  }
-
-  // b1c
-  const bodyOneCores = derived(cores, $c => {
-    const coreEntities = Object.entries($c)
-    if (coreEntities.length) {
-      return coreEntities.filter(([k, v]) => v.carriedBy === BODY_ONE)
-    } else {
-      return []
-    }
-  })
-
-  // b2c
-  const bodyTwoCores = derived(cores, $c => {
-    const coreEntities = Object.entries($c)
-    if (coreEntities.length) {
-      return coreEntities.filter(([k, v]) => v.carriedBy === BODY_TWO)
-    } else {
-      return []
-    }
-  })
-
-  // blc
-  const bodilessCores = derived(cores, $c => {
-    const coreEntities = Object.entries($c)
-    if (coreEntities.length) {
-      return coreEntities.filter(
-        ([k, v]) => v.carriedBy !== BODY_ONE && v.carriedBy !== BODY_TWO
-      )
-    } else {
-      return []
-    }
-  })
-
-  // All bodies
-  const bodyCores = derived([bodyOneCores, bodyTwoCores], ([$b1c, $b2c]) => [
-    ...$b1c,
-    ...$b2c,
-  ])
-
-  $: joined = $bodyCores.map(([k, v]) => k).includes($playerAddress)
-  $: ready =
-    $bodyOneCores.length === $matchSingleton?.coresPerBody &&
-    $bodyTwoCores.length === $matchSingleton?.coresPerBody
-  $: playerVote = $entities[$playerAddress]?.vote
-  $: active = $matchSingleton?.active
-  $: {
-    gameOver = $entities["0x01"]?.health == 0 || $entities["0x02"]?.health == 0
-  }
-
-  function reset() {
-    active = false
   }
 
   function cheer() {
@@ -102,89 +44,64 @@
     }, 1000)
   }
 
-  function startMatch() {
-    $network.worldSend(WorldFunctions.Start, [])
-  }
-
-  function endMatch() {
-    $network.worldSend(WorldFunctions.End, [])
-    reset()
-  }
-
-  function vote(action: ActionType) {
-    $network.worldSend(WorldFunctions.Vote, [action])
-  }
-
-  // Set context
-  setContext("bodyOneCores", bodyOneCores)
-  setContext("bodyTwoCores", bodyTwoCores)
-  setContext("bodyCores", bodyCores)
-  setContext("bodilessCores", bodilessCores)
-  setContext("vote", vote)
-
   onMount(() => {
     socket = new WebSocket("wss://mc.rttskr.com")
-
     socket.addEventListener("message", processCheer)
-
-    playerVote = $entities[$playerAddress].vote
   })
+
+  // -----------
 </script>
 
 <svelte:head>
   <title>
-    {active
-      ? `FIGHT | ${$cores[$playerAddress].name}`
-      : `LOBBY | ${$cores[$playerAddress].name}`}
+    {$matchActive
+      ? `FIGHT | ${$playerCore.name}`
+      : `LOBBY | ${$playerCore.name}`}
   </title>
 </svelte:head>
 
-<div class="void" class:active class:cheering>
-  {#if active}
-    <!-- <img class="overlay-r" src="/neubauten.png" /> -->
-    <!-- <img class="overlay-l" src="/neubauten-2.png" /> -->
-  {/if}
-
+<div class="void" class:active={$matchActive} class:cheering>
   <div>
-    <!-- PLAYER ONE -->
-    <Pane id={1} {active} {joined} />
+    <!-- BODY ONE -->
+    <Pane id={1} />
 
-    <!-- PLAYER TWO -->
-    <Pane id={2} {active} {joined} />
+    <!-- BODY TWO -->
+    <Pane id={2} />
 
     <!-- INSTRUCTIONS, META -->
     <div class="pane-mid-top">
-      {#if !joined && !ready && !active}
+      {#if !$playerJoinedBody && !$bodiesReady && !$matchActive}
         Pick a side, {$cores[$playerAddress].name}
       {/if}
-      {#if ready && !joined}
-        {#if $bodilessCores.length > 0}
+      {#if $bodiesReady && !$playerJoinedBody}
+        {#if $freeCores.length > 0}
           Spectators: <br />
-          {#each $bodilessCores as spectator}
+          {#each $freeCores as spectator}
             {spectator[1].name}
             {#if spectator[0] === $playerAddress}(YOU){/if} <br />
           {/each}
         {/if}
       {/if}
-      {#if active}
+      {#if $matchActive}
         {#if blink}VOTE TO WIN{/if}
       {/if}
     </div>
 
     <!-- ACTIONS, META -->
     <div class="pane-mid-bottom">
-      {#if !active}
-        {#if ready}
+      {#if !$matchActive}
+        {#if $bodiesReady}
           <button
-            disabled={$bodilessCores.includes($playerAddress)}
-            on:click={startMatch}>START</button
+            disabled={$freeCores.includes($playerAddress)}
+            on:click={start}>START</button
           >
         {/if}
-      {:else if gameOver && active}
-        <button on:click={endMatch}>END</button>
+      {:else if $matchOver && $matchActive}
+        <button on:click={end}>END</button>
       {/if}
-
-      {#if active && $bodilessCores.map(([k, v]) => k).includes($playerAddress)}
+      {#if $matchActive && $freeCores
+          .map(([k, v]) => k)
+          .includes($playerAddress)}
         <button on:click={sendCheer}> CHEER </button>
       {/if}
     </div>

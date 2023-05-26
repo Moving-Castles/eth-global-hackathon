@@ -1,13 +1,10 @@
 <script lang="ts">
   import { onMount } from "svelte"
   import { network } from "../../modules/network"
-  import { cores, playerAddress } from "../../modules/gameState"
-  import { getContext } from "svelte"
+  import { cores, bodyOneCores, bodyTwoCores } from "../../modules/state"
+  import { filterObjectByKey, getUniqueValues } from "../../utils/misc"
   import throttle from "just-throttle"
   import Icon from "@iconify/svelte"
-
-  const bodyOneCores = getContext("bodyOneCores")
-  const bodyTwoCores = getContext("bodyTwoCores")
 
   type Client = {
     id: string
@@ -23,32 +20,12 @@
     ...$bodyTwoCores.map(([k, _]) => [k, "#f00"]),
   ])
 
-  function sendPosition(e) {
+  function sendPosition(e: { clientX: number; clientY: number }) {
     const message = JSON.stringify({
       topic: "MousePosition",
-      data: { x: e.clientX, y: e.clientY }
-      // data: { x: e.offsetX, y: e.offsetY },
+      data: { x: e.clientX, y: e.clientY },
     })
     socket.send(message)
-  }
-
-  function getUniqueValues<T>(arr: T[]): T[] {
-    return [...new Set(arr)]
-  }
-
-  function filterObjectByKey(
-    obj: { [key: string]: any },
-    keysToKeep: string[]
-  ): { [key: string]: any } {
-    const filteredObj: { [key: string]: any } = {}
-
-    keysToKeep.forEach(key => {
-      if (obj.hasOwnProperty(key)) {
-        filteredObj[key] = obj[key]
-      }
-    })
-
-    return filteredObj
   }
 
   async function sendVerification() {
@@ -62,15 +39,14 @@
 
   onMount(() => {
     socket = new WebSocket("wss://mc.rttskr.com")
-    // socket = new WebSocket("ws://localhost:9001")
 
     // Connection opened
-    socket.addEventListener("open", event => {
+    socket.addEventListener("open", () => {
       sendVerification()
     })
 
     // Listen for messages
-    socket.addEventListener("message", event => {
+    socket.addEventListener("message", (event: { data: string }) => {
       // console.log("Message from server", event)
       let msgObj = JSON.parse(event.data)
       // console.log("msgObj", msgObj)
@@ -116,15 +92,6 @@
 {/each}
 
 <style>
-  .cursors {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 10000;
-    background: lightsalmon;
-    font-size: 18px;
-  }
-
   .cursor {
     width: 40px;
     height: 40px;

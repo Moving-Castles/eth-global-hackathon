@@ -6,18 +6,18 @@
     failedActions,
     sequencerState,
     SequencerState,
-  } from "../../modules/actionSequencer";
-  import { playSound } from "../../../howler";
-  import ActionItem from "./ActionItem.svelte";
+  } from "../../modules/action/actionSequencer"
+  import { playSound } from "../../../howler"
+  import ActionItem from "./ActionItem.svelte"
 
   function toggleSequencer() {
-    sequencerState.set($sequencerState);
+    sequencerState.set($sequencerState)
     if ($sequencerState === SequencerState.Running) {
-      playSound("eventBad", "ui");
-      sequencerState.set(SequencerState.Paused);
+      playSound("eventBad", "ui")
+      sequencerState.set(SequencerState.Paused)
     } else {
-      playSound("eventGood", "ui");
-      sequencerState.set(SequencerState.Running);
+      playSound("eventGood", "ui")
+      sequencerState.set(SequencerState.Running)
     }
   }
 </script>

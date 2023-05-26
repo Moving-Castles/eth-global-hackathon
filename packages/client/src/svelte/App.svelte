@@ -4,10 +4,10 @@
   // import { mount as mountDevTools } from "@latticexyz/dev-tools"
   import { createComponentSystem, createLoadingStateSystem } from "./systems"
   import { network, ready, blockNumber } from "./modules/network"
-  import { entities, playerCore } from "./modules/gameState"
+  import { entities, playerCore } from "./modules/state"
   // import { initStaticContent } from "./modules/staticContent"
-  import { initActionSequencer } from "./modules/actionSequencer"
-  import { initActionUpdater } from "./modules/actionUpdater"
+  import { initActionSequencer } from "./modules/action/actionSequencer"
+  import { initActionUpdater } from "./modules/action/actionUpdater"
 
   import Loading from "./components/Loading/Loading.svelte"
   import Spawn from "./components/Spawn/Spawn.svelte"
