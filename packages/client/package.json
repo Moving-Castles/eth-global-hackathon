@@ -52,6 +52,7 @@
     "howler": "^2.2.3",
     "just-throttle": "^4.2.0",
     "lodash": "^4.17.21",
+    "lottie-web": "^5.11.0",
     "uuid": "^9.0.0"
   }
 }

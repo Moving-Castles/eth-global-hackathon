@@ -24,26 +24,14 @@
 
 <style>
   .votes {
-    position: absolute;
     right: 40px;
-    height: 100%;
+    width: 50vw;
+    bottom: 40px;
     display: flex;
-    flex-flow: column nowrap;
+    flex-flow: row nowrap;
     justify-content: center;
     gap: 20px;
+    position: fixed;
     transition: opacity 0.1s ease;
-  }
-
-  .votes-grid {
-    position: absolute;
-    height: 100%;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    gap: 20px;
-  }
-
-  .disabled {
-    /* opacity: 0.2; */
   }
 </style>

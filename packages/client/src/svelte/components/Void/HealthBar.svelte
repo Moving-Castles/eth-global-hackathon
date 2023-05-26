@@ -43,37 +43,75 @@
     style:right={id === 2 ? 0 : "auto"}
     style:left={id === 1 ? 0 : "auto"}
     style:width="{$health.toFixed(0)}%"
-    style:background-color={id === 1 ? "#0f0" : "#f00"}
+    style:background-color={id === 1 ? "var(--player1)" : "var(--player2)"}
     class="bar-inner"
   />
+
+  <div class="bar-background" />
 </div>
 
 <style>
   .health {
-    pointer-events: none;
     position: fixed;
-    top: 0;
-    background: #737373;
-    margin: 2rem 1rem;
-    border: 2px solid black;
+    margin: 2rem 0;
   }
 
   .player-1 {
     left: 0;
+    clip-path: polygon(0% 0%, 100% 0%, calc(100% - 20px) 100%, 0% 100%);
   }
 
   .player-2 {
     right: 0;
+    clip-path: polygon(0 0, 100% 0%, 100% 100%, 20px 100%);
   }
 
   .bar {
-    width: 30vw;
-    height: 30px;
+    width: 40vw;
+    height: 60px;
+    background-position: top center;
+    /* filter: invert(1); */
+  }
+
+  .bar-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-image: url("/stage.png");
+    width: 100%;
+    height: 100%;
+    filter: saturate(0);
+    mix-blend-mode: lighten;
+    z-index: 1;
+    animation: move 30s infinite linear;
+  }
+
+  @keyframes move {
+    from {
+      background-position: 30% 0;
+    }
+    to {
+      background-position: 70% 0;
+    }
   }
 
   .bar-inner {
     position: absolute;
     height: 100%;
-    /* bottom: 0; */
+    background-image: url("/stage.png");
+    background-position: top center;
+    filter: saturate(2);
+    mix-blend-mode: overlay;
+    z-index: 2;
+  }
+
+  .player-1 .bar-inner {
+    /* clip-path: polygon(0% 0%, 100% 0%, calc(100% - 20px) 100%, 0% 100%); */
+  }
+
+  .player-2 .bar-inner {
+    /* clip-path: polygon(0 0, 100% 0%, 100% 100%, 20px 100%); */
   }
 </style>
