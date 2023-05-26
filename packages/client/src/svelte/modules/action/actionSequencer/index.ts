@@ -44,7 +44,6 @@ export function getEnergyCost(systemId: keyof SystemTypes) {
 }
 
 export function addToSequencer(systemId: keyof SystemTypes, params: any[] = []) {
-  console.time("action")
   queuedActions.update((queuedActions) => {
     console.log(self)
     const newAction = {
@@ -95,12 +94,9 @@ export function initActionSequencer() {
 
   // Listen to ECS system calls to determine when an action has been executed
   get(network).ecsEvent$.subscribe(event => {
-    console.log(event);
     if (event.type === "NetworkComponentUpdate") {
-      console.log("NetworkComponentUpdate", event)
       const action = get(activeActions).find((a) => a.tx === event.txHash);
       if (!action) return;
-      console.timeEnd("action")
       // Remove action from active list
       activeActions.update((activeActions) => activeActions.filter((a) => a.tx !== action?.tx));
       // Add action to completed list

@@ -1,81 +1,24 @@
 <script lang="ts">
-  import { onMount } from "svelte"
-  import { network } from "../../modules/network"
-  import { cores, bodyOneCores, bodyTwoCores } from "../../modules/state"
-  import { filterObjectByKey, getUniqueValues } from "../../utils/misc"
+  import {
+    cores,
+    bodyOneCores,
+    bodyTwoCores,
+    playerAddress,
+  } from "../../modules/state"
+  import { sendPosition, cursors, verifiedClients } from "../../modules/signal"
   import throttle from "just-throttle"
   import Icon from "@iconify/svelte"
-
-  type Client = {
-    id: string
-    address: string
-  }
-
-  let verifiedClients: string[] = []
-  let cursors: { [key: string]: { x: number; y: number } } = {}
-  let socket: any
 
   $: colors = Object.fromEntries([
     ...$bodyOneCores.map(([k, _]) => [k, "#0f0"]),
     ...$bodyTwoCores.map(([k, _]) => [k, "#f00"]),
   ])
-
-  function sendPosition(e: { clientX: number; clientY: number }) {
-    const message = JSON.stringify({
-      topic: "MousePosition",
-      data: { x: e.clientX, y: e.clientY },
-    })
-    socket.send(message)
-  }
-
-  async function sendVerification() {
-    const signature = await $network.network.signer.value_.signMessage("mc")
-    const message = JSON.stringify({
-      topic: "verify",
-      data: { signature: signature },
-    })
-    socket.send(message)
-  }
-
-  onMount(() => {
-    socket = new WebSocket("wss://mc.rttskr.com")
-
-    // Connection opened
-    socket.addEventListener("open", () => {
-      sendVerification()
-    })
-
-    // Listen for messages
-    socket.addEventListener("message", (event: { data: string }) => {
-      // console.log("Message from server", event)
-      let msgObj = JSON.parse(event.data)
-      // console.log("msgObj", msgObj)
-
-      // MOUSE POSITION
-      if (msgObj.topic === "MousePosition") {
-        if (verifiedClients.includes(msgObj.address)) {
-          cursors[msgObj.address] = msgObj
-        }
-      }
-
-      // VERIFIED CLIENTS
-      if (msgObj.topic === "verifiedClients") {
-        // TODO: do this on server
-        console.log("verifiedClients", msgObj.verifiedClients)
-        verifiedClients = getUniqueValues(
-          msgObj.verifiedClients
-            .filter((client: Client) => $cores[client.address])
-            .map((client: Client) => client.address)
-        )
-        cursors = filterObjectByKey(cursors, verifiedClients)
-      }
-    })
-  })
 </script>
 
 <svelte:window on:mousemove={throttle(sendPosition, 160)} />
 
-{#each Object.entries(cursors) as [key, value]}
+<!-- Cursors -->
+{#each Object.entries($cursors) as [key, value]}
   <div
     class="cursor"
     id={key}
@@ -90,6 +33,23 @@
     </div>
   </div>
 {/each}
+
+<!-- Presence box -->
+<div>
+  <div>
+    <strong>
+      {$verifiedClients.length} wizard{$verifiedClients.length > 1 ? "s" : ""} present
+    </strong>
+  </div>
+  <div>
+    {#each $verifiedClients as client}
+      <div>
+        {$cores[client].name}
+        {#if client === $playerAddress}(YOU){/if}
+      </div>
+    {/each}
+  </div>
+</div>
 
 <style>
   .cursor {
