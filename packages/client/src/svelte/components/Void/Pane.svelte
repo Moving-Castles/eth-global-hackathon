@@ -15,11 +15,15 @@
   import { join } from "../../modules/action"
   import { lore } from "../../modules/content/lore"
 
+  import HealthSkeleton from "./HealthSkeleton.svelte"
   import Body from "../../components/Bodies/Body.svelte"
   import HealthBar from "../../components/Void/HealthBar.svelte"
   import Votes from "../../components/Void/Votes.svelte"
 
   export let id: number
+
+  let hit = false
+  let timeout
 
   const body: Derived<BodyType[]> = derived(
     entities,
@@ -62,8 +66,9 @@
   </div>
   <div>
     {#if $matchActive}
-      <HealthBar />
-      <div
+      <!-- <HealthBar /> -->
+      <HealthSkeleton src="/SKELETON.json" />
+      <!-- <div
         class="name"
         style:text-align={id === 1 ? "left" : "right"}
         style:left={id === 1 ? "20px" : "auto"}
@@ -72,6 +77,18 @@
         {lore[id === 1 ? "governance_models_P1" : "governance_models_P2"][0]}<br
         />{#if $cooldown > 0}{$cooldown}{/if}
       </div>
+      <div
+        class="names"
+        style:text-align={id === 1 ? "left" : "right"}
+        style:left={id === 1 ? "20px" : "auto"}
+        style:right={id === 2 ? "20px" : "auto"}
+      >
+        {#each $cores as [_, core] (_)}
+          <div>
+            {core.name}
+          </div>
+        {/each}
+      </div> -->
       {#if isPlayerBody}
         <Votes />
       {/if}
@@ -131,6 +148,7 @@
     top: 0;
     padding: 3rem;
     transition: all 1s ease;
+    font-family: var(--font-family-special);
 
     &.active {
       background: transparent !important;
@@ -190,5 +208,10 @@
   .name {
     position: fixed;
     top: 80px;
+  }
+
+  .names {
+    position: fixed;
+    top: 20vw;
   }
 </style>

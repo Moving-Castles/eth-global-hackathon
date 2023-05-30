@@ -10,8 +10,8 @@
   import Icon from "@iconify/svelte"
 
   $: colors = Object.fromEntries([
-    ...$bodyOneCores.map(([k, _]) => [k, "#0f0"]),
-    ...$bodyTwoCores.map(([k, _]) => [k, "#f00"]),
+    ...$bodyOneCores.map(([k, _]) => [k, "var(--player1)"]),
+    ...$bodyTwoCores.map(([k, _]) => [k, "var(--player2)"]),
   ])
 </script>
 
@@ -28,9 +28,9 @@
     <div class="cursor-icon">
       <Icon icon="game-icons:fairy-wand" />
     </div>
-    <div class="cursor-text">
+    <!-- <div class="cursor-text">
       {$cores[key]?.name}
-    </div>
+    </div> -->
   </div>
 {/each}
 

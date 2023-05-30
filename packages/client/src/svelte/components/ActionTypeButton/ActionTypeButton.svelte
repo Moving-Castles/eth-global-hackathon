@@ -3,13 +3,14 @@
   import { playerCore } from "../../modules/state"
   import { vote, ActionType } from "../../modules/action"
   import { tweened } from "svelte/motion"
+  import { quintIn as easing } from "svelte/easing"
   export let actionType: string
 
   const id = getContext("id")
   const body = getContext("body")
   const cores = getContext("cores")
   const cooldown = getContext("cooldown")
-  const progress = tweened(0, { duration: 200 })
+  const progress = tweened(0, { duration: 200, easing })
 
   // Player voted when their own roundIndex is larger than the body's
   $: playerVoted = $playerCore.roundIndex > $body.roundIndex
@@ -51,7 +52,7 @@
   <div
     class="progress"
     style:height="{$progress * 100}%"
-    style:background-color={id === 1 ? "#0f0" : "#f00"}
+    style:background-color={id === 1 ? "var(--player1)" : "var(--player2)"}
   />
   <div class="background" />
 </div>
@@ -65,9 +66,9 @@
     aspect-ratio: 1;
     display: block;
     position: relative;
-    width: 4rem;
+    width: 5vw;
     cursor: pointer;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.5);
   }
 
   .image {

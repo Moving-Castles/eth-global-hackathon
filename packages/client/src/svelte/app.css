@@ -24,6 +24,8 @@
   --special: #ff7ce7;
   --gate: #7269f8;
   --empty: lightgrey;
+  --player1: #0000ff;
+  --player2: #ff0000;
 
   /* Sizing */
   --padding-button: 6px 12px;
@@ -158,20 +160,20 @@ button[disabled] {
 
 .pane-1 .vote-button {
   color: black;
-  background-color: #0f0;
+  background-color: var(--player1);
 }
 
 .pane-1 .vote {
-  color: #0f0;
+  color: var(--player1);
 }
 
 .pane-2 .vote-button {
   color: black;
-  background-color: #f00;
+  background-color: var(--player1);
 }
 
 .pane-2 .vote {
-  color: #f00;
+  color: var(--player2);
 }
 
 .vote.inactive {

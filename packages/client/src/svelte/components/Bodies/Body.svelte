@@ -55,7 +55,6 @@
     })
   }
 
-  //
   const delayedActionType = delayedWritable("NONE", 500)
 
   $: {
@@ -81,21 +80,6 @@
     console.log("NOW")
     $delayedActionType = ActionType[$body.lastAction]
   }
-
-  // onMount(() => {
-  //   const entKey =
-  //     id === "BODY_ONE"
-  //       ? "0x0000000000000000000000000000000000000000000000000000000000000001"
-  //       : "0x0000000000000000000000000000000000000000000000000000000000000002"
-
-  //   // entities.subscribe(newEnts => {
-
-  //   //   $delayedActionType = ActionType[$body.lastAction]
-  //   //   if (core[1]?.carriedBy === entKey) {
-  //   //     console.log("setting action")
-  //   //   }
-  //   // })
-  // })
 </script>
 
 <BodySlider {id} sources={modelSources} />
