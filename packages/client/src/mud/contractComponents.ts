@@ -230,5 +230,20 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    StartBlock: (() => {
+      const tableId = new TableId("moving_castles", "StartBlock");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.BigInt,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
   };
 }

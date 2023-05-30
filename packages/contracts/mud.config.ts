@@ -33,12 +33,7 @@ export default mudConfig({
         Taunt: "uint256",
         MatchIndex: "uint32",
         RoundIndex: "uint32",
-        // Taunt: {
-        //     schema: {
-        //         taunter: "bytes32",
-        //     },
-        //     ephemeral: true,
-        // },
+        StartBlock: "uint256"
     },
     modules: [
         {

@@ -12,6 +12,7 @@ contract MatchSystemTest is MudV2Test {
     fillBodies();
     world.moving_castles_MatchSystem_start();
     assertTrue(Active.get(world, MatchKey));
+    assertEq(StartBlock.get(world, MatchKey), block.number);
     assertEq(Health.get(world, BodyOne), 100);
     assertEq(Health.get(world, BodyTwo), 100);
   }
@@ -32,6 +33,26 @@ contract MatchSystemTest is MudV2Test {
     assertEq(CarriedBy.get(world, coreEntity), 0);
     assertEq(Points.get(world, coreEntity), 1);
     assertEq(RoundIndex.get(world, coreEntity), 0);
+  }
+
+  function testNuke() public {
+    setUp();
+    fillBodies();
+    world.moving_castles_MatchSystem_start();
+    assertEq(MatchIndex.get(world, MatchKey), 0);
+    // FF
+    vm.roll(block.number + 601);
+    // Match is expired, nuke it
+    vm.startPrank(xavier);
+    world.moving_castles_MatchSystem_nuke();
+    vm.stopPrank();
+    // Game should be over
+    assertTrue(!Active.get(world, MatchKey));
+    assertEq(MatchIndex.get(world, MatchKey), 1);
+    // Nuker should be rewarded
+    assertEq(Points.get(world, LibUtils.addressToEntityKey(xavier)), 5);
+    // ...
+    assertEq(Points.get(world, LibUtils.addressToEntityKey(alice)), 0);
   }
 
   function testRevertNotOver() public {

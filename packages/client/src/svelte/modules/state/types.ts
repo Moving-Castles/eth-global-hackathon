@@ -22,12 +22,14 @@ export type Entity = {
   lastAction?: ActionType;
   matchIndex?: number;
   roundIndex?: number;
+  startBlock?: number;
 };
 
 export type MatchSingleton = {
   active: boolean;
   coresPerBody: number;
   matchIndex: number;
+  startBlock: number;
 }
 
 export type Core = {
