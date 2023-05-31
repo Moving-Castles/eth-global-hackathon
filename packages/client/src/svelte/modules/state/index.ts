@@ -3,7 +3,7 @@
  * 
  */
 import { writable, derived } from "svelte/store";
-import { network } from "../network";
+import { network, blockNumber } from "../network";
 import type {
   MatchSingleton,
   Core,
@@ -54,32 +54,43 @@ export const bodyCores = derived([bodyOneCores, bodyTwoCores], ([$bodyOneCore, $
 
 // *** PLAYER -----------------------------------------------------------------
 
-export const playerAddress = derived(network, ($network) => $network.network?.connectedAddress.get() || "0x0");
+export const playerAddress = derived(network,
+  $network => $network.network?.connectedAddress.get() || "0x0");
 
-export const playerCore = derived(
-  [entities, playerAddress],
+export const playerCore = derived([entities, playerAddress],
   ([$entities, $playerAddress]) => $entities[$playerAddress] as Core
 );
 
-export const playerBody = derived([entities, playerCore], ([$entities, $playerCore]) => {
-  if (!$entities || !$playerCore) return {} as Body;
-  return $entities[$playerCore.carriedBy] as Body;
-});
+export const playerBody = derived([entities, playerCore],
+  ([$entities, $playerCore]) => {
+    if (!$entities || !$playerCore) return {} as Body;
+    return $entities[$playerCore.carriedBy] as Body;
+  });
 
 // *** GAME STATE -------------------------------------------------------------
 
 // True if the local player has joined a body
-export const playerJoinedBody = derived([bodyCores, playerAddress], ([$bodyCores, $playerAddress]) => $bodyCores.map(([key, value]) => key).includes($playerAddress))
+export const playerJoinedBody = derived([bodyCores, playerAddress],
+  ([$bodyCores, $playerAddress]) => $bodyCores.map(([key]) => key).includes($playerAddress))
 
 // True if both bodies have reached the required number of cores
-export const bodiesReady = derived([bodyOneCores, bodyTwoCores, matchSingleton], ([$bodyOneCores, $bodyTwoCores, $matchSingleton]) => {
-  return $bodyOneCores.length === $matchSingleton?.coresPerBody && $bodyTwoCores.length === $matchSingleton?.coresPerBody
-})
+export const bodiesReady = derived([bodyOneCores, bodyTwoCores, matchSingleton],
+  ([$bodyOneCores, $bodyTwoCores, $matchSingleton]) => {
+    return $bodyOneCores.length === $matchSingleton?.coresPerBody
+      && $bodyTwoCores.length === $matchSingleton?.coresPerBody
+  })
 
 // True if match is in progress
-export const matchActive = derived(matchSingleton, $matchSingleton => $matchSingleton?.active)
+export const matchActive = derived(matchSingleton,
+  $matchSingleton => $matchSingleton?.active)
 
 // True if either body has 0 health
-export const matchOver = derived(entities, $entities => {
-  return $entities["0x01"]?.health == 0 || $entities["0x02"]?.health == 0
-})
+export const matchOver = derived(entities,
+  $entities => {
+    return $entities["0x01"]?.health == 0 || $entities["0x02"]?.health == 0
+  })
+
+// True if 60 block (1 minute) have passed since match started
+// TODO: change to 600 (10 minutes) for production
+export const matchExpired = derived([matchSingleton, blockNumber],
+  ([$matchSingleton, $blockNumber]) => Number($matchSingleton?.startBlock) + 61 < Number($blockNumber))

@@ -4,7 +4,7 @@ import { System } from "@latticexyz/world/src/System.sol";
 import { Health, Active, CoresPerBody, Governance, MatchIndex, StartBlock, Points } from "../codegen/Tables.sol";
 import { GovernanceType, ActionType } from "../codegen/Types.sol";
 import { LibUtils, LibBody } from "../libraries/Libraries.sol";
-import { BodyOne, BodyTwo, MatchKey } from "../constants.sol";
+import { BodyOne, BodyTwo, MatchKey, MAX_MATCH_DURATION } from "../constants.sol";
 
 contract MatchSystem is System {
   function init() public {
@@ -52,7 +52,7 @@ contract MatchSystem is System {
 
   function nuke() public {
     require(Active.get(MatchKey) == true, "match ended");
-    require(StartBlock.get(MatchKey) + 600 < block.number, "not expired");
+    require(StartBlock.get(MatchKey) + MAX_MATCH_DURATION < block.number, "not expired");
     // ...
     Active.set(MatchKey, false);
     MatchIndex.set(MatchKey, MatchIndex.get(MatchKey) + 1);

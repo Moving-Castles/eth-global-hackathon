@@ -2,7 +2,7 @@
 pragma solidity >=0.8.17;
 import { console } from "forge-std/console.sol";
 import { MudV2Test } from "../MudV2Test.t.sol";
-import { BodyOne, BodyTwo, MatchKey } from "../../src/constants.sol";
+import { BodyOne, BodyTwo, MatchKey, MAX_MATCH_DURATION } from "../../src/constants.sol";
 import "../../src/codegen/Tables.sol";
 import "../../src/libraries/Libraries.sol";
 
@@ -41,7 +41,7 @@ contract MatchSystemTest is MudV2Test {
     world.moving_castles_MatchSystem_start();
     assertEq(MatchIndex.get(world, MatchKey), 0);
     // FF
-    vm.roll(block.number + 601);
+    vm.roll(block.number + MAX_MATCH_DURATION + 1);
     // Match is expired, nuke it
     vm.startPrank(xavier);
     world.moving_castles_MatchSystem_nuke();

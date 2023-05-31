@@ -6,6 +6,7 @@ export enum WorldFunctions {
     Join = "moving_castles_JoinSystem_join",
     Start = "moving_castles_MatchSystem_start",
     End = "moving_castles_MatchSystem_end",
+    Nuke = "moving_castles_MatchSystem_nuke",
     Vote = "moving_castles_VoteSystem_vote",
 }
 
@@ -30,6 +31,10 @@ export function start() {
 
 export function end() {
     get(network).worldSend(WorldFunctions.End, [])
+}
+
+export function nuke() {
+    get(network).worldSend(WorldFunctions.Nuke, [])
 }
 
 export function vote(action: ActionType) {

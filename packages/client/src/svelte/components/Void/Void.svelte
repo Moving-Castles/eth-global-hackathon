@@ -15,6 +15,7 @@
 
   import OffChain from "../../components/OffChain/OffChain.svelte"
   import Pane from "../../components/Void/Pane.svelte"
+  import NukeButton from "../NukeButton/NukeButton.svelte"
 
   let cheerTimeout: NodeJS.Timeout
   let blink = false
@@ -39,6 +40,10 @@
       : `LOBBY | ${$playerCore.name}`}
   </title>
 </svelte:head>
+
+{#if $matchActive}
+  <NukeButton />
+{/if}
 
 <div class="void" class:active={$matchActive} class:cheering={$cheering}>
   <div>
