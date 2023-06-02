@@ -139,7 +139,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: #0000ff;
+    background: #000000;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -150,6 +150,7 @@
       background-image: url("/stage.png");
       background-size: contain;
       background-position: center;
+      // background-repeat: no-repeat;
     }
   }
 

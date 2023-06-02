@@ -19,6 +19,7 @@
   import Body from "../../components/Bodies/Body.svelte"
   import Votes from "../../components/Void/Votes.svelte"
   import Ellipse from "../../components/Ellipse/Ellipse.svelte"
+  import PlayerItem from "../../components/Void/PlayerItem.svelte"
 
   export let id: 1 | 2
   let hit = false
@@ -69,6 +70,14 @@
   class:opponent={!isPlayerBody}
   class:mine={isPlayerBody}
 >
+  {#if !$matchActive}
+    <div class="player-list">
+      {#each $cores as [_, core] (core)}
+        <PlayerItem {core} />
+      {/each}
+    </div>
+  {/if}
+
   <div class="body-container">
     <Body
       mine={isPlayerBody}
