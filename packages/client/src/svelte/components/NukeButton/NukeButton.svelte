@@ -6,7 +6,7 @@
 
 <div class="nuke">
   {#if $matchExpired}
-    <button on:click={nuke}>NUKE</button>
+    <button class="button" on:click={nuke}>NUKE</button>
   {:else}
     {Number($matchSingleton.startBlock) + 61 - Number($blockNumber)}
   {/if}
@@ -18,8 +18,8 @@
     top: 10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 200px;
-    height: 100px;
+    /* width: 200px; */
+    /* height: 100px; */
     background: black;
     display: flex;
     justify-content: center;

@@ -21,10 +21,10 @@
 <style>
   .votes {
     right: 40px;
-    width: 50vw;
+    height: 50vh;
     bottom: 40px;
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow: column nowrap;
     justify-content: center;
     gap: 20px;
     position: fixed;
