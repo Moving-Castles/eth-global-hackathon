@@ -7,7 +7,6 @@
     matchActive,
     playerJoinedBody,
     bodiesReady,
-    bodyCores,
     matchOver,
   } from "../../modules/state"
   import { start, end } from "../../modules/action"
@@ -17,6 +16,7 @@
   import Pane from "../../components/Void/Pane.svelte"
   import NukeButton from "../NukeButton/NukeButton.svelte"
   import MinimalExecutor from "../Executor/MinimalExecutor.svelte"
+  import LeaderBoard from "../LeaderBoard/LeaderBoard.svelte"
 
   let cheerTimeout: NodeJS.Timeout
   let blink = false
@@ -27,8 +27,6 @@
       cheering.set(false)
     }, 1000)
   }
-
-  $: joined = $bodyCores.map(([k]) => k)
 </script>
 
 <svelte:head>
@@ -41,6 +39,10 @@
 
 {#if $matchActive}
   <NukeButton />
+{/if}
+
+{#if !$matchActive}
+  <LeaderBoard />
 {/if}
 
 <div class="executor">

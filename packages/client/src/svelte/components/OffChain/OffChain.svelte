@@ -1,11 +1,6 @@
 <script lang="ts">
-  import {
-    cores,
-    bodyOneCores,
-    bodyTwoCores,
-    playerAddress,
-  } from "../../modules/state"
-  import { sendPosition, cursors, verifiedClients } from "../../modules/signal"
+  import { cores, bodyOneCores, bodyTwoCores } from "../../modules/state"
+  import { sendPosition, cursors } from "../../modules/signal"
   import throttle from "just-throttle"
   import Icon from "@iconify/svelte"
 
@@ -13,7 +8,6 @@
     ...$bodyOneCores.map(([k, _]) => [k, "var(--player1)"]),
     ...$bodyTwoCores.map(([k, _]) => [k, "var(--player2)"]),
   ])
-
 </script>
 
 <svelte:window on:mousemove={throttle(sendPosition, 160)} />
@@ -34,23 +28,6 @@
     </div>
   </div>
 {/each}
-
-<!-- Presence box -->
-<div>
-  <div>
-    <strong>
-      {$verifiedClients.length} wizard{$verifiedClients.length > 1 ? "s" : ""} present
-    </strong>
-  </div>
-  <div>
-    {#each $verifiedClients as client}
-      <div>
-        {$cores[client].name}
-        {#if client === $playerAddress}(YOU){/if}
-      </div>
-    {/each}
-  </div>
-</div>
 
 <style>
   .cursor {
