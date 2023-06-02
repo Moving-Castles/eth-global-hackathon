@@ -13,6 +13,7 @@
     ...$bodyOneCores.map(([k, _]) => [k, "var(--player1)"]),
     ...$bodyTwoCores.map(([k, _]) => [k, "var(--player2)"]),
   ])
+
 </script>
 
 <svelte:window on:mousemove={throttle(sendPosition, 160)} />

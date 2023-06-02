@@ -29,9 +29,6 @@
   }
 
   $: joined = $bodyCores.map(([k]) => k)
-
-  $: console.log(joined, $playerAddress)
-  $: console.log($playerJoinedBody)
 </script>
 
 <svelte:head>

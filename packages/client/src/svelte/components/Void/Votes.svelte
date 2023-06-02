@@ -5,6 +5,7 @@
 
   const id = getContext("id")
   const cooldown = getContext("cooldown")
+
 </script>
 
 <div

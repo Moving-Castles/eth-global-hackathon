@@ -20,7 +20,6 @@
   import Votes from "../../components/Void/Votes.svelte"
 
   export let id: number
-
   let hit = false
   let timeout
 
