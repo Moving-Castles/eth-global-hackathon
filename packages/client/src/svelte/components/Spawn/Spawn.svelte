@@ -1,7 +1,7 @@
 <script lang="ts">
   import { toastMessage } from "../../modules/ui/toast"
   import { onMount } from "svelte"
-  import { playSound } from "../../../howler"
+  import { playSound } from "../../modules/sound"
   import { spawn } from "../../modules/action"
 
   import Ellipse from "../Ellipse/Ellipse.svelte"

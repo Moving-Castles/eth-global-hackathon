@@ -13,7 +13,7 @@
   import { derived } from "svelte/store"
   import { blockNumber } from "../../modules/network"
   import { join } from "../../modules/action"
-  import { playSound } from "../../../howler"
+  import { playSound } from "../../modules/sound"
 
   import HealthSkeleton from "./HealthSkeleton.svelte"
   import Body from "../../components/Bodies/Body.svelte"

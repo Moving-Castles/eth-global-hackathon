@@ -11,7 +11,7 @@
   } from "../../modules/state"
   import { start, end } from "../../modules/action"
   import { sendCheer, cheering } from "../../modules/signal"
-  import { playSound } from "../../../howler"
+  import { playSound } from "../../modules/sound"
 
   import Cursors from "../../components/Cursors/Cursors.svelte"
   import Pane from "../../components/Void/Pane.svelte"

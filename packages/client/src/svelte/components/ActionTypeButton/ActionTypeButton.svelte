@@ -4,7 +4,7 @@
   import { vote, ActionType } from "../../modules/action"
   import { tweened } from "svelte/motion"
   import { quintIn as easing } from "svelte/easing"
-  import { playSound } from "../../../howler"
+  import { playSound } from "../../modules/sound"
   export let actionType: string
 
   const id = getContext("id")

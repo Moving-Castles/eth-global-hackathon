@@ -3,7 +3,7 @@
   import { matchExpired, matchSingleton } from "../../modules/state"
   import { blockNumber } from "../../modules/network"
   import { nuke } from "../../modules/action"
-  import { playSound } from "../../../howler"
+  import { playSound } from "../../modules/sound"
 
   let nukeInProgress = false
 

@@ -8,7 +8,7 @@
     sequencerState,
     SequencerState,
   } from "../../modules/action/actionSequencer"
-  import { playSound } from "../../../howler"
+  import { playSound } from "../../modules/sound"
 
   function toggleSequencer() {
     sequencerState.set($sequencerState)

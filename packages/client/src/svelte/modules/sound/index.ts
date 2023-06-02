@@ -7,8 +7,6 @@ export const fx = writable(new Howl({ src: [""] }));
 
 export function playSound(category: string, id: string, loop = false, fade = false) {
 
-  let timeout;
-
   const sound = new Howl({
     src: [soundLibrary[category][id].src],
     volume: soundLibrary[category][id].volume,
