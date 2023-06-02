@@ -1,20 +1,31 @@
 <script lang="ts">
   import { cores, playerAddress } from "../../modules/state"
+  import type { Core } from "../../modules/state/types"
   import { verifiedClients } from "../../modules/signal"
-  //TODO: order cores by points
+
+  function sortObjectByPoints(obj: { [key: string]: Core }) {
+    const sortedArray = Object.entries(obj).sort(
+      (a, b) => b[1].points - a[1].points
+    )
+    const sortedObject: { [key: string]: Core } = {}
+    for (const [key, value] of sortedArray) {
+      sortedObject[key] = value
+    }
+    return sortedObject
+  }
 </script>
 
 <div class="leaderboard">
   <strong>
-    {$verifiedClients.length} core{$verifiedClients.length > 1 ? "s" : ""} present
+    {$verifiedClients.length} core{$verifiedClients.length > 1 ? "s" : ""} online
   </strong>
   <hr />
   <ol>
-    {#each Object.entries($cores) as [key, core]}
+    {#each Object.entries(sortObjectByPoints($cores)) as [key, core]}
       <li>
         {core.name}
         {#if key === $playerAddress}(YOU){/if}
-        {#if $verifiedClients.includes(key)}*{/if}
+        {#if $verifiedClients.includes(key)}(ONLINE){/if}
         : <strong>{core.points || 0}</strong>
       </li>
     {/each}
@@ -28,10 +39,11 @@
     position: fixed;
     z-index: 10000;
     pointer-events: none;
-    flex-wrap: wrap;
     color: white;
     background: darkblue;
     padding: 15px;
+    /* height: 100px;
+    overflow: scroll; */
   }
 
   ol,
