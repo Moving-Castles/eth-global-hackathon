@@ -19,6 +19,8 @@ const BODY_TWO = "0x000000000000000000000000000000000000000000000000000000000000
 
 // --- STORES -----------------------------------------------------------------
 
+// Mirror of the on chain state.
+// Only ever written to via the update systems in /svelte/systems
 export const entities = writable({} as Entities);
 
 export const cores = derived(entities, ($entities) => {
@@ -94,3 +96,25 @@ export const matchOver = derived(entities,
 // TODO: change to 600 (10 minutes) for production
 export const matchExpired = derived([matchSingleton, blockNumber],
   ([$matchSingleton, $blockNumber]) => Number($matchSingleton?.startBlock) + 61 < Number($blockNumber))
+
+
+// export const worldState = derived(matchSingleton, $matchSingleton => {
+//   })
+
+// *** PLAYER -----------------------------------------------------------------
+
+export const worldState = writable({} as WorldState);
+export enum WorldState {
+  WAITING_FOR_PLAYERS,
+  READY_TO_START,
+  MATCH_IN_PROGRESS,
+  MATCH_OVER,
+  MATCH_EXIPRED
+}
+
+export const playerState = writable({} as PlayerState);
+export enum PlayerState {
+  UNSPAWNED,
+  FREE,
+  IN_BODY
+}

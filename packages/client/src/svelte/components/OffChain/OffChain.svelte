@@ -28,9 +28,9 @@
     <div class="cursor-icon">
       <Icon icon="game-icons:fairy-wand" />
     </div>
-    <!-- <div class="cursor-text">
+    <div class="cursor-text">
       {$cores[key]?.name}
-    </div> -->
+    </div>
   </div>
 {/each}
 
