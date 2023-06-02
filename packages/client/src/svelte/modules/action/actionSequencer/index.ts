@@ -7,8 +7,6 @@
 import type { SystemTypes } from "contracts/types/SystemTypes";
 import { writable, get } from "svelte/store";
 import { network, blockNumber } from "../../network";
-import { playerCore } from "../../state";
-import { playSound } from "../../../../howler";
 import { toastMessage } from "../../ui/toast"
 
 // --- TYPES -----------------------------------------------------------------
@@ -21,9 +19,6 @@ export enum SequencerState {
 export type Action = {
   actionId: string;
   systemId: keyof SystemTypes;
-  requirements: {
-    energy: number;
-  };
   tx?: string;
   timestamp?: number;
   params?: any[];
@@ -39,20 +34,13 @@ export const failedActions = writable([] as Action[]);
 
 // --- API -----------------------------------------------------------------
 
-export function getEnergyCost(systemId: keyof SystemTypes) {
-  return 0;
-}
-
 export function addToSequencer(systemId: keyof SystemTypes, params: any[] = []) {
   queuedActions.update((queuedActions) => {
     console.log(self)
     const newAction = {
       actionId: self.crypto.randomUUID(),
       systemId: systemId,
-      params: params,
-      requirements: {
-        energy: getEnergyCost(systemId)
-      }
+      params: params
     };
     return [...queuedActions, newAction];
   });
@@ -110,19 +98,11 @@ async function execute() {
   try {
     // Remove action from queue list
     queuedActions.update((queuedActions) => queuedActions.slice(1));
-    // Check if player has enough energy
-    if (get(playerCore).energy < action.requirements.energy) {
-      // Add action to failed list
-      failedActions.update((failedActions) => [action, ...failedActions]);
-      toastMessage({ message: 'Not enough energy to execute action: ' + String(action.systemId) + '. Requires ' + action.requirements.energy + ' energy.', type: 'warning', timestamp: performance.now() })
-      playSound("error", "ui")
-      return;
-    }
+    // TODO: Check if player can do action
     // Add action to active list
     activeActions.update((activeActions) => [action, ...activeActions]);
     // @todo: fix types
     const tx = await get(network).worldSend(action.systemId, [...action.params]);
-    // const tx = await get(network).systems[action.systemId].executeTyped(...action.params);
     // Transaction sent. Add tx hash and timestamp to action.
     activeActions.update((activeActions) => {
       activeActions[0].tx = tx.hash;

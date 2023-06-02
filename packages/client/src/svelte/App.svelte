@@ -6,7 +6,7 @@
   import { entities, playerCore } from "./modules/state"
   // import { initStaticContent } from "./modules/staticContent"
   import { initActionSequencer } from "./modules/action/actionSequencer"
-  import { initActionUpdater } from "./modules/action/actionUpdater"
+  // import { initActionUpdater } from "./modules/action/actionUpdater"
   import { initSignalNetwork } from "./modules/signal"
 
   import Loading from "./components/Loading/Loading.svelte"
@@ -27,7 +27,7 @@
     const mudLayer = await setup()
     network.set(mudLayer)
     initActionSequencer()
-    initActionUpdater()
+    // initActionUpdater()
 
     // Create systems to listen to changes to defined component
     for (const componentKey of Object.keys(mudLayer.contractComponents)) {
