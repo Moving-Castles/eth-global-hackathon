@@ -39,7 +39,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
   class:disabled={playerVoted || $cooldown > -1}
-  class="button"
+  class="action"
   on:click={() => {
     vote(ActionType[actionType])
   }}
@@ -60,7 +60,7 @@
 <!-- <small>{$progress}</small> -->
 
 <style>
-  .button {
+  .action {
     overflow: hidden;
     border-radius: 100%;
     aspect-ratio: 1;

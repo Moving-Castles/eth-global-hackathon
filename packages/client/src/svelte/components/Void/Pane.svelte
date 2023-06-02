@@ -17,7 +17,6 @@
 
   import HealthSkeleton from "./HealthSkeleton.svelte"
   import Body from "../../components/Bodies/Body.svelte"
-  import HealthBar from "../../components/Void/HealthBar.svelte"
   import Votes from "../../components/Void/Votes.svelte"
 
   export let id: number
@@ -68,27 +67,11 @@
     {#if $matchActive}
       <!-- <HealthBar /> -->
       <HealthSkeleton src="/SKELETON.json" />
-      <!-- <div
-        class="name"
-        style:text-align={id === 1 ? "left" : "right"}
-        style:left={id === 1 ? "20px" : "auto"}
-        style:right={id === 2 ? "20px" : "auto"}
-      >
-        {lore[id === 1 ? "governance_models_P1" : "governance_models_P2"][0]}<br
-        />{#if $cooldown > 0}{$cooldown}{/if}
-      </div>
-      <div
-        class="names"
-        style:text-align={id === 1 ? "left" : "right"}
-        style:left={id === 1 ? "20px" : "auto"}
-        style:right={id === 2 ? "20px" : "auto"}
-      >
-        {#each $cores as [_, core] (_)}
-          <div>
-            {core.name}
-          </div>
+      <div class="names">
+        {#each $cores as [_, core] (core)}
+          {core.name}
         {/each}
-      </div> -->
+      </div>
       {#if isPlayerBody}
         <Votes />
       {/if}
@@ -103,7 +86,10 @@
             {$matchSingleton?.coresPerBody - $cores.length} spots left
           </div>
           {#if !$playerJoinedBody && $cores.length < $matchSingleton?.coresPerBody}
-            <button class="statistics-button" on:click|once={() => join(id)}>
+            <button
+              class="statistics-button pane-special"
+              on:click|once={() => join(id)}
+            >
               JOIN
             </button>
           {/if}
@@ -148,7 +134,7 @@
     top: 0;
     padding: 3rem;
     transition: all 1s ease;
-    font-family: var(--font-family-special);
+    font-family: var(--font-family);
 
     &.active {
       background: transparent !important;
@@ -211,7 +197,9 @@
   }
 
   .names {
-    position: fixed;
-    top: 20vw;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translate(-50%, 0);
   }
 </style>

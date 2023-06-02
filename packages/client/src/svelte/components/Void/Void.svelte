@@ -78,6 +78,7 @@
         {#if $bodiesReady}
           <button
             disabled={$freeCores.includes($playerAddress)}
+            class="pane-special"
             on:click={start}>START</button
           >
         {/if}

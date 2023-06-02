@@ -183,3 +183,18 @@ button[disabled] {
 .disabled {
   /* filter: grayscale(2); */
 }
+
+.button,
+.pane-special {
+  padding: 10px 20px;
+  background: white;
+  color: black;
+  font-family: var(--font-family-special);
+}
+
+.button:hover,
+.pane-special:hover {
+  background: black;
+  color: white;
+  cursor: pointer;
+}
