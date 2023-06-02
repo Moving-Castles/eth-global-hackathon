@@ -4,6 +4,7 @@
   import { vote, ActionType } from "../../modules/action"
   import { tweened } from "svelte/motion"
   import { quintIn as easing } from "svelte/easing"
+  import { playSound } from "../../../howler"
   export let actionType: string
 
   const id = getContext("id")
@@ -34,15 +35,19 @@
 
   // Reset to 0 when cooldown is over
   $: if ($cooldown < 0 && allVotesAreIn) progress.set(0)
+
+  function sendVote() {
+    // if (playerVoted) return
+    playSound("tekken", "select")
+    vote(ActionType[actionType])
+  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
   class:disabled={playerVoted || $cooldown > -1}
   class="action"
-  on:click={() => {
-    vote(ActionType[actionType])
-  }}
+  on:click={sendVote}
 >
   <img
     class="image {actionType}"

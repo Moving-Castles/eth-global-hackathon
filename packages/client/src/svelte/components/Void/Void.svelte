@@ -11,21 +11,45 @@
   } from "../../modules/state"
   import { start, end } from "../../modules/action"
   import { sendCheer, cheering } from "../../modules/signal"
+  import { playSound } from "../../../howler"
 
   import Cursors from "../../components/Cursors/Cursors.svelte"
   import Pane from "../../components/Void/Pane.svelte"
   import NukeButton from "../NukeButton/NukeButton.svelte"
-  import MinimalExecutor from "../Executor/MinimalExecutor.svelte"
   import LeaderBoard from "../LeaderBoard/LeaderBoard.svelte"
+  import Ellipse from "../Ellipse/Ellipse.svelte"
 
   let cheerTimeout: NodeJS.Timeout
   let blink = false
+
+  let startInProgess = false
+  let endInProgress = false
 
   $: if ($cheering) {
     clearTimeout(cheerTimeout)
     cheerTimeout = setTimeout(() => {
       cheering.set(false)
     }, 1000)
+  }
+
+  function sendStart() {
+    if (startInProgess) return
+    startInProgess = true
+    playSound("tekken", "click")
+    start()
+  }
+
+  function sendEnd() {
+    if (endInProgress) return
+    endInProgress = true
+    playSound("tekken", "click")
+    end()
+  }
+
+  // !!! HACK
+  $: if ($matchActive) {
+    startInProgess = false
+    endInProgress = false
   }
 </script>
 
@@ -44,10 +68,6 @@
 {#if !$matchActive}
   <LeaderBoard />
 {/if}
-
-<div class="executor">
-  <MinimalExecutor />
-</div>
 
 <div class="void" class:active={$matchActive} class:cheering={$cheering}>
   <div>
@@ -82,16 +102,26 @@
         {#if $bodiesReady}
           <button
             disabled={$freeCores.includes($playerAddress)}
-            class="pane-special"
-            on:click={start}>START</button
+            class="start-button pane-special"
+            on:click={sendStart}
           >
+            {#if startInProgess}
+              <Ellipse />
+            {:else}
+              START
+            {/if}
+          </button>
         {/if}
       {:else if $matchOver && $matchActive}
-        <button on:click={end}>END</button>
+        <button on:click={sendEnd}>
+          {#if endInProgress}
+            <Ellipse />
+          {:else}
+            END
+          {/if}
+        </button>
       {/if}
-      {#if $matchActive && $freeCores
-          .map(([k, v]) => k)
-          .includes($playerAddress)}
+      {#if $matchActive && $freeCores.map(([k]) => k).includes($playerAddress)}
         <button on:click={sendCheer}>CHEER</button>
       {/if}
     </div>
@@ -158,9 +188,9 @@
   .pane-mid-bottom {
     position: fixed;
     left: 50%;
-    bottom: 10%;
+    top: 50%;
     background: red;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(-50%);
     z-index: 9;
   }
 
@@ -172,10 +202,10 @@
     padding: 5px;
   }
 
-  .executor {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 10000;
+  .start-button {
+    font-size: 48px;
+    border: 0;
+    padding: 20px 40px;
+    width: 300px;
   }
 </style>

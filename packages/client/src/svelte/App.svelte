@@ -12,6 +12,7 @@
   import Loading from "./components/Loading/Loading.svelte"
   import Spawn from "./components/Spawn/Spawn.svelte"
   import Void from "./components/Void/Void.svelte"
+  import MinimalExecutor from "./components/Executor/MinimalExecutor.svelte"
 
   // - - - - -
   $: console.log("$entities", $entities)
@@ -45,6 +46,10 @@
   })
 </script>
 
+<div class="executor">
+  <MinimalExecutor />
+</div>
+
 <main>
   {#if !$ready || UIState === 0}
     <Loading on:next={() => (UIState = 1)} />
@@ -54,3 +59,13 @@
     <Void />
   {/if}
 </main>
+
+<style>
+  .executor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    opacity: 0.5;
+  }
+</style>

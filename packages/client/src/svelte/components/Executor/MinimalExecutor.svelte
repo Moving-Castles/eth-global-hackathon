@@ -9,6 +9,7 @@
     SequencerState,
   } from "../../modules/action/actionSequencer"
   import { playSound } from "../../../howler"
+  import { WorldFunctions } from "../../modules/action"
 
   // function toggleSequencer() {
   //   sequencerState.set($sequencerState)
@@ -74,7 +75,7 @@
   queuedActions.subscribe(actions => {
     if (actions.length > localQueuedActionsCount) animateQueuedAction()
     setTimeout(() => {
-      playSound("item", "ui")
+      // playSound("item", "ui")
       localQueuedActionsCount = actions.length
     }, CONNECTOR_TIME * 1000)
   })
@@ -82,7 +83,7 @@
   activeActions.subscribe(actions => {
     if (actions.length > localActiveActionsCount) animateActiveAction()
     setTimeout(() => {
-      playSound("item", "ui")
+      // playSound("item", "ui")
       localActiveActionsCount = actions.length
     }, CONNECTOR_TIME * 1000)
   })
@@ -90,7 +91,13 @@
   completedActions.subscribe(actions => {
     if (actions.length > localCompletedActionsCount) animateCompletedAction()
     setTimeout(() => {
-      playSound("error", "ui")
+      if (actions.length === 0) return
+      console.log(actions[0].systemId)
+      if (actions[0].systemId == WorldFunctions.Start) {
+        playSound("tekken", "gameStart")
+      } else {
+        playSound("tekken", "yes")
+      }
       localCompletedActionsCount = actions.length
       clearConnectors()
     }, CONNECTOR_TIME * 1000)
@@ -99,7 +106,7 @@
   failedActions.subscribe(actions => {
     if (actions.length > localFailedActionsCount) animateFailedAction()
     setTimeout(() => {
-      playSound("error", "ui")
+      // playSound("tekken", "no")
       localFailedActionsCount = actions.length
       clearConnectors()
     }, CONNECTOR_TIME * 1000)
@@ -132,6 +139,7 @@
     display: flex;
     flex-direction: row;
     background: black;
+    z-index: 10000;
 
     .node {
       height: 30px;

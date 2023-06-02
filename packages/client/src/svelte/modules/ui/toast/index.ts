@@ -10,7 +10,7 @@ export interface Toast {
 
 export const toasts: Writable<Toast[]> = writable([])
 
-export function toastMessage (toast: Toast) {
+export function toastMessage(toast: Toast) {
   console.log('toasting message...', toast)
   toasts.set([...get(toasts), toast])
 }

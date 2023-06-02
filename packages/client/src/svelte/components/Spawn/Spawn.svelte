@@ -1,49 +1,115 @@
 <script lang="ts">
-  import { lore } from "../../modules/content/lore"
+  import { toastMessage } from "../../modules/ui/toast"
+  import { onMount } from "svelte"
+  import { playSound } from "../../../howler"
   import { spawn } from "../../modules/action"
-  let name = lore.names[Math.floor(Math.random() * lore.names.length)]
+
+  import Ellipse from "../Ellipse/Ellipse.svelte"
+
+  let inputEl: HTMLInputElement
+  let name = ""
+  let spawnInProgress = false
+  function sendSpawn() {
+    if (spawnInProgress) return
+    if (name.length < 5) {
+      playSound("tekken", "error")
+      toastMessage({
+        message: "Name must be at least 5 characters long",
+        type: "warning",
+        timestamp: performance.now(),
+      })
+      return
+    }
+    spawnInProgress = true
+    playSound("tekken", "click")
+    spawn(name)
+  }
+
+  onMount(() => {
+    inputEl.focus()
+  })
 </script>
 
 <div class="spawn">
-  We welcome <br />
-  <div class="avatar-creation">
-    <form
-      on:submit|preventDefault={() => {
-        spawn(name)
+  <div class="spawn-dialog">
+    Who are you?<br />
+    <input
+      class="name-input"
+      type="text"
+      bind:this={inputEl}
+      bind:value={name}
+      on:keydown={e => {
+        if (e.key === "Enter") {
+          sendSpawn()
+        }
       }}
-    >
-      <input id="name" type="text" bind:value={name} />
-    </form>
+    />
+    <button on:click={sendSpawn}>
+      {#if spawnInProgress}
+        <Ellipse />
+      {:else}
+        SPAWN{/if}
+    </button>
   </div>
-  <button
-    on:click={() => {
-      spawn(name)
-    }}>SPAWN</button
-  >
 </div>
 
 <style lang="scss">
   .spawn {
+    font-family: var(--font-family-special);
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background: #ff0000;
+    font-size: 72px;
+    color: black;
     display: flex;
-    gap: 3rem;
     flex-flow: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    font-size: 3rem;
   }
 
-  input {
-    background: black;
-    color: red;
+  .spawn-dialog {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 900px;
+  }
+
+  .name-input {
+    font-family: var(--font-family-special) !important;
     font-family: monospace;
     text-align: center;
-    font-size: 3rem;
+    outline: none;
+    border: none;
+    font-size: 72px;
+    background: white;
+    color: black;
+    margin: 0;
+    width: 100%;
+
+    // &:focus {
+    //   background: rgb(255, 0, 0);
+    // }
+  }
+
+  button {
+    font-size: 32px;
+    font-family: var(--font-family-special);
+    margin-top: 40px;
+    width: 50%;
+    margin-left: 0;
+    margin-right: 0;
+    border: 1px solid black;
+    background: red;
+    cursor: pointer;
+
+    &:hover {
+      background: white;
+    }
   }
 </style>

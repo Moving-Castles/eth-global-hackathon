@@ -13,15 +13,17 @@
   import { derived } from "svelte/store"
   import { blockNumber } from "../../modules/network"
   import { join } from "../../modules/action"
-  import { lore } from "../../modules/content/lore"
+  import { playSound } from "../../../howler"
 
   import HealthSkeleton from "./HealthSkeleton.svelte"
   import Body from "../../components/Bodies/Body.svelte"
   import Votes from "../../components/Void/Votes.svelte"
+  import Ellipse from "../../components/Ellipse/Ellipse.svelte"
 
-  export let id: number
+  export let id: 1 | 2
   let hit = false
   let timeout
+  let joinInProgress = false
 
   const body: Derived<BodyType[]> = derived(
     entities,
@@ -44,6 +46,18 @@
   setContext("isPlayerBody", isPlayerBody)
   setContext("cooldown", cooldown)
   setContext("cores", cores)
+
+  function sendJoin() {
+    if (joinInProgress) return
+    joinInProgress = true
+    playSound("tekken", "click")
+    join(id)
+  }
+
+  // !!! HACK
+  $: if ($matchActive) {
+    joinInProgress = false
+  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -58,7 +72,7 @@
   <div class="body-container">
     <Body
       mine={isPlayerBody}
-      ready={$cores.length === $matchSingleton?.coresPerBody}
+      ready={$cores.length === ($matchSingleton?.coresPerBody || 1)}
       id={id === 1 ? "BODY_ONE" : "BODY_TWO"}
     />
   </div>
@@ -85,11 +99,12 @@
             {$matchSingleton?.coresPerBody - $cores.length} spots left
           </div>
           {#if !$playerJoinedBody && $cores.length < $matchSingleton?.coresPerBody}
-            <button
-              class="statistics-button pane-special"
-              on:click|once={() => join(id)}
-            >
-              JOIN
+            <button class="statistics-button pane-special" on:click={sendJoin}>
+              {#if joinInProgress}
+                <Ellipse />
+              {:else}
+                JOIN
+              {/if}
             </button>
           {/if}
         </div>
@@ -179,6 +194,7 @@
     flex-shrink: 1;
     font-size: 3rem;
   }
+
   .statistics-content-main,
   .statistics-button {
     padding: 12px 20px;
@@ -188,6 +204,7 @@
     color: white;
     background: black;
     font-size: 3rem;
+    width: 180px;
   }
 
   .name {

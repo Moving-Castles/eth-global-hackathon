@@ -5,7 +5,7 @@ import { writable } from "svelte/store";
 export const music = writable(new Howl({ src: [""] }));
 export const fx = writable(new Howl({ src: [""] }));
 
-export function playSound(id: string, category: string, loop = false, fade = false) {
+export function playSound(category: string, id: string, loop = false, fade = false) {
 
   let timeout;
 
