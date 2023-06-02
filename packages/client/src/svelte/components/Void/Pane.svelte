@@ -1,93 +1,93 @@
 <script lang="ts">
+  // import { setContext } from "svelte"
+  import {
+    entities,
+    matchSingleton,
+    playerAddress,
+    bodyOneCores,
+    bodyTwoCores,
+    playerJoinedBody,
+    matchActive,
+  } from "../../modules/state"
+  import { setContext } from "svelte"
+  import { derived } from "svelte/store"
+  import { blockNumber } from "../../modules/network"
+  import { join } from "../../modules/action"
+  import { lore } from "../../modules/content/lore"
+
+  import HealthSkeleton from "./HealthSkeleton.svelte"
   import Body from "../../components/Bodies/Body.svelte"
-  import HealthBar from "../../components/Void/HealthBar.svelte"
-  import ActionTypeButton from "../ActionTypeButton/ActionTypeButton.svelte"
   import Votes from "../../components/Void/Votes.svelte"
-  import { setContext, getContext } from "svelte"
-  import Icon from "@iconify/svelte"
-  import { entities, matchSingleton, ActionType } from "../../modules/entities"
-  import { playerAddress } from "../../modules/player"
-  import { network } from "../../modules/network"
-  import { WorldFunctions } from "../../modules/actionSequencer"
-  import { onMount } from "svelte"
 
   export let id: number
-  export let joined: boolean
-  export let active: boolean
+  let hit = false
+  let timeout
 
-  const icons = {
-    0: id === 1 ? "game-icons:abstract-010" : "game-icons:abstract-033", // NONE
-    1: id === 1 ? "game-icons:alligator-clip" : "game-icons:alligator-clip", // ATTACK_ONE
-    2: id === 1 ? "game-icons:3d-hammer" : "game-icons:3d-hammer", // ATTACK_TWO
-    3: id === 1 ? "game-icons:magick-trick" : "game-icons:magick-trick", // ATTACK_THREE
-    4: id === 1 ? "game-icons:health-potion" : "game-icons:health-potion", // HEAL
-    5: id === 1 ? "game-icons:anarchy" : "game-icons:anarchy", // TAUNT
-  }
+  const body: Derived<BodyType[]> = derived(
+    entities,
+    $ents => $ents[id === 1 ? "0x01" : "0x02"]
+  )
+  const cores: Derived<CoreType[]> = derived(
+    [bodyOneCores, bodyTwoCores],
+    ([$b1c, $b2c]) => (id === 1 ? $b1c : $b2c)
+  )
+  const cooldown: Derived<Number> = derived(
+    [blockNumber, body],
+    ([$r, $b]) => Number($b.readyBlock) - Number($r)
+  )
 
-  setContext("icons", icons)
-  const bodyOneCores = getContext("bodyOneCores")
-  const bodyTwoCores = getContext("bodyTwoCores")
+  $: isPlayerBody = $cores.map(([key]) => key).includes($playerAddress)
 
-  $: bodyCores = id === 1 ? bodyOneCores : bodyTwoCores
-  $: coreVote = $entities[$playerAddress]?.vote
-
-  function joinBody(i: 1 | 2) {
-    if (!joined) $network.worldSend(WorldFunctions.Join, [i])
-  }
-
-  onMount(() => {
-    coreVote = $entities[$playerAddress]?.vote
-  })
+  // LOCAL CONTEXT
+  setContext("id", id)
+  setContext("body", body)
+  setContext("isPlayerBody", isPlayerBody)
+  setContext("cooldown", cooldown)
+  setContext("cores", cores)
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
   class="pane pane-{id}"
-  class:active
-  class:lobby={!active}
-  class:joined
-  class:opponent={!$bodyCores.map(([k, _]) => k).includes($playerAddress)}
-  class:mine={$bodyCores.map(([k, _]) => k).includes($playerAddress)}
+  class:active={$matchActive}
+  class:lobby={!$matchActive}
+  class:joined={$playerJoinedBody}
+  class:opponent={!isPlayerBody}
+  class:mine={isPlayerBody}
 >
-<!-- {#if active} -->
-    <!-- <div class="vote-counter">
-      {#each $bodyCores as [k, entry]}
-        <div
-          class="vote"
-          class:inactive={entry.vote === ActionType.NONE || !entry.vote}
-        >
-          <Icon icon={icons[entry.vote] || icons[0]} />
-        </div>
-      {/each}
-    </div> -->
-  <!-- {/if} -->
-
   <div class="body-container">
     <Body
-      {joined}
-      {active}
-      mine={$bodyCores.map(([k, _]) => k).includes($playerAddress)}
-      ready={$bodyCores.length === $matchSingleton?.coresPerBody}
+      mine={isPlayerBody}
+      ready={$cores.length === $matchSingleton?.coresPerBody}
       id={id === 1 ? "BODY_ONE" : "BODY_TWO"}
     />
   </div>
   <div>
-    {#if active}
-      <HealthBar {id} />
+    {#if $matchActive}
+      <!-- <HealthBar /> -->
+      <HealthSkeleton src="/SKELETON.json" />
+      <div class="names">
+        {#each $cores as [_, core] (core)}
+          {core.name}
+        {/each}
+      </div>
+      {#if isPlayerBody}
+        <Votes />
+      {/if}
     {/if}
   </div>
 
-  {#if !active}
+  {#if !$playerJoinedBody}
     <div class="statistics">
-      {#if $bodyCores.length < $matchSingleton?.coresPerBody}
+      {#if $cores.length < $matchSingleton?.coresPerBody}
         <div class="statistics-content">
           <div class="statistics-content-main">
-            {$matchSingleton?.coresPerBody - $bodyCores.length} spots left
+            {$matchSingleton?.coresPerBody - $cores.length} spots left
           </div>
-          {#if !joined && $bodyCores.length < $matchSingleton?.coresPerBody}
+          {#if !$playerJoinedBody && $cores.length < $matchSingleton?.coresPerBody}
             <button
-              class="statistics-button"
-              on:click|once={() => joinBody(id)}
+              class="statistics-button pane-special"
+              on:click|once={() => join(id)}
             >
               JOIN
             </button>
@@ -97,8 +97,6 @@
         <div class="statistics-content statistics-content-main">READY</div>
       {/if}
     </div>
-  {:else if $bodyCores.map(([k, v]) => k).includes($playerAddress)}
-    <Votes {id} {coreVote} />
   {/if}
 </div>
 
@@ -135,6 +133,7 @@
     top: 0;
     padding: 3rem;
     transition: all 1s ease;
+    font-family: var(--font-family);
 
     &.active {
       background: transparent !important;
@@ -189,5 +188,17 @@
     color: white;
     background: black;
     font-size: 3rem;
+  }
+
+  .name {
+    position: fixed;
+    top: 80px;
+  }
+
+  .names {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translate(-50%, 0);
   }
 </style>

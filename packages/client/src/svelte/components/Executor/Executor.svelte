@@ -7,7 +7,7 @@
     failedActions,
     sequencerState,
     SequencerState,
-  } from "../../modules/actionSequencer"
+  } from "../../modules/action/actionSequencer"
   import { playSound } from "../../../howler"
 
   function toggleSequencer() {

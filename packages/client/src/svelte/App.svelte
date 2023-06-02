@@ -1,20 +1,19 @@
 <script lang="ts">
   import { onMount } from "svelte"
   import { setup } from "../mud/setup"
-  // import { mount as mountDevTools } from "@latticexyz/dev-tools"
   import { createComponentSystem, createLoadingStateSystem } from "./systems"
   import { network, ready, blockNumber } from "./modules/network"
-  import { playerCore } from "./modules/player"
+  import { entities, playerCore } from "./modules/state"
   // import { initStaticContent } from "./modules/staticContent"
-  import { initActionSequencer } from "./modules/actionSequencer"
-  import { initActionUpdater } from "./modules/actionUpdater"
+  import { initActionSequencer } from "./modules/action/actionSequencer"
+  // import { initActionUpdater } from "./modules/action/actionUpdater"
+  import { initSignalNetwork } from "./modules/signal"
 
   import Loading from "./components/Loading/Loading.svelte"
   import Spawn from "./components/Spawn/Spawn.svelte"
   import Void from "./components/Void/Void.svelte"
 
   // - - - - -
-  import { entities } from "./modules/entities"
   $: console.log("$entities", $entities)
   $: console.log("$network", $network)
   $: console.log($playerCore)
@@ -28,7 +27,7 @@
     const mudLayer = await setup()
     network.set(mudLayer)
     initActionSequencer()
-    initActionUpdater()
+    // initActionUpdater()
 
     // Create systems to listen to changes to defined component
     for (const componentKey of Object.keys(mudLayer.contractComponents)) {
@@ -41,8 +40,8 @@
     // For convenience, we store the block number in a svelte store
     mudLayer.network.blockNumber$.subscribe((x: number) => blockNumber.set(x))
 
-    // !!! Dev mode
-    // mountDevTools()
+    // !! HACK
+    setTimeout(initSignalNetwork, 3000)
   })
 </script>
 

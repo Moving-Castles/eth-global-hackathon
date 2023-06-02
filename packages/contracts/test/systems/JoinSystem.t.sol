@@ -20,6 +20,7 @@ contract JoinSystemTest is MudV2Test {
     vm.stopPrank();
 
     assertEq(CarriedBy.get(world, coreEntity), BodyOne);
+    assertEq(RoundIndex.get(world, coreEntity), 0);
   }
 
   function testRevertAlreadyCarried() public {

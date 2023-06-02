@@ -30,13 +30,10 @@ export default mudConfig({
         LastAction: "ActionType",
         Governance: "GovernanceType",
         CoresPerBody: "uint32",
-        Taunt: "uint256"
-        // Taunt: {
-        //     schema: {
-        //         taunter: "bytes32",
-        //     },
-        //     ephemeral: true,
-        // },
+        Taunt: "uint256",
+        MatchIndex: "uint32",
+        RoundIndex: "uint32",
+        StartBlock: "uint256"
     },
     modules: [
         {

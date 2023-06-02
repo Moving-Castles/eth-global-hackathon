@@ -9,4 +9,6 @@ interface IMatchSystem {
   function moving_castles_MatchSystem_start() external;
 
   function moving_castles_MatchSystem_end() external;
+
+  function moving_castles_MatchSystem_nuke() external;
 }

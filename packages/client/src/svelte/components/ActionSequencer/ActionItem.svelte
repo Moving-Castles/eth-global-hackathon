@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { shortenAddress } from "../../utils/misc";
-  import type { Action } from "../../modules/actionSequencer";
-  export let action: Action;
+  import { shortenAddress } from "../../utils/misc"
+  import type { Action } from "../../modules/action/actionSequencer"
+  export let action: Action
 </script>
 
 <div class="action">

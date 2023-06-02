@@ -1,110 +1,25 @@
 <script lang="ts">
-  import { onMount } from "svelte"
-  import { network } from "../../modules/network"
-  import { playerAddress } from "../../modules/player"
-  import { cores } from "../../modules/entities"
-  import { getContext } from "svelte"
+  import {
+    cores,
+    bodyOneCores,
+    bodyTwoCores,
+    playerAddress,
+  } from "../../modules/state"
+  import { sendPosition, cursors, verifiedClients } from "../../modules/signal"
   import throttle from "just-throttle"
   import Icon from "@iconify/svelte"
 
-  const bodyOneCores = getContext("bodyOneCores")
-  const bodyTwoCores = getContext("bodyTwoCores")
-
-  type Client = {
-    id: string
-    address: string
-  }
-
-  let verifiedClients: string[] = []
-  let cursors: { [key: string]: { x: number; y: number } } = {}
-  let socket: any
-
   $: colors = Object.fromEntries([
-    ...$bodyOneCores.map(([k, _]) => [k, "#0f0"]),
-    ...$bodyTwoCores.map(([k, _]) => [k, "#f00"]),
+    ...$bodyOneCores.map(([k, _]) => [k, "var(--player1)"]),
+    ...$bodyTwoCores.map(([k, _]) => [k, "var(--player2)"]),
   ])
 
-  function sendPosition(e) {
-    const message = JSON.stringify({
-      topic: "MousePosition",
-      data: { x: e.clientX, y: e.clientY },
-      // data: { x: e.offsetX, y: e.offsetY },
-    })
-    if (socket && socket.send) {
-      socket.send(message)
-    }
-  }
-
-  function getUniqueValues<T>(arr: T[]): T[] {
-    return [...new Set(arr)]
-  }
-
-  function filterObjectByKey(
-    obj: { [key: string]: any },
-    keysToKeep: string[]
-  ): { [key: string]: any } {
-    const filteredObj: { [key: string]: any } = {}
-
-    keysToKeep.forEach(key => {
-      if (obj.hasOwnProperty(key)) {
-        filteredObj[key] = obj[key]
-      }
-    })
-
-    return filteredObj
-  }
-
-  async function sendVerification() {
-    const signature = await $network.network.signer.value_.signMessage("mc")
-    const message = JSON.stringify({
-      topic: "verify",
-      data: { signature: signature },
-    })
-    if (socket && socket.send) {
-      socket.send(message)
-    }
-  }
-
-  onMount(() => {
-    socket = new WebSocket("wss://mc.rttskr.com")
-    // socket = new WebSocket("ws://localhost:9001")
-
-    // Connection opened
-    socket.addEventListener("open", event => {
-      sendVerification()
-    })
-
-    // Listen for messages
-    socket.addEventListener("message", event => {
-      console.log("Message from server", event)
-      let msgObj = JSON.parse(event.data)
-      console.log("msgObj", msgObj)
-
-      // MOUSE POSITION
-      if (msgObj.topic === "MousePosition") {
-        if (verifiedClients.includes(msgObj.address)) {
-          cursors[msgObj.address] = msgObj
-        }
-      }
-
-      // VERIFIED CLIENTS
-      if (msgObj.topic === "verifiedClients") {
-        // TODO: do this on server
-        console.log("verifiedClients", msgObj.verifiedClients)
-        verifiedClients = getUniqueValues(
-          msgObj.verifiedClients
-            .filter((client: Client) => $cores[client.address])
-            .map((client: Client) => client.address)
-        )
-        cursors = filterObjectByKey(cursors, verifiedClients)
-      }
-    })
-  })
 </script>
 
 <svelte:window on:mousemove={throttle(sendPosition, 160)} />
 
-{#each Object.entries(cursors) as [key, value]}
+<!-- Cursors -->
+{#each Object.entries($cursors) as [key, value]}
   <div
     class="cursor"
     id={key}
@@ -120,22 +35,15 @@
   </div>
 {/each}
 
-<!-- <div class="cursors">
-  {#each Object.entries(cursors) as [key, value]}
-    <div>
-      {$cores[key]?.name} : {value.x}, {value.y}
-    </div>
-  {/each}
-</div> -->
-
+<!-- Presence box -->
 <div>
   <div>
     <strong>
-      {verifiedClients.length} wizard{verifiedClients.length > 1 ? "s" : ""} present
+      {$verifiedClients.length} wizard{$verifiedClients.length > 1 ? "s" : ""} present
     </strong>
   </div>
   <div>
-    {#each verifiedClients as client}
+    {#each $verifiedClients as client}
       <div>
         {$cores[client].name}
         {#if client === $playerAddress}(YOU){/if}
@@ -145,15 +53,6 @@
 </div>
 
 <style>
-  .cursors {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 10000;
-    background: lightsalmon;
-    font-size: 18px;
-  }
-
   .cursor {
     width: 40px;
     height: 40px;

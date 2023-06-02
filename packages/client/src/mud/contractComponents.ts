@@ -200,5 +200,50 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    MatchIndex: (() => {
+      const tableId = new TableId("moving_castles", "MatchIndex");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Number,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    RoundIndex: (() => {
+      const tableId = new TableId("moving_castles", "RoundIndex");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Number,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    StartBlock: (() => {
+      const tableId = new TableId("moving_castles", "StartBlock");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.BigInt,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
   };
 }

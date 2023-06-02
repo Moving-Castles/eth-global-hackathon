@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17;
 import { System } from "@latticexyz/world/src/System.sol";
-import { CarriedBy, CoresPerBody } from "../codegen/Tables.sol";
+import { CarriedBy, CoresPerBody, RoundIndex } from "../codegen/Tables.sol";
 import { LibUtils, LibBody } from "../libraries/Libraries.sol";
 import { BodyOne, BodyTwo, MatchKey } from "../constants.sol";
 
@@ -15,5 +15,6 @@ contract JoinSystem is System {
     require(LibBody.getCores(bodyEntity).length < CoresPerBody.get(MatchKey), "body is full");
     // ...
     CarriedBy.set(coreEntity, bodyEntity);
+    RoundIndex.set(coreEntity, 0);
   }
 }

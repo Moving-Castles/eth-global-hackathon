@@ -1,4 +1,9 @@
 {
-  "editor.formatOnSave": false,
-  "eslint.validate": ["javascript", "svelte", "typescript"]
+  "editor.formatOnSave": true,
+  "solidity.monoRepoSupport": true,
+  "eslint.validate": [
+    "javascript",
+    "svelte",
+    "typescript"
+  ]
 }

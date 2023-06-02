@@ -1,19 +1,21 @@
 <script lang="ts">
   import BodySlider from "./BodySlider.svelte"
-  import { lore } from "../../modules/lore"
-  import { entities, ActionType } from "../../modules/entities"
-  import { onMount } from "svelte"
+  import { lore } from "../../modules/content/lore"
+  import { ActionType } from "../../modules/action"
+  import { entities, playerAddress, matchOver } from "../../modules/state"
+  import { delayedWritable } from "../../modules/ui/stores"
+  import { getContext, onMount } from "svelte"
 
   export let id: string
-  export let joined: boolean
-  export let ready: boolean
-  export let active: boolean
   export let mine: boolean
 
-  let previousActionType = "NONE"
-  let actionType = "NONE"
-  let modelSources = []
-  let timeout
+  const body = getContext("body")
+  const cores = getContext("cores")
+  const cooldown = getContext("cooldown")
+
+  let endActionType = "NONE"
+
+  let modelSources: any[] = []
 
   $: states = {
     NONE: `/states/${id}/idle.gif`,
@@ -27,7 +29,7 @@
     DIE: `/states/${id}/die.gif`,
   }
 
-  $: stateSrc = states[actionType]
+  $: stateSrc = states[$matchOver ? endActionType : $delayedActionType]
 
   $: modelsKey =
     id === "BODY_ONE" ? "governance_models_P1" : "governance_models_P2"
@@ -53,34 +55,34 @@
     })
   }
 
-  const setState = (state, delay) => {
-    clearTimeout(timeout)
-    actionType = state
-    timeout = setTimeout(() => {
-      actionType = "NONE"
-    }, delay)
+  const delayedActionType = delayedWritable("NONE", 500)
+
+  $: {
+    const body = $entities[id === "BODY_ONE" ? "0x01" : "0x02"]
+    const opponentBody = $entities[id === "BODY_ONE" ? "0x02" : "0x01"]
+
+    if (body?.health === 0 || opponentBody?.health === 0) {
+      if (body.health === 0) {
+        // You lose some
+        endActionType = "DIE"
+      } else if (opponentBody.health === 0) {
+        // You win some
+        endActionType = "WIN"
+      }
+    }
   }
 
-  onMount(() => {
-    const entKey = id === 1 ? "0x01" : "0x02"
-    previousActionType = $entities[entKey]?.lastAction
-    actionType = "NONE"
+  $: allVotesAreIn = $cores
+    .map(([_, core]) => core.roundIndex)
+    .every(roundIndex => roundIndex === $body.roundIndex)
 
-    entities.subscribe(newEntities => {
-      const ent = newEntities[entKey]
-
-      if (ent) {
-        if (ent.lastAction !== previousActionType) {
-          // Who does the action?
-          setState(ActionType[ent?.lastAction], 400)
-          previousActionType = ActionType[ent?.lastAction]
-        }
-      }
-    })
-  })
+  $: if (allVotesAreIn && $cooldown === 5) {
+    console.log("NOW")
+    $delayedActionType = ActionType[$body.lastAction]
+  }
 </script>
 
-<BodySlider {id} {active} sources={modelSources} {ready} />
+<BodySlider {id} sources={modelSources} />
 
 <style>
   .body {

@@ -16,3 +16,6 @@ import { LastAction, LastActionTableId } from "./tables/LastAction.sol";
 import { Governance, GovernanceTableId } from "./tables/Governance.sol";
 import { CoresPerBody, CoresPerBodyTableId } from "./tables/CoresPerBody.sol";
 import { Taunt, TauntTableId } from "./tables/Taunt.sol";
+import { MatchIndex, MatchIndexTableId } from "./tables/MatchIndex.sol";
+import { RoundIndex, RoundIndexTableId } from "./tables/RoundIndex.sol";
+import { StartBlock, StartBlockTableId } from "./tables/StartBlock.sol";

@@ -1,8 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte"
   import { loadingMessage, ready } from "../../modules/network"
-  import { playerCore } from "../../modules/player"
-  import { onMount } from "svelte"
+  import { playerCore } from "../../modules/state"
 
   const dispatch = createEventDispatcher()
 
@@ -12,6 +11,7 @@
 </script>
 
 <div>
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div class="loading" class:story={$ready} on:click={next}>
     <div class="loading-message" class:story-inner={$ready}>
       {$loadingMessage}

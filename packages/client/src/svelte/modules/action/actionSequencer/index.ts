@@ -6,20 +6,10 @@
 
 import type { SystemTypes } from "contracts/types/SystemTypes";
 import { writable, get } from "svelte/store";
-import { network, blockNumber } from "../network";
-import { playerCore } from "../player";
-import { playSound } from "../../../howler";
-import { toastMessage } from "../../modules/toast"
+import { network, blockNumber } from "../../network";
+import { toastMessage } from "../../ui/toast"
 
 // --- TYPES -----------------------------------------------------------------
-
-export enum WorldFunctions {
-  Spawn = "moving_castles_SpawnSystem_spawn",
-  Join = "moving_castles_JoinSystem_join",
-  Start = "moving_castles_MatchSystem_start",
-  End = "moving_castles_MatchSystem_end",
-  Vote = "moving_castles_VoteSystem_vote",
-}
 
 export enum SequencerState {
   Running,
@@ -29,9 +19,6 @@ export enum SequencerState {
 export type Action = {
   actionId: string;
   systemId: keyof SystemTypes;
-  requirements: {
-    energy: number;
-  };
   tx?: string;
   timestamp?: number;
   params?: any[];
@@ -47,21 +34,13 @@ export const failedActions = writable([] as Action[]);
 
 // --- API -----------------------------------------------------------------
 
-export function getEnergyCost(systemId: keyof SystemTypes) {
-  return 0;
-}
-
 export function addToSequencer(systemId: keyof SystemTypes, params: any[] = []) {
-  console.time("action")
   queuedActions.update((queuedActions) => {
     console.log(self)
     const newAction = {
       actionId: self.crypto.randomUUID(),
       systemId: systemId,
-      params: params,
-      requirements: {
-        energy: getEnergyCost(systemId)
-      }
+      params: params
     };
     return [...queuedActions, newAction];
   });
@@ -103,12 +82,9 @@ export function initActionSequencer() {
 
   // Listen to ECS system calls to determine when an action has been executed
   get(network).ecsEvent$.subscribe(event => {
-    console.log(event);
     if (event.type === "NetworkComponentUpdate") {
-      console.log("NetworkComponentUpdate", event)
       const action = get(activeActions).find((a) => a.tx === event.txHash);
       if (!action) return;
-      console.timeEnd("action")
       // Remove action from active list
       activeActions.update((activeActions) => activeActions.filter((a) => a.tx !== action?.tx));
       // Add action to completed list
@@ -122,19 +98,11 @@ async function execute() {
   try {
     // Remove action from queue list
     queuedActions.update((queuedActions) => queuedActions.slice(1));
-    // Check if player has enough energy
-    if (get(playerCore).energy < action.requirements.energy) {
-      // Add action to failed list
-      failedActions.update((failedActions) => [action, ...failedActions]);
-      toastMessage({ message: 'Not enough energy to execute action: ' + String(action.systemId) + '. Requires ' + action.requirements.energy + ' energy.', type: 'warning', timestamp: performance.now() })
-      playSound("error", "ui")
-      return;
-    }
+    // TODO: Check if player can do action
     // Add action to active list
     activeActions.update((activeActions) => [action, ...activeActions]);
     // @todo: fix types
     const tx = await get(network).worldSend(action.systemId, [...action.params]);
-    // const tx = await get(network).systems[action.systemId].executeTyped(...action.params);
     // Transaction sent. Add tx hash and timestamp to action.
     activeActions.update((activeActions) => {
       activeActions[0].tx = tx.hash;

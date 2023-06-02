@@ -1,19 +1,4 @@
-/*
- *  Central store for all entities in the game.
- * 
- */
-import { writable, derived } from "svelte/store";
-
-// --- TYPES -----------------------------------------------------------------
-
-export enum ActionType {
-  NONE,
-  ATTACK_ONE,
-  ATTACK_TWO,
-  ATTACK_THREE,
-  HEAL,
-  TAUNT
-}
+import { ActionType } from "../action";
 
 export enum GovernanceType {
   NONE,
@@ -35,11 +20,16 @@ export type Entity = {
   taunt?: number;
   coresPerBody?: number;
   lastAction?: ActionType;
+  matchIndex?: number;
+  roundIndex?: number;
+  startBlock?: number;
 };
 
 export type MatchSingleton = {
   active: boolean;
   coresPerBody: number;
+  matchIndex: number;
+  startBlock: number;
 }
 
 export type Core = {
@@ -49,6 +39,7 @@ export type Core = {
   points: number;
   carriedBy: string;
   vote: ActionType;
+  roundIndex: number;
 };
 
 export type Body = {
@@ -57,9 +48,8 @@ export type Body = {
   governance: GovernanceType;
   taunt: number;
   lastAction: ActionType;
+  roundIndex: number;
 }
-
-// - - - -
 
 export type Entities = {
   [index: string]: Entity;
@@ -68,15 +58,3 @@ export type Entities = {
 export type Cores = {
   [index: string]: Core;
 };
-
-// --- STORES -----------------------------------------------------------------
-
-export const entities = writable({} as Entities);
-
-export const cores = derived(entities, ($entities) => {
-  return Object.fromEntries(Object.entries($entities).filter(([key, entity]) => entity.core)) as Cores;
-});
-
-export const matchSingleton = derived(entities, ($entities) => {
-  return $entities["0x0666"] as MatchSingleton;
-});

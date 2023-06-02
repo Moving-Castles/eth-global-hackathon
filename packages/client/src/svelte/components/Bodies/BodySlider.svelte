@@ -1,12 +1,11 @@
 <script lang="ts">
-  export let sources = []
-  export let ready
-  export let target
-  export let active
+  import { bodiesReady, matchActive } from "../../modules/state"
+  import { getContext } from "svelte"
+  export let sources: string | any[] = []
   export let id: "BODY_ONE" | "BODY_TWO"
-  import { mask } from "../../transitions"
+  import { mask } from "../../utils/transitions"
 
-  let navigable = !ready
+  let navigable = !$bodiesReady
   let index = 0
 
   const next = () => {
@@ -14,22 +13,21 @@
   }
 
   const prev = () => {
-    console.log("prev")
-    // (tabIndex - 1 + items.length) % items.length
     if (navigable) index = (index - 1 + sources.length) % sources.length
   }
 
-  $: if (ready) {
+  const cooldown = getContext("cooldown")
+
+  $: if ($bodiesReady) {
     index = 0
     navigable = false
   }
 </script>
 
-<div class="slider">
+<div class="slider cooldown-{$cooldown}">
   <!-- <button class="nav-next" on:click={next}>next</button> -->
   {#each sources as { name, src }, i (src)}
     {#key index}
-      <!-- in:fly={{ x: id === "BODY_ONE" ? -400 : 400 }} -->
       <div
         in:mask={{
           feather: 10,
@@ -48,9 +46,11 @@
           class:first={i === 0}
           {src}
           style:transform={id === "BODY_ONE" ? "scale(1)" : "scale(-1, 1)"}
+          alt="img"
         />
-        {#if !active}
-          <p class="name">{name}</p>
+        {#if !$matchActive}
+          <p class="name pane-special">{name}</p>
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
           <svg
             class="prevButton"
             on:click={prev}
@@ -66,6 +66,7 @@
             />
           </svg>
 
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
           <svg
             class="nextButton"
             on:click={next}
@@ -75,10 +76,7 @@
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path
-              d="M63 37L-3.4258e-06 73.3731L-2.45961e-07 0.626931L63 37Z"
-              fill="#fff"
-            />
+            <path d="M63 37L-3.4258e-06 73.3731L-2.45961e-07 0.626931L63 37Z" />
           </svg>
         {/if}
       </div>
@@ -91,6 +89,23 @@
     position: relative;
     aspect-ratio: 1;
     width: 100%;
+    transition: filter 1s linear;
+  }
+
+  .cooldown-5 {
+    filter: contrast(5) grayscale(1);
+  }
+  .cooldown-4 {
+    filter: contrast(4) grayscale(0.8);
+  }
+  .cooldown-3 {
+    filter: contrast(3) grayscale(0.6);
+  }
+  .cooldown-2 {
+    filter: contrast(2) grayscale(0.4);
+  }
+  .cooldown-1 {
+    filter: contrast(1) grayscale(0.2);
   }
 
   .slide {
@@ -113,13 +128,14 @@
 
   .name {
     position: absolute;
-    padding: 10px 20px;
     text-align: center;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    padding: 10px 20px;
     background: white;
     color: black;
+    line-height: 20px;
   }
 
   .visible {
@@ -132,16 +148,27 @@
   }
 
   .prevButton {
+    fill: white;
     position: absolute;
     top: 50%;
     transform: scale(-0.5, 0.5);
     left: 0;
+    cursor: pointer;
+    z-index: 99;
   }
 
   .nextButton {
+    fill: white;
     position: absolute;
     top: 50%;
     transform: scale(0.5);
     right: 0;
+    cursor: pointer;
+    z-index: 99;
+  }
+
+  .nextButton:hover :global(path),
+  .prevButton:hover :global(path) {
+    fill: black !important;
   }
 </style>

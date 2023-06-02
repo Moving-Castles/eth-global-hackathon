@@ -18,4 +18,21 @@ export function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export const DEV = false;
+export function getUniqueValues<T>(arr: T[]): T[] {
+  return [...new Set(arr)]
+}
+
+export function filterObjectByKey(
+  obj: { [key: string]: any },
+  keysToKeep: string[]
+): { [key: string]: any } {
+  const filteredObj: { [key: string]: any } = {}
+
+  keysToKeep.forEach(key => {
+    if (obj.hasOwnProperty(key)) {
+      filteredObj[key] = obj[key]
+    }
+  })
+
+  return filteredObj
+}

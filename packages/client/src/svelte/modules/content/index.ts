@@ -1,6 +1,5 @@
 import { writable, derived } from "svelte/store";
-import { loadData, urlFor } from "../sanity"
-
+import { loadData, urlFor } from "./sanity"
 
 type Asset = {
     label: string;
