@@ -16,6 +16,7 @@
   import OffChain from "../../components/OffChain/OffChain.svelte"
   import Pane from "../../components/Void/Pane.svelte"
   import NukeButton from "../NukeButton/NukeButton.svelte"
+  import MinimalExecutor from "../Executor/MinimalExecutor.svelte"
 
   let cheerTimeout: NodeJS.Timeout
   let blink = false
@@ -44,6 +45,10 @@
 {#if $matchActive}
   <NukeButton />
 {/if}
+
+<div class="executor">
+  <MinimalExecutor />
+</div>
 
 <div class="void" class:active={$matchActive} class:cheering={$cheering}>
   <div>
@@ -165,5 +170,12 @@
     right: 5px;
     font-size: 11px;
     padding: 5px;
+  }
+
+  .executor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10000;
   }
 </style>
