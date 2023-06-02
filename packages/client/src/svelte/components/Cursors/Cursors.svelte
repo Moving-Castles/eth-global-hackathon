@@ -12,7 +12,6 @@
 
 <svelte:window on:mousemove={throttle(sendPosition, 160)} />
 
-<!-- Cursors -->
 {#each Object.entries($cursors) as [key, value]}
   <div
     class="cursor"

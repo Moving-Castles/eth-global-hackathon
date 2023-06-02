@@ -12,7 +12,7 @@
   import { start, end } from "../../modules/action"
   import { sendCheer, cheering } from "../../modules/signal"
 
-  import OffChain from "../../components/OffChain/OffChain.svelte"
+  import Cursors from "../../components/Cursors/Cursors.svelte"
   import Pane from "../../components/Void/Pane.svelte"
   import NukeButton from "../NukeButton/NukeButton.svelte"
   import MinimalExecutor from "../Executor/MinimalExecutor.svelte"
@@ -97,7 +97,7 @@
     </div>
 
     <div class="info">
-      <OffChain />
+      <Cursors />
     </div>
   </div>
 </div>
