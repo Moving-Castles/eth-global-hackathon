@@ -17,7 +17,7 @@
   import { lore } from "../../modules/content/lore"
 
   import Cursors from "../../components/Cursors/Cursors.svelte"
-  import Pane from "../../components/Void/Pane.svelte"
+  import Pane from "../../components/Pane/Pane.svelte"
   import NukeButton from "../NukeButton/NukeButton.svelte"
   import LeaderBoard from "../LeaderBoard/LeaderBoard.svelte"
   import Presence from "../Presence/Presence.svelte"

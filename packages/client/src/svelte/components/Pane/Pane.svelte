@@ -18,12 +18,11 @@
   import { join } from "../../modules/action"
   import { playSound } from "../../modules/sound"
 
-  // import HealthSkeleton from "./HealthSkeleton.svelte"
   import HealthBar from "./HealthBar.svelte"
-  import Body from "../../components/Bodies/Body.svelte"
-  import Votes from "../../components/Void/Votes.svelte"
+  import Body from "../../components/Body/Body.svelte"
   import Ellipse from "../../components/Ellipse/Ellipse.svelte"
-  import PlayerItem from "../../components/Void/PlayerItem.svelte"
+  import Votes from "./Votes.svelte"
+  import PlayerItem from "./PlayerItem.svelte"
 
   export let id: 1 | 2
   let hit = false
@@ -95,7 +94,6 @@
   <div>
     {#if $matchActive && !$matchOver}
       <HealthBar />
-      <!-- <HealthSkeleton src="/SKELETON.json" /> -->
       <div class="names">
         {#each $cores as [_, core] (core)}
           {core.name}
