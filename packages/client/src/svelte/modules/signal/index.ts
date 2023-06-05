@@ -1,4 +1,5 @@
-
+import type { Toast } from "../../modules/ui/toast"
+import { toastMessage } from "../../modules/ui/toast"
 import { get, writable } from "svelte/store"
 import { network } from "../network"
 import { cores } from "../state"
@@ -32,7 +33,7 @@ export function initSignalNetwork() {
 
     // Listen for messages
     socket.addEventListener("message", (event: { data: string }) => {
-        console.log("Message from server ", event.data)
+        // console.log("Message from server ", event.data)
         let msgObj = JSON.parse(event.data)
 
         // MOUSE POSITION
@@ -67,6 +68,13 @@ export function initSignalNetwork() {
         if (msgObj.topic === "cheer") {
             cheering.set(true);
         }
+
+        // CHEER
+        if (msgObj.topic === "toast") {
+            console.log('receive toast')
+            console.log(msgObj.data.message)
+            toastMessage(msgObj.data.message)
+        }
     })
 }
 
@@ -89,4 +97,13 @@ export function sendPosition(e: { clientX: number; clientY: number }) {
 
 export function sendCheer() {
     socket.send(JSON.stringify({ topic: "cheer" }))
+}
+
+export function sendToast(message: string) {
+    const options = { timestamp: performance.now(), type: "warning", disappear: true }
+    const toast = { message, ...options} as Toast
+    // For local player
+    toastMessage(message, options)
+    // For world
+    socket.send(JSON.stringify({ topic: "toast", data: toast }))
 }

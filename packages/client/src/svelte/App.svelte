@@ -12,6 +12,7 @@
   import Loading from "./components/Loading/Loading.svelte"
   import Spawn from "./components/Spawn/Spawn.svelte"
   import Void from "./components/Void/Void.svelte"
+  import Toasts from "./components/Toast/Toasts.svelte"
   import MinimalExecutor from "./components/Executor/MinimalExecutor.svelte"
 
   // - - - - -
@@ -59,6 +60,8 @@
     <Void />
   {/if}
 </main>
+
+<Toasts />
 
 <style>
   .executor {

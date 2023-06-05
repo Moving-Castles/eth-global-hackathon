@@ -5,13 +5,16 @@
     playerCore,
     freeCores,
     matchActive,
+    matchWinner,
     playerJoinedBody,
     bodiesReady,
     matchOver,
+    BODY_ONE,
   } from "../../modules/state"
   import { start, end } from "../../modules/action"
   import { sendCheer, cheering } from "../../modules/signal"
   import { playSound } from "../../modules/sound"
+  import { lore } from "../../modules/content/lore"
 
   import Cursors from "../../components/Cursors/Cursors.svelte"
   import Pane from "../../components/Void/Pane.svelte"
@@ -25,6 +28,16 @@
 
   let startInProgess = false
   let endInProgress = false
+  let winnerName = ""
+
+  $: if ($matchWinner) {
+    winnerName =
+      $matchWinner === BODY_ONE
+        ? lore.governance_models_P1[0]
+        : lore.governance_models_P2[0]
+  } else {
+    winnerName = ""
+  }
 
   $: if ($cheering) {
     clearTimeout(cheerTimeout)
@@ -115,19 +128,34 @@
             {/if}
           </button>
         {/if}
-      {:else if $matchOver && $matchActive}
-        <button on:click={sendEnd}>
-          {#if endInProgress}
-            <Ellipse />
-          {:else}
-            END
-          {/if}
-        </button>
       {/if}
       {#if $matchActive && $freeCores.map(([k]) => k).includes($playerAddress)}
         <button on:click={sendCheer}>CHEER</button>
       {/if}
     </div>
+
+    {#if $matchOver && $matchActive}
+      <div class="summary">
+        <!-- RESULT MESSAGE -->
+        <div class="pane-mid-top">
+          {#if $matchWinner}
+            {winnerName} wins!
+          {:else}
+            It's a tie!
+          {/if}
+        </div>
+
+        <div class="pane-mid-bottom">
+          <button class="button" on:click={sendEnd}>
+            {#if endInProgress}
+              <Ellipse />
+            {:else}
+              END
+            {/if}
+          </button>
+        </div>
+      </div>
+    {/if}
 
     <div class="info">
       <Cursors />
@@ -173,6 +201,18 @@
     z-index: 9;
     width: 45vw;
     pointer-events: none;
+  }
+
+  .summary {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    padding: 4rem;
+    // background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-items: center;
   }
 
   button {
