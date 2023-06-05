@@ -133,6 +133,9 @@
   }
 
   .executor {
+    position: fixed;
+    bottom: 0;
+    left: 0;
     overflow: hidden;
     height: auto;
     height: 30px;
@@ -145,7 +148,7 @@
       height: 30px;
       width: 30px;
       background: #808080;
-      font-size: 10px;
+      font-size: 8px;
       display: flex;
       justify-content: center;
       align-items: center;

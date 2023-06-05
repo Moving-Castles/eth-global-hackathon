@@ -1,56 +1,45 @@
 <script lang="ts">
   import { slide } from "svelte/transition"
   import { cores, playerAddress } from "../../modules/state"
-  import type { Core } from "../../modules/state/types"
   import { verifiedClients } from "../../modules/signal"
 
   let expanded = false
-
-  function toggleLeaderboard() {
+  function togglePresence() {
     expanded = !expanded
-  }
-
-  function sortObjectByPoints(obj: { [key: string]: Core }) {
-    const sortedArray = Object.entries(obj).sort(
-      (a, b) => b[1].points - a[1].points
-    )
-    const sortedObject: { [key: string]: Core } = {}
-    for (const [key, value] of sortedArray) {
-      sortedObject[key] = value
-    }
-    return sortedObject
   }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="leaderboard-toggle" on:click={toggleLeaderboard}>✦</div>
+<div class="presence-toggle" on:click={togglePresence}>
+  {$verifiedClients.length}
+</div>
 
 {#if expanded}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
-    class="leaderboard"
+    class="presence"
     transition:slide={{ duration: 200 }}
-    on:click={toggleLeaderboard}
+    on:click={togglePresence}
   >
-    <strong>High Score</strong>
+    <strong>
+      {$verifiedClients.length} core{$verifiedClients.length > 1 ? "s" : ""} online
+    </strong>
     <hr />
-    <ol>
-      {#each Object.entries(sortObjectByPoints($cores)) as [key, core]}
+    <ul>
+      {#each $verifiedClients as key}
         <li>
-          {core.name}
+          {$cores[key].name}
           {#if key === $playerAddress}(YOU){/if}
-          {#if $verifiedClients.includes(key)}(ONLINE){/if}
-          : <strong>{core.points || 0}</strong>
         </li>
       {/each}
-    </ol>
+    </ul>
   </div>
 {/if}
 
 <style lang="scss">
-  .leaderboard-toggle {
+  .presence-toggle {
     top: 5px;
-    left: 5px;
+    right: 5px;
     position: fixed;
     z-index: 10000;
     color: black;
@@ -61,12 +50,12 @@
     text-align: center;
     line-height: 38px;
     cursor: pointer;
-    font-size: 38px;
+    font-size: 18px;
   }
 
-  .leaderboard {
+  .presence {
     top: 50px;
-    left: 5px;
+    right: 5px;
     position: fixed;
     z-index: 10000;
     color: black;
@@ -75,7 +64,7 @@
     border-radius: 5px;
   }
 
-  ol,
+  ul,
   li {
     list-style-position: inside;
     margin: 0;

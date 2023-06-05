@@ -17,6 +17,7 @@
   import Pane from "../../components/Void/Pane.svelte"
   import NukeButton from "../NukeButton/NukeButton.svelte"
   import LeaderBoard from "../LeaderBoard/LeaderBoard.svelte"
+  import Presence from "../Presence/Presence.svelte"
   import Ellipse from "../Ellipse/Ellipse.svelte"
 
   let cheerTimeout: NodeJS.Timeout
@@ -68,6 +69,8 @@
 {#if !$matchActive}
   <LeaderBoard />
 {/if}
+
+<Presence />
 
 <div class="void" class:active={$matchActive} class:cheering={$cheering}>
   <div>
