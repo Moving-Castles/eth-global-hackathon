@@ -4,6 +4,9 @@
   export let sources: string | any[] = []
   export let id: "BODY_ONE" | "BODY_TWO"
   import { mask } from "../../utils/transitions"
+  import { fade } from "svelte/transition"
+  import { range } from "../../utils/maths"
+  import { elasticOut, cubicOut, quartOut } from "svelte/easing"
 
   let navigable = !$bodiesReady
   let index = 0
@@ -17,6 +20,23 @@
   }
 
   const cooldown = getContext("cooldown")
+
+  function slap(node, { delay = 0, duration = 1500 }) {
+    const o = +getComputedStyle(node).opacity
+    const tt = getComputedStyle(node).transform
+
+    return {
+      delay,
+      duration,
+      css: t => {
+        const eased = elasticOut(t)
+        const scale = range(0, 1, 3, 1, quartOut(t))
+        return `
+          transform: ${tt} scale(${scale}) rotate(${eased * 1080}deg);
+        `
+      },
+    }
+  }
 
   $: if ($bodiesReady) {
     index = 0
@@ -49,7 +69,16 @@
           alt="img"
         />
         {#if !$matchActive}
-          <p class="name pane-special">{name}</p>
+          {#if i !== 0}
+            {#key i}
+              <div out:fade in:slap class="locked">
+                <div style:transform="rotate({20 - 40 * Math.random()}deg)">
+                  LOCKED
+                </div>
+              </div>
+            {/key}
+          {/if}
+          <p class:first={i === 0} class="name pane-special">{name}</p>
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <svg
             class="prevButton"
@@ -116,6 +145,17 @@
     display: block;
   }
 
+  .locked {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-family: var(--font-family-special);
+    font-size: 3rem;
+    z-index: 999;
+    color: red;
+    transform: translate(-50%, -50%) translateY(20px);
+  }
+
   img {
     width: 100%;
     aspect-ratio: 1;
@@ -136,6 +176,11 @@
     background: white;
     color: black;
     line-height: 20px;
+  }
+
+  .name:not(.first) {
+    background: black;
+    color: rgba(255, 255, 255, 0.7);
   }
 
   .visible {
