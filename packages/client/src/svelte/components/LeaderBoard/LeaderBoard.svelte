@@ -3,11 +3,13 @@
   import { cores, playerAddress } from "../../modules/state"
   import type { Core } from "../../modules/state/types"
   import { verifiedClients } from "../../modules/signal"
+  import { playSound } from "../../modules/sound"
 
   let expanded = false
 
   function toggleLeaderboard() {
     expanded = !expanded
+    playSound("tekken", "select")
   }
 
   function sortObjectByPoints(obj: { [key: string]: Core }) {
@@ -23,7 +25,9 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="leaderboard-toggle" on:click={toggleLeaderboard}>✦</div>
+<div class="leaderboard-toggle" class:expanded on:click={toggleLeaderboard}>
+  ✦
+</div>
 
 {#if expanded}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -50,11 +54,11 @@
 <style lang="scss">
   .leaderboard-toggle {
     top: 5px;
-    left: 5px;
+    right: 50px;
     position: fixed;
     z-index: 10000;
     color: black;
-    background: lightgray;
+    background: rgba(211, 211, 211, 0.8);
     border-radius: 50%;
     height: 40px;
     width: 40px;
@@ -62,17 +66,20 @@
     line-height: 38px;
     cursor: pointer;
     font-size: 38px;
+
+    &.expanded {
+      background: rgba(211, 211, 211, 1);
+    }
   }
 
   .leaderboard {
     top: 50px;
-    left: 5px;
+    right: 70px;
     position: fixed;
     z-index: 10000;
     color: black;
-    background: rgba(211, 211, 211, 0.9);
+    background: rgba(211, 211, 211, 0.8);
     padding: 15px;
-    border-radius: 5px;
   }
 
   ol,

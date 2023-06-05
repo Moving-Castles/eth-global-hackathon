@@ -1,13 +1,13 @@
 <script lang="ts">
-  import type { Toast } from "../../modules/ui/toast";
-  import { toasts, toastMessage } from "../../modules/ui/toast";
-  import ToastComponent from "./Toast.svelte";
-  import { fade } from "svelte/transition";
+  import type { Toast } from "../../modules/ui/toast"
+  import { toasts, toastMessage } from "../../modules/ui/toast"
+  import ToastComponent from "./Toast.svelte"
+  import { fade } from "svelte/transition"
   import { flip } from "svelte/animate"
 
   const onEnd = (e: CustomEvent<{ end: Toast }>) => {
-    toasts.set($toasts.filter((t: Toast) => t.timestamp !== e.detail.timestamp));
-  };
+    toasts.set($toasts.filter((t: Toast) => t.timestamp !== e.detail.timestamp))
+  }
 
   // setInterval(() => {
   //   toastMessage("Testing")
@@ -26,9 +26,8 @@
   .toast-pane {
     position: absolute;
     z-index: 99;
-    bottom: 0px;
-    left: 50%;
-    transform: translate(-50%, 0);
+    bottom: 10px;
+    right: 10px;
     display: flex;
     flex-direction: column-reverse;
     pointer-events: none;

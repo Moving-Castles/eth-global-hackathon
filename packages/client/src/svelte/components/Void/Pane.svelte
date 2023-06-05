@@ -45,8 +45,6 @@
 
   $: isPlayerBody = $cores.map(([key]) => key).includes($playerAddress)
 
-  $: console.log($bodyOne, $bodyTwo)
-
   // LOCAL CONTEXT
   setContext("id", id)
   setContext("body", body)
@@ -78,6 +76,9 @@
 >
   {#if !$matchActive}
     <div class="player-list">
+      <div class="spot-counter">
+        {$matchSingleton?.coresPerBody - $cores.length} spots left
+      </div>
       {#each $cores as [_, core] (core)}
         <PlayerItem {core} />
       {/each}
@@ -110,9 +111,6 @@
     <div class="statistics">
       {#if $cores.length < $matchSingleton?.coresPerBody}
         <div class="statistics-content">
-          <div class="statistics-content-main">
-            {$matchSingleton?.coresPerBody - $cores.length} spots left
-          </div>
           {#if !$playerJoinedBody && $cores.length < $matchSingleton?.coresPerBody}
             <button class="statistics-button pane-special" on:click={sendJoin}>
               {#if joinInProgress}
@@ -246,5 +244,12 @@
     bottom: 20px;
     left: 50%;
     transform: translate(-50%, 0);
+  }
+
+  .spot-counter {
+    background: black;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
   }
 </style>

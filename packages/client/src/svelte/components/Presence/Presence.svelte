@@ -2,15 +2,17 @@
   import { slide } from "svelte/transition"
   import { cores, playerAddress } from "../../modules/state"
   import { verifiedClients } from "../../modules/signal"
+  import { playSound } from "../../modules/sound"
 
   let expanded = false
   function togglePresence() {
     expanded = !expanded
+    playSound("tekken", "select")
   }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="presence-toggle" on:click={togglePresence}>
+<div class="presence-toggle" class:expanded on:click={togglePresence}>
   {$verifiedClients.length}
 </div>
 
@@ -43,7 +45,7 @@
     position: fixed;
     z-index: 10000;
     color: black;
-    background: lightgray;
+    background: rgba(211, 211, 211, 0.8);
     border-radius: 50%;
     height: 40px;
     width: 40px;
@@ -51,17 +53,20 @@
     line-height: 38px;
     cursor: pointer;
     font-size: 18px;
+
+    &.expanded {
+      background: rgba(211, 211, 211, 1);
+    }
   }
 
   .presence {
     top: 50px;
-    right: 5px;
+    right: 25px;
     position: fixed;
     z-index: 10000;
     color: black;
-    background: rgba(211, 211, 211, 0.9);
+    background: rgba(211, 211, 211, 0.8);
     padding: 15px;
-    border-radius: 5px;
   }
 
   ul,

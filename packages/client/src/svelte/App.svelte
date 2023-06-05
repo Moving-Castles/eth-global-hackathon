@@ -47,9 +47,7 @@
   })
 </script>
 
-<div class="executor">
-  <MinimalExecutor />
-</div>
+<MinimalExecutor />
 
 <main>
   {#if !$ready || UIState === 0}
@@ -62,13 +60,3 @@
 </main>
 
 <Toasts />
-
-<style>
-  .executor {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 10000;
-    opacity: 0.5;
-  }
-</style>

@@ -134,7 +134,7 @@
 
   .executor {
     position: fixed;
-    bottom: 0;
+    top: 0;
     left: 0;
     overflow: hidden;
     height: auto;
@@ -143,6 +143,7 @@
     flex-direction: row;
     background: black;
     z-index: 10000;
+    opacity: 0.6;
 
     .node {
       height: 30px;

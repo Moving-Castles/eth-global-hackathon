@@ -10,18 +10,14 @@
   const close = () => dispatch("end", toast)
 
   onMount(() => {
-    setTimeout(() => {
-      close()
-    }, 4000)
+    setTimeout(close, 3000)
   })
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="toast absolute {toast.type}" on:click={close}>
   <p>
-    {#if toast.type === "warning"}!{/if}
     {toast.message}
-    {#if toast.type === "warning"}!{/if}
   </p>
 </div>
 
@@ -35,6 +31,8 @@
     padding: 0px;
     cursor: pointer;
     text-align: center;
+    background: blue;
+    font-size: 14px;
     /* @keyframes duration | easing-function | delay |
   iteration-count | direction | fill-mode | play-state | name */
     // animation: fly-up steps(16, end) 3s forwards, side-to-side steps(5, end) 4s forwards;
