@@ -3,16 +3,44 @@
   import { cores, playerAddress } from "../../modules/state"
   import { verifiedClients } from "../../modules/signal"
   import { playSound } from "../../modules/sound"
+  import { TimelineMax } from "gsap"
 
   let expanded = false
   function togglePresence() {
     expanded = !expanded
     playSound("tekken", "select")
   }
+
+  let toggleEl: HTMLElement
+  function flash(color: string) {
+    const tl2 = new TimelineMax()
+    tl2.to(toggleEl, 0, { backgroundColor: color })
+    tl2.to(toggleEl, 0.8, { backgroundColor: "rgba(211, 211, 211, 0.8)" })
+  }
+
+  let verifiedClientsCount = 0
+  $: {
+    if ($verifiedClients.length > verifiedClientsCount) {
+      playSound("tekken", "honk")
+      flash("rgba(0, 255, 0, 0.8)")
+    }
+
+    if ($verifiedClients.length < verifiedClientsCount) {
+      playSound("tekken", "no")
+      flash("rgba(255, 0, 0, 0.8)")
+    }
+
+    verifiedClientsCount = $verifiedClients.length
+  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="presence-toggle" class:expanded on:click={togglePresence}>
+<div
+  class="presence-toggle"
+  bind:this={toggleEl}
+  class:expanded
+  on:click={togglePresence}
+>
   {$verifiedClients.length}
 </div>
 

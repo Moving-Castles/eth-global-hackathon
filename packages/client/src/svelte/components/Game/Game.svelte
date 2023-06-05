@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from "svelte"
+  import { initSignalNetwork } from "../../modules/signal"
   import {
     cores,
     playerAddress,
@@ -16,8 +18,8 @@
   import { playSound } from "../../modules/sound"
   import { lore } from "../../modules/content/lore"
 
-  import Cursors from "../../components/Cursors/Cursors.svelte"
-  import Pane from "../../components/Pane/Pane.svelte"
+  import Cursors from "../Cursors/Cursors.svelte"
+  import Pane from "../Pane/Pane.svelte"
   import NukeButton from "../NukeButton/NukeButton.svelte"
   import LeaderBoard from "../LeaderBoard/LeaderBoard.svelte"
   import Presence from "../Presence/Presence.svelte"
@@ -65,6 +67,10 @@
     startInProgess = false
     endInProgress = false
   }
+
+  onMount(() => {
+    initSignalNetwork()
+  })
 </script>
 
 <svelte:head>
@@ -84,8 +90,9 @@
 {/if}
 
 <Presence />
+<!-- <Cursors /> -->
 
-<div class="void" class:active={$matchActive} class:cheering={$cheering}>
+<div class="game" class:active={$matchActive} class:cheering={$cheering}>
   <div>
     <!-- BODY ONE -->
     <Pane id={1} />
@@ -156,15 +163,11 @@
         </div>
       </div>
     {/if}
-
-    <div class="info">
-      <Cursors />
-    </div>
   </div>
 </div>
 
 <style lang="scss">
-  .void {
+  .game {
     position: fixed;
     top: 0;
     left: 0;

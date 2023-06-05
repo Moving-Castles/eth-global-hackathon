@@ -6,12 +6,10 @@
   import { entities, playerCore } from "./modules/state"
   // import { initStaticContent } from "./modules/staticContent"
   import { initActionSequencer } from "./modules/action/actionSequencer"
-  // import { initActionUpdater } from "./modules/action/actionUpdater"
-  import { initSignalNetwork } from "./modules/signal"
 
   import Loading from "./components/Loading/Loading.svelte"
   import Spawn from "./components/Spawn/Spawn.svelte"
-  import Void from "./components/Void/Void.svelte"
+  import Game from "./components/Game/Game.svelte"
   import Toasts from "./components/Toast/Toasts.svelte"
   import MinimalExecutor from "./components/Executor/MinimalExecutor.svelte"
 
@@ -29,7 +27,6 @@
     const mudLayer = await setup()
     network.set(mudLayer)
     initActionSequencer()
-    // initActionUpdater()
 
     // Create systems to listen to changes to defined component
     for (const componentKey of Object.keys(mudLayer.contractComponents)) {
@@ -41,9 +38,6 @@
 
     // For convenience, we store the block number in a svelte store
     mudLayer.network.blockNumber$.subscribe((x: number) => blockNumber.set(x))
-
-    // !! HACK
-    setTimeout(initSignalNetwork, 3000)
   })
 </script>
 
@@ -55,7 +49,7 @@
   {:else if !$playerCore}
     <Spawn />
   {:else}
-    <Void />
+    <Game />
   {/if}
 </main>
 

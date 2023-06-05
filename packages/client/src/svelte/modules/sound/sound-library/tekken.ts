@@ -41,4 +41,8 @@ export const tekken: SoundAssets = {
         src: "./sounds/tekken/nuke.mp3",
         volume: 1,
     },
+    honk: {
+        src: "./sounds/tekken/honk.wav",
+        volume: 1,
+    }
 };

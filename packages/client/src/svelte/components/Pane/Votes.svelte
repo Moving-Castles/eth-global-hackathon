@@ -1,11 +1,10 @@
 <script lang="ts">
   import { getContext } from "svelte"
   import { ActionType } from "../../modules/action"
-  import ActionTypeButton from "../../components/ActionTypeButton/ActionTypeButton.svelte"
+  import ActionTypeButton from "../ActionTypeButton/ActionTypeButton.svelte"
 
   const id = getContext("id")
   const cooldown = getContext("cooldown")
-
 </script>
 
 <div

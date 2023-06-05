@@ -108,33 +108,76 @@ export const matchExpired = derived([matchSingleton, blockNumber],
 // Return the winning entity
 // If it's a tie, return no entities
 // If the match is not over, return no entities
-export const matchWinner = derived([matchOver, bodyOne, bodyTwo], 
+export const matchWinner = derived([matchOver, bodyOne, bodyTwo],
   ([$matchOver, $bodyOne, $bodyTwo]) => {
     if ($matchOver) {
       if ($bodyOne.health > $bodyTwo.health) return BODY_ONE
       if ($bodyTwo.health > $bodyOne.health) return BODY_TWO
     }
-
     return false
   })
 
-// export const worldState = derived(matchSingleton, $matchSingleton => {
-//   })
-
 // *** PLAYER -----------------------------------------------------------------
 
-export const worldState = writable({} as WorldState);
-export enum WorldState {
-  WAITING_FOR_PLAYERS,
-  READY_TO_START,
-  MATCH_IN_PROGRESS,
-  MATCH_OVER,
-  MATCH_EXIPRED
-}
+// export enum WorldState {
+//   WAITING_FOR_PLAYERS,
+//   READY_TO_START,
+//   MATCH_IN_PROGRESS,
+//   MATCH_OVER,
+//   MATCH_EXPIRED
+// }
 
-export const playerState = writable({} as PlayerState);
-export enum PlayerState {
-  UNSPAWNED,
-  FREE,
-  IN_BODY
-}
+// export enum WorldEvent {
+//   FILLED,
+//   START,
+//   KILL,
+//   TIMEOUT,
+//   END,
+//   NUKE
+// }
+
+// export const worldState = writable({} as WorldState);
+
+// export function transitionWorld(state: WorldState, event: WorldEvent) {
+//   switch (state) {
+//     case WorldState.WAITING_FOR_PLAYERS:
+//       if (event === WorldEvent.FILLED) {
+//         worldState.set(WorldState.READY_TO_START);
+//         return true;
+//       }
+//     case WorldState.READY_TO_START:
+//       if (event === WorldEvent.START) {
+//         worldState.set(WorldState.MATCH_IN_PROGRESS);
+//         return true;
+//       }
+//     case WorldState.MATCH_IN_PROGRESS:
+//       if (event === WorldEvent.KILL) {
+//         worldState.set(WorldState.MATCH_OVER);
+//         return true;
+//       }
+//       if (event === WorldEvent.TIMEOUT) {
+//         worldState.set(WorldState.MATCH_EXPIRED);
+//         return true;
+//       }
+//     case WorldState.MATCH_OVER:
+//       if (event === WorldEvent.END) {
+//         worldState.set(WorldState.WAITING_FOR_PLAYERS);
+//         return true;
+//       }
+//     case WorldState.MATCH_EXPIRED:
+//       if (event === WorldEvent.NUKE) {
+//         worldState.set(WorldState.WAITING_FOR_PLAYERS);
+//         return true;
+//       }
+//     default:
+//       return false;
+//   }
+// }
+
+// export const playerState = writable({} as PlayerState);
+// export enum PlayerState {
+//   UNSPAWNED,
+//   FREE,
+//   IN_BODY
+// }
+
