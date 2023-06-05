@@ -176,7 +176,7 @@
     position: fixed;
     top: 0;
     padding: 3rem;
-    transition: all 1s ease;
+    /* transition: all 1s ease; */
     font-family: var(--font-family);
 
     &.active {
