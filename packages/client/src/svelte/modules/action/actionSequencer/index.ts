@@ -36,7 +36,6 @@ export const failedActions = writable([] as Action[]);
 
 export function addToSequencer(systemId: keyof SystemTypes, params: any[] = []) {
   queuedActions.update((queuedActions) => {
-    console.log(self)
     const newAction = {
       actionId: self.crypto.randomUUID(),
       systemId: systemId,
@@ -111,7 +110,7 @@ async function execute() {
     });
   } catch (e) {
     // @todo: handle error better
-    toastMessage({ message: e, type: 'warning', timestamp: performance.now() })
+    toastMessage("Something went wrong", { type: "error" })
     // Clear active list
     activeActions.update(() => []);
     // Add action to failed list

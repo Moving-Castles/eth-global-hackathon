@@ -8,6 +8,9 @@
     bodyTwoCores,
     playerJoinedBody,
     matchActive,
+    matchOver,
+    bodyOne,
+    bodyTwo,
   } from "../../modules/state"
   import { setContext } from "svelte"
   import { derived } from "svelte/store"
@@ -15,7 +18,8 @@
   import { join } from "../../modules/action"
   import { playSound } from "../../modules/sound"
 
-  import HealthSkeleton from "./HealthSkeleton.svelte"
+  // import HealthSkeleton from "./HealthSkeleton.svelte"
+  import HealthBar from "./HealthBar.svelte"
   import Body from "../../components/Bodies/Body.svelte"
   import Votes from "../../components/Void/Votes.svelte"
   import Ellipse from "../../components/Ellipse/Ellipse.svelte"
@@ -40,6 +44,8 @@
   )
 
   $: isPlayerBody = $cores.map(([key]) => key).includes($playerAddress)
+
+  $: console.log($bodyOne, $bodyTwo)
 
   // LOCAL CONTEXT
   setContext("id", id)
@@ -86,9 +92,9 @@
     />
   </div>
   <div>
-    {#if $matchActive}
-      <!-- <HealthBar /> -->
-      <HealthSkeleton src="/SKELETON.json" />
+    {#if $matchActive && !$matchOver}
+      <HealthBar />
+      <!-- <HealthSkeleton src="/SKELETON.json" /> -->
       <div class="names">
         {#each $cores as [_, core] (core)}
           {core.name}
@@ -120,6 +126,20 @@
       {:else}
         <div class="statistics-content statistics-content-main">READY</div>
       {/if}
+    </div>
+  {/if}
+
+  {#if $matchOver}
+    <div class="results">
+      <h1>
+        {#if $body.health > 0}
+          WINNER
+        {:else if $bodyOne.health === 0 && $bodyTwo.health === 0}
+          TIED
+        {:else if $body.health === 0}
+          LOSER
+        {/if}
+      </h1>
     </div>
   {/if}
 </div>

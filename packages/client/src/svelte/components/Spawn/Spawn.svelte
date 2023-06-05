@@ -13,11 +13,7 @@
     if (spawnInProgress) return
     if (name.length < 5) {
       playSound("tekken", "error")
-      toastMessage({
-        message: "Name must be at least 5 characters long",
-        type: "warning",
-        timestamp: performance.now(),
-      })
+      toastMessage("Name must be at least 5 characters long")
       return
     }
     spawnInProgress = true

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fade } from "svelte/transition"
-  import { matchExpired, matchSingleton } from "../../modules/state"
+  import { matchExpired, matchSingleton, matchOver } from "../../modules/state"
   import { blockNumber } from "../../modules/network"
   import { nuke } from "../../modules/action"
   import { playSound } from "../../modules/sound"
@@ -16,9 +16,9 @@
 </script>
 
 <div class="nuke">
-  {#if $matchExpired}
+  {#if $matchExpired && !$matchOver}
     <button class="button" on:click={sendNuke}>NUKE</button>
-  {:else}
+  {:else if !$matchOver}
     {Number($matchSingleton.startBlock) + 61 - Number($blockNumber)}
   {/if}
 </div>

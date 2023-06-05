@@ -5,6 +5,10 @@
   import { tweened } from "svelte/motion"
   import { quintIn as easing } from "svelte/easing"
   import { playSound } from "../../modules/sound"
+  import { sendToast } from "../../modules/signal"
+  // import { toastMessage } from "../../modules/ui/toast"
+  import { lore } from "../../modules/content/lore"
+
   export let actionType: string
 
   const id = getContext("id")
@@ -37,8 +41,12 @@
   $: if ($cooldown < 0 && allVotesAreIn) progress.set(0)
 
   function sendVote() {
-    // if (playerVoted) return
     playSound("tekken", "select")
+    sendToast(
+      `${$playerCore.name} ${Math.random() < 0.5 ? "voted" : "wants to"} ${
+        lore.actionTypesP1[actionType.toLowerCase()]
+      }`
+    )
     vote(ActionType[actionType])
   }
 </script>

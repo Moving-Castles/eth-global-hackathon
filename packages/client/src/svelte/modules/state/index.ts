@@ -14,8 +14,8 @@ import type {
 
 // --- CONSTANTS --------------------------------------------------------------
 
-const BODY_ONE = "0x0000000000000000000000000000000000000000000000000000000000000001"
-const BODY_TWO = "0x0000000000000000000000000000000000000000000000000000000000000002"
+export const BODY_ONE = "0x0000000000000000000000000000000000000000000000000000000000000001"
+export const BODY_TWO = "0x0000000000000000000000000000000000000000000000000000000000000002"
 
 // --- STORES -----------------------------------------------------------------
 
@@ -32,6 +32,14 @@ export const matchSingleton = derived(entities, ($entities) => {
 });
 
 // *** BODIES -----------------------------------------------------------------
+
+export const bodyOne = derived(entities, ($entities) => {
+  return $entities["0x01"]
+})
+
+export const bodyTwo = derived(entities, ($entities) => {
+  return $entities["0x02"]
+})
 
 export const bodyOneCores = derived(cores, $cores => {
   const coreEntities = Object.entries($cores)
@@ -97,6 +105,18 @@ export const matchOver = derived(entities,
 export const matchExpired = derived([matchSingleton, blockNumber],
   ([$matchSingleton, $blockNumber]) => Number($matchSingleton?.startBlock) + 61 < Number($blockNumber))
 
+// Return the winning entity
+// If it's a tie, return no entities
+// If the match is not over, return no entities
+export const matchWinner = derived([matchOver, bodyOne, bodyTwo], 
+  ([$matchOver, $bodyOne, $bodyTwo]) => {
+    if ($matchOver) {
+      if ($bodyOne.health > $bodyTwo.health) return BODY_ONE
+      if ($bodyTwo.health > $bodyOne.health) return BODY_TWO
+    }
+
+    return false
+  })
 
 // export const worldState = derived(matchSingleton, $matchSingleton => {
 //   })
