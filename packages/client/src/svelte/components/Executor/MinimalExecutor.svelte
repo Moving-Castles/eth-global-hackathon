@@ -5,29 +5,13 @@
     queuedActions,
     completedActions,
     failedActions,
-    sequencerState,
-    SequencerState,
   } from "../../modules/action/actionSequencer"
   import { playSound } from "../../modules/sound"
   import { WorldFunctions } from "../../modules/action"
 
-  // function toggleSequencer() {
-  //   sequencerState.set($sequencerState)
-  //   if ($sequencerState === SequencerState.Running) {
-  //     playSound("eventBad", "ui")
-  //     sequencerState.set(SequencerState.Paused)
-  //   } else {
-  //     playSound("eventGood", "ui")
-  //     sequencerState.set(SequencerState.Running)
-  //   }
-  // }
-
   let queueElement: HTMLElement
   let activeElement: HTMLElement
   let doneElement: HTMLElement
-  let coreConnector: HTMLElement
-  let queueConnector: HTMLElement
-  let activeConnector: HTMLElement
 
   let localQueuedActionsCount = 0
   let localActiveActionsCount = 0
@@ -38,38 +22,28 @@
   const NODE_TIME = 0.4
 
   function animateAction(
-    connectorEl: HTMLElement,
     nodeEl: HTMLElement,
     nodeColor: string
   ) {
     const tl2 = new TimelineMax()
-    tl2.to(connectorEl, 0, { height: 0 })
-    tl2.to(connectorEl, CONNECTOR_TIME, { height: 100, opacity: 1 })
     tl2.to(nodeEl, 0, { backgroundColor: nodeColor })
     tl2.to(nodeEl, NODE_TIME, { backgroundColor: "#808080" })
   }
 
   function animateQueuedAction() {
-    animateAction(coreConnector, queueElement, "orange")
+    animateAction(queueElement, "orange")
   }
 
   function animateActiveAction() {
-    animateAction(queueConnector, activeElement, "orange")
+    animateAction(activeElement, "orange")
   }
 
   function animateCompletedAction() {
-    animateAction(activeConnector, doneElement, "green")
+    animateAction( doneElement, "green")
   }
 
   function animateFailedAction() {
-    animateAction(activeConnector, doneElement, "red")
-  }
-
-  function clearConnectors() {
-    const tl2 = new TimelineMax()
-    tl2.to(coreConnector, 0.3, { opacity: 0 }, "end")
-    tl2.to(queueConnector, 0.3, { opacity: 0 }, "end")
-    tl2.to(activeConnector, 0.3, { opacity: 0 }, "end")
+    animateAction(doneElement, "red")
   }
 
   queuedActions.subscribe(actions => {
@@ -99,16 +73,13 @@
         playSound("tekken", "yes")
       }
       localCompletedActionsCount = actions.length
-      clearConnectors()
     }, CONNECTOR_TIME * 1000)
   })
 
   failedActions.subscribe(actions => {
     if (actions.length > localFailedActionsCount) animateFailedAction()
     setTimeout(() => {
-      // playSound("tekken", "no")
       localFailedActionsCount = actions.length
-      clearConnectors()
     }, CONNECTOR_TIME * 1000)
   })
 </script>

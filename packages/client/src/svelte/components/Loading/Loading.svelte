@@ -39,7 +39,8 @@
       font-size: 4rem;
       line-height: 4rem;
       color: red;
-      background: black;
+      user-select: none;
+      cursor: pointer;
     }
 
     .story-inner {

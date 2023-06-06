@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { entities } from "../../modules/state"
+  import { onMount } from "svelte"
   import { tweened } from "svelte/motion"
-  import { getContext, onMount } from "svelte"
+  import { entities, bodies } from "../../modules/state"
 
-  const id = getContext("id")
-  const body = getContext("body")
+  export let id: 1 | 2
 
   let hit = false
   let timeout: any
@@ -23,15 +22,14 @@
   }
 
   onMount(() => {
-    $health = $body.health
+    $health = $bodies[id].health
     entities.subscribe(newEntities => {
       const entity = newEntities[id === 1 ? "0x01" : "0x02"]
-
       if (entity) {
-        if (entity?.health !== previousHealth) {
+        if (entity.health !== previousHealth) {
           setHit()
-          health.set(entity?.health)
-          previousHealth = entity?.health
+          health.set(entity.health)
+          previousHealth = entity.health
         }
       }
     })
@@ -42,7 +40,7 @@
   <div
     style:right={id === 2 ? 0 : "auto"}
     style:left={id === 1 ? 0 : "auto"}
-    style:width="{$health.toFixed(0)}%"
+    style:height="{$health.toFixed(0)}%"
     style:background-color={id === 1 ? "var(--player1)" : "var(--player2)"}
     class="bar-inner"
   />
@@ -53,22 +51,20 @@
 <style>
   .health {
     position: fixed;
-    margin: 2rem 0;
+    top: 50px;
   }
 
   .player-1 {
-    left: 0;
-    clip-path: polygon(0% 0%, 100% 0%, calc(100% - 20px) 100%, 0% 100%);
+    left: 20px;
   }
 
   .player-2 {
-    right: 0;
-    clip-path: polygon(0 0, 100% 0%, 100% 100%, 20px 100%);
+    right: 20px;
   }
 
   .bar {
-    width: 40vw;
-    height: 60px;
+    width: 60px;
+    height: 75vh;
     background-position: top center;
     /* filter: invert(1); */
   }
@@ -79,13 +75,11 @@
     left: 0;
     bottom: 0;
     right: 0;
-    background-image: url("/stage.png");
     width: 100%;
     height: 100%;
     filter: saturate(0);
     mix-blend-mode: lighten;
     z-index: 1;
-    animation: move 30s infinite linear;
   }
 
   @keyframes move {
@@ -99,19 +93,18 @@
 
   .bar-inner {
     position: absolute;
-    height: 100%;
-    background-image: url("/stage.png");
-    background-position: top center;
-    filter: saturate(2);
+    bottom: 0;
+    width: 100%;
+    background: red;
     mix-blend-mode: overlay;
     z-index: 2;
   }
 
   .player-1 .bar-inner {
-    /* clip-path: polygon(0% 0%, 100% 0%, calc(100% - 20px) 100%, 0% 100%); */
+    clip-path: polygon(0% 0%, 100% 0%, calc(100% - 20px) 100%, 0% 100%);
   }
 
   .player-2 .bar-inner {
-    /* clip-path: polygon(0 0, 100% 0%, 100% 100%, 20px 100%); */
+    clip-path: polygon(0 0, 100% 0%, 100% 100%, 20px 100%);
   }
 </style>

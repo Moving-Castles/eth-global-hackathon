@@ -110,6 +110,7 @@ async function execute() {
     });
   } catch (e) {
     // @todo: handle error better
+    console.error(e)
     toastMessage("Something went wrong", { type: "error" })
     // Clear active list
     activeActions.update(() => []);

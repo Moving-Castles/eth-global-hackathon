@@ -27,29 +27,26 @@ export const cores = derived(entities, ($entities) => {
   return Object.fromEntries(Object.entries($entities).filter(([, entity]) => entity.core)) as Cores;
 });
 
+export const bodies = derived(entities, ($entities) => {
+  return {
+    [1]: $entities["0x01"] as Body,
+    [2]: $entities["0x02"] as Body,
+  }
+});
+
 export const matchSingleton = derived(entities, ($entities) => {
   return $entities["0x0666"] as MatchSingleton;
 });
 
 // *** BODIES -----------------------------------------------------------------
 
-export const bodyOne = derived(entities, ($entities) => {
-  return $entities["0x01"]
-})
-
-export const bodyTwo = derived(entities, ($entities) => {
-  return $entities["0x02"]
-})
-
-export const bodyOneCores = derived(cores, $cores => {
+export const coresInBodies = derived(cores, $cores => {
   const coreEntities = Object.entries($cores)
-  return coreEntities.length > 0 ? coreEntities.filter(([, value]) => value.carriedBy === BODY_ONE) : []
-})
-
-export const bodyTwoCores = derived(cores, $cores => {
-  const coreEntities = Object.entries($cores)
-  return coreEntities.length > 0 ? coreEntities.filter(([, value]) => value.carriedBy === BODY_TWO) : []
-})
+  return {
+    [1]: coreEntities.length > 0 ? coreEntities.filter(([_, value]) => value.carriedBy === BODY_ONE) : [],
+    [2]: coreEntities.length > 0 ? coreEntities.filter(([_, value]) => value.carriedBy === BODY_TWO) : []
+  }
+});
 
 export const freeCores = derived(cores, $cores => {
   const coreEntities = Object.entries($cores)
@@ -57,42 +54,65 @@ export const freeCores = derived(cores, $cores => {
     ([, value]) => ![BODY_ONE, BODY_TWO].includes(value.carriedBy)) : []
 })
 
-export const bodyCores = derived([bodyOneCores, bodyTwoCores], ([$bodyOneCore, $bodyTwoCores]) => [
-  ...$bodyOneCore,
-  ...$bodyTwoCores,
-])
+export const cooldownOnBodies = derived([blockNumber, bodies], ([$blockNumber, $bodies]) => {
+  return {
+    [1]: Number($bodies[1].readyBlock) - Number($blockNumber),
+    [2]: Number($bodies[2].readyBlock) - Number($blockNumber),
+  }
+})
 
 // *** PLAYER -----------------------------------------------------------------
 
 export const playerAddress = derived(network,
   $network => $network.network?.connectedAddress.get() || "0x0");
 
-export const playerCore = derived([entities, playerAddress],
-  ([$entities, $playerAddress]) => $entities[$playerAddress] as Core
+export const playerCore = derived([cores, playerAddress],
+  ([$cores, $playerAddress]) => $cores[$playerAddress] as Core
 );
 
-export const playerBody = derived([entities, playerCore],
-  ([$entities, $playerCore]) => {
-    if (!$entities || !$playerCore) return {} as Body;
-    return $entities[$playerCore.carriedBy] as Body;
-  });
+export const isPlayerBody = derived([playerCore],
+  ([$playerCore]) => {
+    return {
+      [1]: $playerCore.carriedBy === BODY_ONE,
+      [2]: $playerCore.carriedBy === BODY_TWO,
+    }
+  })
+
+// True if the local player has joined a body
+export const playerJoinedBody = derived([playerCore],
+  ([$playerCore]) => [BODY_ONE, BODY_TWO].includes($playerCore.carriedBy))
+
+// Player voted when their own roundIndex is larger than the body's
+export const playerHasVoted = derived([playerCore, entities],
+  ([$playerCore, $entities]) =>
+    $playerCore.roundIndex > ($entities[$playerCore.carriedBy]?.roundIndex || 0)
+)
 
 // *** GAME STATE -------------------------------------------------------------
 
-// True if the local player has joined a body
-export const playerJoinedBody = derived([bodyCores, playerAddress],
-  ([$bodyCores, $playerAddress]) => $bodyCores.map(([key]) => key).includes($playerAddress))
-
 // True if both bodies have reached the required number of cores
-export const bodiesReady = derived([bodyOneCores, bodyTwoCores, matchSingleton],
-  ([$bodyOneCores, $bodyTwoCores, $matchSingleton]) => {
-    return $bodyOneCores.length === $matchSingleton?.coresPerBody
-      && $bodyTwoCores.length === $matchSingleton?.coresPerBody
+export const bodiesReady = derived([coresInBodies, matchSingleton],
+  ([$coresInBodies, $matchSingleton]) => {
+    return $coresInBodies[1].length === $matchSingleton?.coresPerBody
+      && $coresInBodies[2].length === $matchSingleton?.coresPerBody
   })
 
 // True if match is in progress
 export const matchActive = derived(matchSingleton,
   $matchSingleton => $matchSingleton?.active)
+
+// All votes are in when the cores roundIndeces are all same as body's
+// export const allVotesAreIn = derived([bodies, coresInBodies],
+//   ([$bodies, $coresInBodies]) => {
+//     return {
+//       [1]: $coresInBodies[1]
+//         .map(([_, core]) => core.roundIndex)
+//         .every(roundIndex => roundIndex === $bodies[1].roundIndex),
+//       [2]: $coresInBodies[2]
+//         .map(([_, core]) => core.roundIndex)
+//         .every(roundIndex => roundIndex === $bodies[2].roundIndex),
+//     }
+//   })
 
 // True if either body has 0 health
 export const matchOver = derived(entities,
@@ -108,11 +128,11 @@ export const matchExpired = derived([matchSingleton, blockNumber],
 // Return the winning entity
 // If it's a tie, return no entities
 // If the match is not over, return no entities
-export const matchWinner = derived([matchOver, bodyOne, bodyTwo],
-  ([$matchOver, $bodyOne, $bodyTwo]) => {
+export const matchWinner = derived([matchOver, bodies],
+  ([$matchOver, $bodies]) => {
     if ($matchOver) {
-      if ($bodyOne.health > $bodyTwo.health) return BODY_ONE
-      if ($bodyTwo.health > $bodyOne.health) return BODY_TWO
+      if ($bodies[1].health > $bodies[2].health) return BODY_ONE
+      if ($bodies[2].health > $bodies[1].health) return BODY_TWO
     }
     return false
   })

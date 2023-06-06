@@ -27,14 +27,12 @@
   <div class="overlay" in:fade={{ duration: 500 }} />
 {/if}
 
-<style>
+<style lang="scss">
   .nuke {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
-    /* width: 200px; */
-    /* height: 100px; */
     background: black;
     display: flex;
     justify-content: center;

@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { cores, bodyOneCores, bodyTwoCores } from "../../modules/state"
+  import { cores, coresInBodies } from "../../modules/state"
   import { sendPosition, cursors } from "../../modules/signal"
   import throttle from "just-throttle"
   import Icon from "@iconify/svelte"
 
   $: colors = Object.fromEntries([
-    ...$bodyOneCores.map(([k, _]) => [k, "var(--player1)"]),
-    ...$bodyTwoCores.map(([k, _]) => [k, "var(--player2)"]),
+    ...$coresInBodies[1].map(([k, _]) => [k, "var(--player1)"]),
+    ...$coresInBodies[2].map(([k, _]) => [k, "var(--player2)"]),
   ])
 </script>
 

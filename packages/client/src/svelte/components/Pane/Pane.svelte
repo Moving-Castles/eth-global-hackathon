@@ -1,67 +1,19 @@
 <script lang="ts">
-  // import { setContext } from "svelte"
   import {
-    entities,
+    bodies,
     matchSingleton,
-    playerAddress,
-    bodyOneCores,
-    bodyTwoCores,
+    coresInBodies,
     playerJoinedBody,
     matchActive,
     matchOver,
-    bodyOne,
-    bodyTwo,
+    isPlayerBody,
   } from "../../modules/state"
-  import { setContext } from "svelte"
-  import { derived } from "svelte/store"
-  import { blockNumber } from "../../modules/network"
-  import { join } from "../../modules/action"
-  import { playSound } from "../../modules/sound"
-
   import HealthBar from "./HealthBar.svelte"
   import Body from "../../components/Body/Body.svelte"
-  import Ellipse from "../../components/Ellipse/Ellipse.svelte"
-  import Votes from "./Votes.svelte"
+  import Actions from "./Actions.svelte"
   import PlayerItem from "./PlayerItem.svelte"
-
+  import JoinButton from "./JoinButton.svelte"
   export let id: 1 | 2
-  let hit = false
-  let timeout
-  let joinInProgress = false
-
-  const body: Derived<BodyType[]> = derived(
-    entities,
-    $ents => $ents[id === 1 ? "0x01" : "0x02"]
-  )
-  const cores: Derived<CoreType[]> = derived(
-    [bodyOneCores, bodyTwoCores],
-    ([$b1c, $b2c]) => (id === 1 ? $b1c : $b2c)
-  )
-  const cooldown: Derived<Number> = derived(
-    [blockNumber, body],
-    ([$r, $b]) => Number($b.readyBlock) - Number($r)
-  )
-
-  $: isPlayerBody = $cores.map(([key]) => key).includes($playerAddress)
-
-  // LOCAL CONTEXT
-  setContext("id", id)
-  setContext("body", body)
-  setContext("isPlayerBody", isPlayerBody)
-  setContext("cooldown", cooldown)
-  setContext("cores", cores)
-
-  function sendJoin() {
-    if (joinInProgress) return
-    joinInProgress = true
-    playSound("tekken", "click")
-    join(id)
-  }
-
-  // !!! HACK
-  $: if ($matchActive) {
-    joinInProgress = false
-  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -70,72 +22,68 @@
   class:active={$matchActive}
   class:lobby={!$matchActive}
   class:joined={$playerJoinedBody}
-  class:opponent={!isPlayerBody}
-  class:mine={isPlayerBody}
+  class:opponent={!$isPlayerBody[id]}
+  class:mine={$isPlayerBody[id]}
 >
-  {#if !$matchActive}
-    <div class="player-list">
+  <div class="player-list">
+    {#if !$matchActive}
+      <!-- SPOT COUNTER -->
       <div class="spot-counter">
-        {$matchSingleton?.coresPerBody - $cores.length} spots left
+        {$matchSingleton?.coresPerBody - $coresInBodies[id].length} spots left
       </div>
-      {#each $cores as [_, core] (core)}
-        <PlayerItem {core} />
-      {/each}
-    </div>
-  {/if}
+    {/if}
 
-  <div class="body-container">
-    <Body
-      mine={isPlayerBody}
-      ready={$cores.length === ($matchSingleton?.coresPerBody || 1)}
-      id={id === 1 ? "BODY_ONE" : "BODY_TWO"}
-    />
-  </div>
-  <div>
-    {#if $matchActive && !$matchOver}
-      <HealthBar />
-      <div class="names">
-        {#each $cores as [_, core] (core)}
-          {core.name}
+    <!-- PLAYER LIST -->
+    {#each $coresInBodies[id] as [_, core] (core)}
+      <PlayerItem {core} />
+    {/each}
+
+    <!-- SUBMITTED VOTES -->
+    {#if $matchActive}
+      <div class="round-counter">Round: {$bodies[id].roundIndex}</div>
+      <div class="submitted-votes">
+        {#each $coresInBodies[id] as core}
+          <div class="vote">
+            {#if core[1].roundIndex > $bodies[id].roundIndex}
+              {core[1].vote}
+            {:else}
+              -
+            {/if}
+          </div>
         {/each}
       </div>
-      {#if isPlayerBody}
-        <Votes />
-      {/if}
     {/if}
   </div>
 
-  {#if !$playerJoinedBody}
-    <div class="statistics">
-      {#if $cores.length < $matchSingleton?.coresPerBody}
-        <div class="statistics-content">
-          {#if !$playerJoinedBody && $cores.length < $matchSingleton?.coresPerBody}
-            <button class="statistics-button pane-special" on:click={sendJoin}>
-              {#if joinInProgress}
-                <Ellipse />
-              {:else}
-                JOIN
-              {/if}
-            </button>
-          {/if}
-        </div>
-      {:else}
-        <div class="statistics-content statistics-content-main">READY</div>
+  <!-- BODY -->
+  <div class="body-container">
+    <Body {id} />
+  </div>
+
+  {#if $matchActive}
+    <div>
+      <!-- HEALTH -->
+      <HealthBar {id} />
+      <!-- ACTIONS -->
+      {#if $isPlayerBody[id] && !$matchOver}
+        <Actions {id} />
       {/if}
     </div>
   {/if}
 
-  {#if $matchOver}
-    <div class="results">
-      <h1>
-        {#if $body.health > 0}
-          WINNER
-        {:else if $bodyOne.health === 0 && $bodyTwo.health === 0}
-          TIED
-        {:else if $body.health === 0}
-          LOSER
-        {/if}
-      </h1>
+  {#if !$playerJoinedBody}
+    <div class="statistics">
+      <!-- Body is full -->
+      {#if $coresInBodies[id].length >= $matchSingleton?.coresPerBody}
+        <div class="statistics-content statistics-content-main">READY</div>
+      {:else}
+        <!-- Spot available -->
+        <div class="statistics-content">
+          {#if !$playerJoinedBody}
+            <JoinButton {id} />
+          {/if}
+        </div>
+      {/if}
     </div>
   {/if}
 </div>
@@ -145,18 +93,17 @@
     left: 0;
     background: #00ff00;
   }
+
   .pane-2 {
     right: 0;
     background: #ff0000;
   }
+
   .pane-2.active,
   .pane-1.active {
     background: transparent;
   }
 
-  .pane.lobby.joined.mine {
-    /* filter: saturate(500%); */
-  }
   .pane.lobby.joined.opponent {
     filter: saturate(50%);
   }
@@ -172,7 +119,6 @@
     position: fixed;
     top: 0;
     padding: 3rem;
-    /* transition: all 1s ease; */
     font-family: var(--font-family);
 
     &.active {
@@ -225,12 +171,6 @@
     padding: 12px 20px;
   }
 
-  .statistics-button {
-    color: white;
-    background: black;
-    font-size: 3rem;
-    width: 180px;
-  }
 
   .name {
     position: fixed;

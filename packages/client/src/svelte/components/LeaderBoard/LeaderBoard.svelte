@@ -1,6 +1,6 @@
 <script lang="ts">
   import { slide } from "svelte/transition"
-  import { cores, playerAddress } from "../../modules/state"
+  import { cores, playerAddress, matchSingleton } from "../../modules/state"
   import type { Core } from "../../modules/state/types"
   import { verifiedClients } from "../../modules/signal"
   import { playSound } from "../../modules/sound"
@@ -48,6 +48,8 @@
         </li>
       {/each}
     </ol>
+    <hr />
+    Matches played:<strong>{$matchSingleton.matchIndex}</strong>
   </div>
 {/if}
 

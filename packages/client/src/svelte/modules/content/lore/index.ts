@@ -25,45 +25,13 @@ export const lore = {
   },
   instructions: {
     loading: {
-      ready: 'Wizards are founding a state. They are undecisive on what governance model should reign best amongst them. They decided to resolve this with a fight tournament. They will summon familiars that are embodiment of their preferred gov model. The last standing familiar will decide what strategy is best. ',      
+      ready: 'Wizards are founding a state. They are undecisive on what governance model should reign best amongst them. They decided to resolve this with a fight tournament. They will summon familiars that are embodiment of their preferred gov model. The last standing familiar will decide what strategy is best. ',
     },
     lobby: {
       pick_a_character: '',
       governance: ''
     }
   },
-  names: [
-    "Ser-SeOrg%SiState",
-    "Sir_Satsh-Circit",
-    "Lady%Ada_Rundwon",
-    "Brness-Bitchain",
-    "Prnce_Pytho%Thetan",
-    "Cunt_Cobl-Clear",
-    "JestJav_Jetjump",
-    "Dame%Dark_Diantic",
-    "Lrd-Linnux_LRH",
-    "Marq_Mchine%MEST",
-    "Frar-FW_Firewall",
-    "Bshp_Byte%Thetan",
-    "King-KSW_Kernel",
-    "Vcount_Volcan-Virt",
-    "Sqre_Satsh%Overflow",
-    "Knght-NO_Ntwrk_Node",
-    "Erl-Ethrum_Encrpt",
-    "Duch_DB-Tone_Data",
-    "Arch_Alg%Auditing",
-    "Wzrd-Wifi%WholeTk",
-    "Sir-S_Code_SP",
-    "Friar_Famework-FW",
-    "Cnstable-Crypt_CLR",
-    "Lady-LRH_L-Gate",
-    "Prncess_PreClr-Pix",
-    "Templr-Terabyte_Thet",
-    "Brn-Bandwidth-Bridg",
-    "Empres_E-Metr_Emult",
-    "Marq_Mach%Marcab",
-    "Maidn_Mainfram_MEST"
-  ],
   governance_models_P1: [
     "big democracy",
     "exitocracy",

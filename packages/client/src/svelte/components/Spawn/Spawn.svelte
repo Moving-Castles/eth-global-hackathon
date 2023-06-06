@@ -18,7 +18,7 @@
     }
     spawnInProgress = true
     playSound("tekken", "click")
-    spawn(name)
+    spawn(name.toUpperCase())
   }
 
   onMount(() => {
@@ -87,6 +87,7 @@
     color: black;
     margin: 0;
     width: 100%;
+    text-transform: uppercase;
 
     // &:focus {
     //   background: rgb(255, 0, 0);
