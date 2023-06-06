@@ -4,7 +4,6 @@
  *
  */
 
-import type { SystemTypes } from "contracts/types/SystemTypes";
 import { writable, get } from "svelte/store";
 import { network, blockNumber } from "../../network";
 import { toastMessage } from "../../ui/toast"
@@ -18,7 +17,7 @@ export enum SequencerState {
 
 export type Action = {
   actionId: string;
-  systemId: keyof SystemTypes;
+  systemId: string;
   tx?: string;
   timestamp?: number;
   params?: any[];
@@ -34,7 +33,7 @@ export const failedActions = writable([] as Action[]);
 
 // --- API -----------------------------------------------------------------
 
-export function addToSequencer(systemId: keyof SystemTypes, params: any[] = []) {
+export function addToSequencer(systemId: string, params: any[] = []) {
   queuedActions.update((queuedActions) => {
     const newAction = {
       actionId: self.crypto.randomUUID(),
@@ -63,7 +62,7 @@ export function initActionSequencer() {
    *
    */
 
-  blockNumber.subscribe(async (newBlock) => {
+  blockNumber.subscribe(async () => {
     /*
       * Execute next if:
       * - sequencer is running

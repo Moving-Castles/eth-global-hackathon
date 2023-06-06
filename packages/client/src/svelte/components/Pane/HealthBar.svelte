@@ -77,8 +77,7 @@
     right: 0;
     width: 100%;
     height: 100%;
-    filter: saturate(0);
-    mix-blend-mode: lighten;
+    background: rgba(211, 211, 211, 0.3);
     z-index: 1;
   }
 
@@ -96,15 +95,16 @@
     bottom: 0;
     width: 100%;
     background: red;
-    mix-blend-mode: overlay;
     z-index: 2;
   }
 
-  .player-1 .bar-inner {
+  .player-1 .bar-inner,
+  .player-1 .bar-background {
     clip-path: polygon(0% 0%, 100% 0%, calc(100% - 20px) 100%, 0% 100%);
   }
 
-  .player-2 .bar-inner {
+  .player-2 .bar-inner,
+  .player-2 .bar-background {
     clip-path: polygon(0 0, 100% 0%, 100% 100%, 20px 100%);
   }
 </style>

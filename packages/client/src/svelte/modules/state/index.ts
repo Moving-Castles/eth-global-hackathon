@@ -11,6 +11,7 @@ import type {
   Entities,
   Cores,
 } from "./types";
+import { ActionType } from "../action";
 
 // --- CONSTANTS --------------------------------------------------------------
 
@@ -87,6 +88,9 @@ export const playerHasVoted = derived([playerCore, entities],
   ([$playerCore, $entities]) =>
     $playerCore.roundIndex > ($entities[$playerCore.carriedBy]?.roundIndex || 0)
 )
+
+// The current action the player has voted for, set before executed on-chain
+export const playerAction = writable(ActionType.NONE);
 
 // *** GAME STATE -------------------------------------------------------------
 

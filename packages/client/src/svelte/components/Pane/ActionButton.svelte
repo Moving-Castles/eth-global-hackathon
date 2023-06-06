@@ -1,33 +1,50 @@
 <script lang="ts">
-  import { playerCore } from "../../modules/state"
   import { vote, ActionType } from "../../modules/action"
+  import {
+    playerAction,
+    cooldownOnBodies,
+    playerHasVoted,
+  } from "../../modules/state"
   import { playSound } from "../../modules/sound"
+  import ActionIcon from "./ActionIcon.svelte"
 
   export let id: 1 | 2
-  export let actionType: string
-
-  let voteInProgress = false
+  export let actionType: ActionType
 
   function sendVote() {
-    if (voteInProgress) return
-    voteInProgress = true
     playSound("tekken", "select")
-    vote(ActionType[actionType])
+    playerAction.set(actionType)
+    vote(actionType)
   }
 
-  $: if ($playerCore.roundIndex) {
-    voteInProgress = false
-  }
+  // Player selected this action
+  let selected = false
+  $: selected = $playerAction === actionType
+
+  // Player selected another action
+  let disabled = false
+  $: disabled =
+    $playerAction !== ActionType.NONE && $playerAction !== actionType
+
+  // Body is in cooldown
+  let cooldown = false
+  $: cooldown = $cooldownOnBodies[id] > 0
+
+  // Player has voted in round
+  let voted = false
+  $: voted = $playerHasVoted
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="action" class:active={voteInProgress} on:click={sendVote}>
-  <img
-    class="image {actionType}"
-    src="/icons/{actionType}.png"
-    alt={actionType}
-  />
-  <div class="background" />
+<div
+  class="action"
+  class:selected
+  class:disabled
+  class:cooldown
+  class:voted
+  on:click={sendVote}
+>
+  <ActionIcon {actionType} />
 </div>
 
 <style lang="scss">
@@ -35,49 +52,36 @@
     overflow: hidden;
     border-radius: 100%;
     aspect-ratio: 1;
-    display: block;
-    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 5vw;
     cursor: pointer;
     background: rgba(255, 255, 255, 0.5);
 
-    &.active {
+    &:hover {
+      background: orange;
+    }
+
+    &.selected {
       background: red;
     }
 
-    .image {
-      mix-blend-mode: multiply;
-      background-blend-mode: multiply;
-      width: 75%;
-      margin: 0 auto;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 2;
-    }
-
-    .background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    &.HEAL {
-      transform: translate(-50%, -50%) translate(0, 5%);
-    }
-
     &.disabled {
-      cursor: auto;
       pointer-events: none;
-      background: #7a7a7a;
-      .image {
-        opacity: 0.2;
-      }
+      background: rgba(255, 255, 255, 0.5);
+      opacity: 0.3;
     }
+
+    &.cooldown {
+      pointer-events: none;
+      background: rgba(255, 255, 255, 0.5);
+      opacity: 0.3;
+    }
+
+    // &.voted {
+    //   pointer-events: none;
+    //   opacity: 0.3;
+    // }
   }
 </style>

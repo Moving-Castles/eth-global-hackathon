@@ -1,18 +1,20 @@
 <script lang="ts">
   import {
-    bodies,
     matchSingleton,
     coresInBodies,
     playerJoinedBody,
     matchActive,
     matchOver,
     isPlayerBody,
+    cooldownOnBodies,
   } from "../../modules/state"
   import HealthBar from "./HealthBar.svelte"
   import Body from "../../components/Body/Body.svelte"
   import Actions from "./Actions.svelte"
+  import Votes from "./Votes.svelte"
   import PlayerItem from "./PlayerItem.svelte"
   import JoinButton from "./JoinButton.svelte"
+  import CooldownOverlay from "./CoolDownOverlay.svelte"
   export let id: 1 | 2
 </script>
 
@@ -25,6 +27,10 @@
   class:opponent={!$isPlayerBody[id]}
   class:mine={$isPlayerBody[id]}
 >
+  {#if $cooldownOnBodies[id] > 0}
+    <CooldownOverlay {id} />
+  {/if}
+
   <div class="player-list">
     {#if !$matchActive}
       <!-- SPOT COUNTER -->
@@ -40,18 +46,7 @@
 
     <!-- SUBMITTED VOTES -->
     {#if $matchActive}
-      <div class="round-counter">Round: {$bodies[id].roundIndex}</div>
-      <div class="submitted-votes">
-        {#each $coresInBodies[id] as core}
-          <div class="vote">
-            {#if core[1].roundIndex > $bodies[id].roundIndex}
-              {core[1].vote}
-            {:else}
-              -
-            {/if}
-          </div>
-        {/each}
-      </div>
+      <Votes {id} />
     {/if}
   </div>
 
@@ -88,7 +83,7 @@
   {/if}
 </div>
 
-<style>
+<style lang="scss">
   .pane-1 {
     left: 0;
     background: #00ff00;
@@ -118,7 +113,7 @@
     align-items: center;
     position: fixed;
     top: 0;
-    padding: 3rem;
+    padding: 1rem;
     font-family: var(--font-family);
 
     &.active {
@@ -136,52 +131,27 @@
     z-index: -1;
   }
 
-  .vote-counter {
-    position: absolute;
-    top: 0;
-    font-size: 20rem;
-  }
-
-  .body-statistics {
-    position: absolute;
-    bottom: 0;
-  }
-
   .statistics {
     align-self: start;
     text-align: center;
     display: flex;
     justify-content: center;
     margin: 0 auto;
-  }
 
-  .statistics-content {
-    color: black;
-    background: white;
-    width: auto;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    flex-shrink: 1;
-    font-size: 3rem;
-  }
+    .statistics-content {
+      color: black;
+      background: white;
+      width: auto;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      flex-shrink: 1;
+      font-size: 3rem;
+    }
 
-  .statistics-content-main,
-  .statistics-button {
-    padding: 12px 20px;
-  }
-
-
-  .name {
-    position: fixed;
-    top: 80px;
-  }
-
-  .names {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translate(-50%, 0);
+    .statistics-content-main {
+      padding: 12px 20px;
+    }
   }
 
   .spot-counter {

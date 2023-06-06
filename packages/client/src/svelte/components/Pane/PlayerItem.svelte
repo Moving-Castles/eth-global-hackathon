@@ -13,5 +13,6 @@
     font-family: var(--font-family-special);
     font-size: 32px;
     color: black;
+    text-align: center;
   }
 </style>
