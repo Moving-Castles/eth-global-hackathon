@@ -17,14 +17,20 @@
       {#if core[0] === $playerAddress}
         <!-- Local player -->
         {#if $playerAction !== ActionType.NONE}
-          <ActionIcon actionType={$playerAction} />
+          <span class="pending">
+            <ActionIcon actionType={$playerAction} />
+          </span>
         {:else if core[1].roundIndex > $bodies[id].roundIndex}
-          <ActionIcon actionType={core[1].vote} />
+          <span class="confirmed">
+            <ActionIcon actionType={core[1].vote} />
+          </span>
         {/if}
       {:else}
         <!-- Other player -->
         {#if core[1].roundIndex > $bodies[id].roundIndex}
-          <ActionIcon actionType={core[1].vote} />
+          <span class="confirmed">
+            <ActionIcon actionType={core[1].vote} />
+          </span>
         {/if}
       {/if}
     </div>
@@ -40,9 +46,10 @@
   .submitted-votes {
     display: flex;
     justify-content: center;
+
     .vote {
-      width: 50px;
-      height: 50px;
+      width: 80px;
+      height: 80px;
       background: rgb(211, 211, 211, 0.5);
       border: 2px solid white;
       font-size: 8px;
@@ -50,6 +57,16 @@
       justify-content: center;
       align-items: center;
       margin-right: 20px;
+
+      .pending {
+        opacity: 0.5;
+        text-align: center;
+      }
+
+      .confirmed {
+        opacity: 1;
+        text-align: center;
+      }
     }
   }
 </style>

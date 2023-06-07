@@ -28,7 +28,7 @@
   </div>
 {/each}
 
-<style>
+<style lang="scss">
   .cursor {
     width: 40px;
     height: 40px;
@@ -44,14 +44,14 @@
     align-items: center;
     flex-wrap: wrap;
     color: white;
-  }
 
-  .cursor-icon {
-    font-size: 3em;
-    opacity: 0.5;
-  }
+    .cursor-icon {
+      font-size: 3em;
+      opacity: 0.5;
+    }
 
-  .cursor-text {
-    font-size: 10px;
+    .cursor-text {
+      font-size: 10px;
+    }
   }
 </style>

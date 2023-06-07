@@ -85,8 +85,14 @@ export const playerJoinedBody = derived([playerCore],
 
 // Player voted when their own roundIndex is larger than the body's
 export const playerHasVoted = derived([playerCore, entities],
-  ([$playerCore, $entities]) =>
-    $playerCore.roundIndex > ($entities[$playerCore.carriedBy]?.roundIndex || 0)
+  ([$playerCore, $entities]) => {
+    console.log($playerCore.carriedBy)
+    console.log("$entities[$playerCore.carriedBy]", $entities[$playerCore.carriedBy])
+
+    const bodyKey = $playerCore.carriedBy === BODY_ONE ? "0x01" : "0x02";
+    console.log('bodyKey', bodyKey)
+    return $playerCore.roundIndex > ($entities[bodyKey]?.roundIndex || 0)
+  }
 )
 
 // The current action the player has voted for, set before executed on-chain

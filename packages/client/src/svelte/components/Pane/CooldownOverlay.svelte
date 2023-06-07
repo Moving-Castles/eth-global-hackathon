@@ -12,12 +12,14 @@
 <style lang="scss">
   .cooldown-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    background: rgba(211, 211, 211, 0.1);
-    width: 100%;
-    height: 100%;
+    top: 50%;
+    left: 50%;
+    background: rgba(211, 211, 211, 0.4);
+    width: 50vh;
+    height: 50vh;
+    border-radius: 50%;
     backdrop-filter: blur(10px);
+    transform: translateX(-50%) translateY(-50%);
 
     .cooldown-text {
       font-size: 20vh;

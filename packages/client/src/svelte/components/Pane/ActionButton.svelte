@@ -4,6 +4,7 @@
     playerAction,
     cooldownOnBodies,
     playerHasVoted,
+    playerCore,
   } from "../../modules/state"
   import { playSound } from "../../modules/sound"
   import ActionIcon from "./ActionIcon.svelte"
@@ -17,14 +18,25 @@
     vote(actionType)
   }
 
-  // Player selected this action
-  let selected = false
-  $: selected = $playerAction === actionType
+  // Sketch =>
+  // A button can be:
+  // - selected: player has selected this action, vote transaction is pending
+  // - confirmed: player has voted for this action, vote transaction is confirmed
+  // ...
+  // - disabled: player has selected another action, vote transaction is pending
+  // - disabled #2 (?): player has voted for another action, vote transaction is confirmed
+  // ..
+  // - cooldown: body is in cooldown, voting is not possible
 
-  // Player selected another action
+  let selected = false
+  $: selected =
+    $playerAction === actionType || // Player has selected this action
+    ($playerHasVoted && $playerCore.vote === actionType) // Player has voted for this action
+
   let disabled = false
   $: disabled =
-    $playerAction !== ActionType.NONE && $playerAction !== actionType
+    ($playerAction !== ActionType.NONE && $playerAction !== actionType) || // Player has selected another action
+    ($playerHasVoted && $playerCore.vote !== actionType) // Player has voted for another action
 
   // Body is in cooldown
   let cooldown = false
@@ -65,6 +77,7 @@
 
     &.selected {
       background: red;
+      pointer-events: none;
     }
 
     &.disabled {
@@ -78,10 +91,5 @@
       background: rgba(255, 255, 255, 0.5);
       opacity: 0.3;
     }
-
-    // &.voted {
-    //   pointer-events: none;
-    //   opacity: 0.3;
-    // }
   }
 </style>

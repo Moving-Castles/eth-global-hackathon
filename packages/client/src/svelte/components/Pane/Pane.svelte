@@ -16,6 +16,9 @@
   import JoinButton from "./JoinButton.svelte"
   import CooldownOverlay from "./CoolDownOverlay.svelte"
   export let id: 1 | 2
+
+  let availableSpots = 0
+  $: availableSpots = $matchSingleton?.coresPerBody - $coresInBodies[id].length
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -35,7 +38,11 @@
     {#if !$matchActive}
       <!-- SPOT COUNTER -->
       <div class="spot-counter">
-        {$matchSingleton?.coresPerBody - $coresInBodies[id].length} spots left
+        {#if availableSpots === 0}
+          Ready to fight!
+        {:else}
+          {availableSpots} spots left
+        {/if}
       </div>
     {/if}
 
@@ -159,5 +166,6 @@
     color: white;
     padding: 10px;
     border-radius: 5px;
+    text-align: center;
   }
 </style>
