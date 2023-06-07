@@ -48,7 +48,7 @@ library LibBody {
   function givePoints(bytes32 _bodyEntity) internal {
     bytes32[] memory cores = getCores(_bodyEntity);
     for (uint256 i = 0; i < cores.length; i++) {
-      Points.set(cores[i], Points.get(cores[i]) + 1);
+      Points.set(cores[i], Points.get(cores[i]) + 1000);
     }
   }
 }
